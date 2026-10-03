@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ENTRIES, findEntry, pad, typeOf } from "@/lib/registry";
+import { ENTRIES, findEntry, typeOf } from "@/lib/registry";
 import { highlight, readRepoFile } from "@/lib/source";
 import { Stage } from "@/site/Stage";
 import { CodeTabs, type CodeTab } from "@/site/CodeTabs";
@@ -50,7 +50,6 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
       <div className="anim-rise mb-6 mt-2 flex flex-wrap items-center gap-2.5">
         <h1 className="mr-2 font-title text-[clamp(2.2rem,4.6vw,3.8rem)] leading-none text-board title-shadow">{entry.name}</h1>
         <span className="rounded-full border-[3px] border-ink px-2.5 font-extrabold" style={{ background: type.color }}>{entry.type}</span>
-        <span className="rounded-full border-[3px] border-ink bg-paper px-2.5 font-extrabold">week {pad(entry.week)}</span>
         <span className="rounded-full border-[3px] border-ink bg-paper px-2.5 font-extrabold">ext {entry.ext}</span>
       </div>
 

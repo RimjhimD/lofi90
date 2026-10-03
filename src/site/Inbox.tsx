@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ENTRIES, TYPES, type ComponentType, pad, typeOf } from "@/lib/registry";
+import { ENTRIES, TYPES, type ComponentType, typeOf } from "@/lib/registry";
 
 /** Every built component, as cards that pop in on scroll. Only types that have components get a filter. */
 export function Inbox() {
@@ -70,7 +70,6 @@ export function Inbox() {
                 <span className="mr-1 inline-block rounded-full border-[3px] border-ink px-2 text-xs font-extrabold" style={{ background: t.color }}>
                   {e.type}
                 </span>
-                <span className="inline-block rounded-full border-[3px] border-ink bg-paper px-2 text-xs font-extrabold">week {pad(e.week)}</span>
               </div>
             </Link>
           );

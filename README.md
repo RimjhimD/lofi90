@@ -1,15 +1,15 @@
 # lofi90
 
-**A component library in your pocket.** React + TypeScript + Tailwind components for the LofiStack 90 Day Build Challenge: everyday UI with a twist, plus tools for real automation work. Two new components every week.
+**A component library in your pocket.** React + TypeScript + Tailwind components for the LofiStack 90 Day Build Challenge: everyday UI with a twist, plus tools for real automation work.
 
 Live site: https://lofi90.vercel.app (coming soon)
 
 ## Components
 
-| Ext | Component | Type | Week | Page |
-|---|---|---|---|---|
-| 01 | Passkey Button | button | 01 | `/components/passkey-button` |
-| 02 | Filter Verdict Card | card | 01 | `/components/filter-verdict-card` |
+| Ext | Component | Type | Page |
+|---|---|---|---|
+| 01 | Passkey Button | button | `/components/passkey-button` |
+| 02 | Filter Verdict Card | card | `/components/filter-verdict-card` |
 
 Every component page has a live demo (375 / 768 / full width), the usage example, the full source, a props table and the final prompt that built it.
 

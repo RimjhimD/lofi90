@@ -20,7 +20,7 @@ export default function Home() {
           <div>
             <span className="anim-wobble inline-flex items-center gap-2 rounded-full border-4 border-ink bg-p2 px-3.5 py-0.5 font-extrabold shadow-[4px_4px_0_#20201C]">
               <i className="anim-blink block h-2.5 w-2.5 rounded-full border-2 border-ink bg-p1" />
-              NEW MESSAGE ({newCount}) · WEEK {String(latest).padStart(2, "0")}
+              NEW MESSAGES ({newCount})
             </span>
             <h1 aria-label={WORDS.join(" ")} className="mb-4 mt-6 font-title text-[clamp(2.8rem,6vw,5.2rem)] leading-none text-board title-shadow">
               {WORDS.map((w, i) => (
@@ -30,7 +30,7 @@ export default function Home() {
               ))}
             </h1>
             <p className="ready-rise max-w-[46ch] text-lg font-semibold text-board" style={{ animationDelay: "700ms" }}>
-              React + TypeScript + Tailwind components: everyday UI with a twist, and tools for real automation work. Each one ships with a live demo, its full source and the prompt that built it. Two new ones every week.
+              React + TypeScript + Tailwind components: everyday UI with a twist, and tools for real automation work. Each one ships with a live demo, its full source and the prompt that built it.
             </p>
             <p className="ready-rise mt-4 flex flex-wrap items-center gap-2 font-bold text-board" style={{ animationDelay: "850ms" }}>
               Drive the phone →
@@ -43,7 +43,7 @@ export default function Home() {
             </p>
             <div className="ready-rise mt-6 flex flex-wrap gap-3" style={{ animationDelay: "1000ms" }}>
               <Link href={`/components/${first.slug}`} className="chunk bg-p1! px-5 py-2 text-lg text-white">
-                Open week {String(latest).padStart(2, "0")} ▸
+                Try one ▸
               </Link>
               <Link href="#inbox" className="chunk px-5 py-2 text-lg">
                 See all

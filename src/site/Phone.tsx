@@ -74,7 +74,7 @@ export function Phone() {
     }
     if (k === "new") {
       setQuery("");
-      openList(ENTRIES.filter((e) => e.week === latestWeek), `New · week ${latestWeek}`, "#9B5DE5");
+      openList(ENTRIES.filter((e) => e.week === latestWeek), "New arrivals", "#9B5DE5");
       return;
     }
     if (view === "menu") {
@@ -183,7 +183,7 @@ export function Phone() {
                 ))}
                 {(view === "search" ? searchHits : list).length === 0 && (
                   <li className="px-2 py-1 text-sm font-bold text-[#6b665a]">
-                    {view === "search" ? "No match. Keep typing or press Esc." : "Nothing here yet. New components land every week!"}
+                    {view === "search" ? "No match. Keep typing or press Esc." : "Nothing here yet. More components are on the way!"}
                   </li>
                 )}
               </ul>
