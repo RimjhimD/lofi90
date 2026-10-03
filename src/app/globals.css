@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@theme {
+  --color-felt: #2f7d4e;
+  --color-felt-2: #276b42;
+  --color-board: #fff6e0;
+  --color-paper: #fffdf6;
+  --color-ink: #20201c;
+  --color-p1: #ff5d5d;
+  --color-p2: #ffb800;
+  --color-p3: #3bb2f6;
+  --color-p4: #9b5de5;
+  --color-p5: #00c49a;
+  --font-title: var(--font-luckiest), cursive;
+  --font-body: var(--font-baloo), system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-felt);
+  background-image: radial-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1.5px);
+  background-size: 6px 6px;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+/* Chunky press-down button used across the site chrome. */
+.chunk {
+  border: 4px solid var(--color-ink);
+  border-radius: 999px;
+  background: var(--color-paper);
+  font-weight: 800;
+  box-shadow: 0 5px 0 var(--color-ink);
+  transition: transform 0.08s, box-shadow 0.08s, background-color 0.15s;
+}
+.chunk:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 var(--color-ink);
+}
+.chunk:active,
+.chunk[data-down="true"] {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--color-ink);
+}
+.chunk:focus-visible {
+  outline: 4px solid var(--color-p2);
+  outline-offset: 3px;
+}
+.chunk[aria-pressed="true"],
+.chunk[aria-selected="true"] {
+  background: var(--color-p2);
+}
+
+.title-shadow {
+  text-shadow: 4px 4px 0 var(--color-ink);
+}
+
+/* Code blocks from shiki */
+.code-block pre {
+  margin: 0;
+  padding: 1rem;
+  overflow: auto;
+  max-height: 34rem;
+  font-size: 0.8rem;
+  line-height: 1.65;
+  background: transparent !important;
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(var(--r0, 0deg)); }
+  50% { transform: translateY(-26px) rotate(var(--r1, 12deg)); }
+}
+@keyframes wordpop {
+  from { opacity: 0; transform: translateY(40px) rotate(-6deg) scale(0.8); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes wobble {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg) translateY(-3px); }
+}
+@keyframes dropin {
+  from { opacity: 0; transform: translateY(-120px) rotate(10deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-10px) rotate(-1.2deg); }
+}
+@keyframes slidein {
+  from { opacity: 0; transform: translateX(var(--dir, 24px)); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+@keyframes confetti {
+  to { transform: translate(var(--x), var(--y)) rotate(var(--rot)); opacity: 0; }
+}
+@keyframes ringer {
+  from { transform: rotate(-14deg); }
+  to { transform: rotate(14deg); }
+}
+
+.anim-word { opacity: 0; animation: wordpop 0.6s cubic-bezier(0.3, 1.7, 0.5, 1) forwards; }
+.anim-rise { animation: rise 0.6s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+.anim-wobble { animation: wobble 3s ease-in-out infinite; }
+.anim-phone { animation: dropin 0.8s 0.3s cubic-bezier(0.3, 1.5, 0.5, 1) both, bob 5s 1.2s ease-in-out infinite; }
+.anim-phone:hover { animation-play-state: paused; }
+.anim-slide { animation: slidein 0.28s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+.anim-blink { animation: blink 1s steps(1) infinite; }
+.anim-ring { animation: ringer 0.25s ease-in-out infinite alternate; display: inline-block; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .anim-word { opacity: 1; }
+}
+
+/* Hero animations wait for the intro to finish (html[data-ready]). */
+.ready-word { opacity: 0; transform: translateY(40px) rotate(-6deg) scale(0.8); }
+.ready-rise { opacity: 0; }
+html[data-ready] .ready-word { animation: wordpop 0.6s cubic-bezier(0.3, 1.7, 0.5, 1) forwards; animation-delay: inherit; }
+html[data-ready] .ready-rise { animation: rise 0.6s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+.ready-word:hover { animation: none; transform: rotate(-4deg) scale(1.08); transition: transform 0.2s; }
+@media (prefers-reduced-motion: reduce) {
+  .ready-word, .ready-rise { opacity: 1; transform: none; }
+}

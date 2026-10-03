@@ -1,0 +1,9 @@
+Build a React + TypeScript + Tailwind "Filter Verdict Card" that answers the most common automation question: "why didn't my workflow run for this contact?" No extra libraries.
+
+Split it into two files:
+1. evaluate.ts, pure functions with no React: a Condition type (field as a dot path, op: exists | notExists | equals | notEquals | includes | gt | lt, optional value and label), evaluateCondition and evaluateFilter(record, conditions, mode). Evaluate in order like real automation tools: in "all" mode the first failure decides (BLOCKED), in "any" mode the first pass decides (PASS); conditions after the deciding one are not evaluated. Each result reports the actual value, whether it is missing (null, undefined or ""), and caseOnly when a string or tag would match if letter case were ignored. Write unit tests for these rules.
+2. FilterVerdictCard.tsx with typed props: record, conditions, title, subtitle, mode, animate, stepMs, runKey (change it to re-run) and onVerdict.
+
+Look: board-game style, white card, thick #20201C border, hard offset shadow, cream header and footer.
+
+Behaviour: rows animate one by one. A spinning check icon while checking, then a green tick or a red cross with a small shake (Web Animations API, no global CSS). Each row shows the condition in plain English and the record's actual value; missing values are a dashed "missing" ghost. Rows after the deciding one grey out as "not checked". The header badge goes READY → CHECKING… → a stamped PASS or BLOCKED. The footer (aria-live) explains the verdict in one sentence, including a tip about lowercase tags when the failure is letter case only. Screen-reader text says passed / failed / not checked for each row. Responsive, AA contrast, and with prefers-reduced-motion the result shows instantly without the stagger.
