@@ -18,6 +18,8 @@ export interface UndoFuseButtonProps {
   onCommit: () => void | Promise<void>;
   /** Runs when the user cancels before the fuse burns out. */
   onUndo?: () => void;
+  /** Runs when the button is pressed and the fuse is lit. */
+  onStart?: () => void;
   /** How long the fuse burns, in milliseconds. */
   delayMs?: number;
   /** Override any text. */
@@ -65,6 +67,7 @@ const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("
 export function UndoFuseButton({
   onCommit,
   onUndo,
+  onStart,
   delayMs = 5000,
   labels,
   disabled = false,
@@ -84,9 +87,9 @@ export function UndoFuseButton({
   const [held, setHeld] = useState(false);
   const [left, setLeft] = useState(delayMs);
   const [box, setBox] = useState({ w: 0, h: 0 });
-  const latest = useRef({ onCommit, onUndo });
+  const latest = useRef({ onCommit, onUndo, onStart });
   useEffect(() => {
-    latest.current = { onCommit, onUndo };
+    latest.current = { onCommit, onUndo, onStart };
   });
 
   const state = previewState ?? live;
@@ -145,6 +148,7 @@ export function UndoFuseButton({
     }
     setLeft(delayMs);
     setLive("burning");
+    latest.current.onStart?.();
   }
 
   const seconds = Math.ceil(left / 1000);

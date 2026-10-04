@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ControlValues } from "@/site/Controls";
+import { say } from "@/site/log";
 import { IslandNotification, type IslandItem } from "./IslandNotification";
 
 let n = 0;
@@ -13,12 +14,24 @@ export default function IslandNotificationDemo({ controls = {} }: { controls?: C
   const [log, setLog] = useState("");
   const upload = useRef(0);
 
-  const push = (...more: Omit<IslandItem, "id">[]) => setItems((xs) => [...xs, ...more.map(make)]);
-  const dismiss = (id: string) => setItems((xs) => xs.filter((x) => x.id !== id));
+  const push = (...more: Omit<IslandItem, "id">[]) => {
+    setItems((xs) => [...xs, ...more.map(make)]);
+    say(
+      more.length > 1
+        ? `${more.length} notifications at once. The island shows one and counts the rest (+${more.length - 1}) instead of stacking them.`
+        : `“${more[0].title}” sent. The pill grows into a card at the top.`,
+      more[0].tone === "error" ? "bad" : "info",
+    );
+  };
+  const dismiss = (id: string) => {
+    setItems((xs) => xs.filter((x) => x.id !== id));
+    say("Notification closed. The card shrinks back into the pill.");
+  };
 
   function startUpload() {
     const id = `up${Date.now()}`;
     setItems((xs) => [...xs, { id, title: "Uploading photos", progress: 0 }]);
+    say("Upload started. The island becomes a live progress bar.", "wait");
     clearInterval(upload.current);
     upload.current = window.setInterval(() => {
       setItems((xs) =>
@@ -53,7 +66,10 @@ export default function IslandNotificationDemo({ controls = {} }: { controls?: C
         </div>
         <label className="absolute inset-x-5 bottom-5 block">
           <span className="sr-only">Type a message</span>
-          <input placeholder="Type here — notifications wait until you pause" className="w-full rounded-full border border-[#3A433F] bg-[#121614] px-4 py-2.5 text-sm text-[#E9EDE8] placeholder:text-[#8A938D] focus:border-[#C6FF3D] focus:outline-none" />
+          <input
+            onFocus={() => say("You're typing. New notifications wait so they never cover what you're writing.", "wait")}
+            onBlur={() => say("Stopped typing. Anything waiting can show now.")}
+            placeholder="Type here — notifications wait until you pause" className="w-full rounded-full border border-[#3A433F] bg-[#121614] px-4 py-2.5 text-sm text-[#E9EDE8] placeholder:text-[#8A938D] focus:border-[#C6FF3D] focus:outline-none" />
         </label>
       </div>
       <div role="group" aria-label="Send a notification" className="mt-4 flex flex-wrap justify-center gap-2">

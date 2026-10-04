@@ -62,15 +62,11 @@ html[data-theme="light"] .cr-btn-acc {
 }
 
 body {
-  --mx: 50%;
-  --my: 20%;
   background-color: var(--color-bg);
   /* the console's dot grid, brighter where the cursor spotlight falls */
   background-image:
-    radial-gradient(600px circle at var(--mx) var(--my), var(--glow), transparent 60%),
     radial-gradient(var(--dot) 1px, transparent 1.2px);
-  background-size: 100% 100%, 22px 22px;
-  background-attachment: fixed;
+  background-size: 22px 22px;
   color: var(--color-text);
   font-family: var(--font-body);
   font-size: 15.5px;

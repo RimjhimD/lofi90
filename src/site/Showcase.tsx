@@ -5,6 +5,10 @@ import { DEMOS } from "@/lib/demos";
 import { PLAYGROUNDS } from "@/lib/playgrounds";
 import { Controls, type ControlValues } from "@/site/Controls";
 import { CodePanel, type CodeFile } from "@/site/CodePanel";
+import { listen, type LogLine } from "@/site/log";
+
+const TONE = { info: "text-text/85", good: "text-acc", bad: "text-err", wait: "text-warn" } as const;
+const MARK = { info: "›", good: "✓", bad: "✕", wait: "◷" } as const;
 
 const WIDTHS = [
   { id: "375", label: "375", max: "375px" },
@@ -13,7 +17,7 @@ const WIDTHS = [
 ];
 
 /** One panel with Preview / Code tabs. Preview: the live component on a glowing stage, controls in a column beside it. */
-export function Showcase({ slug, files }: { slug: string; files: CodeFile[] }) {
+export function Showcase({ slug, files, tryIt }: { slug: string; files: CodeFile[]; tryIt: string[] }) {
   const [tab, setTab] = useState<"preview" | "code">("preview");
   const [width, setWidth] = useState("full");
   const Demo = DEMOS[slug];
@@ -21,6 +25,21 @@ export function Showcase({ slug, files }: { slug: string; files: CodeFile[] }) {
   const [values, setValues] = useState<ControlValues>(play?.initial ?? {});
   const [slow, setSlow] = useState(false);
   const stage = useRef<HTMLDivElement>(null);
+  const [lines, setLines] = useState<LogLine[]>([]);
+  const t0 = useRef(0);
+
+  // "What just happened": the live preview reports each thing it does, newest on top.
+  useEffect(() => {
+    t0.current = performance.now();
+    let id = 0;
+    return listen((text, tone) =>
+      setLines((xs) => [{ id: ++id, at: performance.now() - t0.current, text, tone }, ...xs].slice(0, 5)),
+    );
+  }, []);
+  const stamp = (ms: number) => {
+    const s = Math.floor(ms / 1000);
+    return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+  };
 
   // Slow-mo: every animation and transition inside the stage plays at a quarter speed. New ones are
   // caught as they start, so a morph or a flip triggered while slow-mo is on is slowed too.
@@ -77,6 +96,17 @@ export function Showcase({ slug, files }: { slug: string; files: CodeFile[] }) {
         )}
       </div>
 
+      {tab === "preview" && (
+        <ol aria-label="Try it" className="mb-3 grid gap-2 md:grid-cols-3">
+          {tryIt.map((step, i) => (
+            <li key={step} className="panel flex items-start gap-3 px-4 py-3 text-sm leading-snug text-text/90">
+              <span className="mono grid h-6 w-6 shrink-0 place-items-center rounded-full border border-acc/50 bg-acc/10 text-[0.64rem] text-acc">{i + 1}</span>
+              {step}
+            </li>
+          ))}
+        </ol>
+      )}
+
       {tab === "preview" ? (
         <div className="panel grid overflow-hidden lg:grid-cols-[minmax(0,1fr)_280px]">
           <div ref={stage} className="screen relative grid min-h-[480px] place-items-center overflow-hidden p-6">
@@ -98,6 +128,21 @@ export function Showcase({ slug, files }: { slug: string; files: CodeFile[] }) {
               onReset={() => setValues(play.initial)}
             />
           )}
+          <div className="border-t border-line px-4 py-3 lg:col-span-2">
+            <p className="mono mb-2 flex items-center gap-2 text-[0.6rem] text-mute">
+              <i className="led" data-on={lines.length > 0} data-pulse={lines.length > 0} style={{ width: 6, height: 6 }} /> What just happened
+            </p>
+            <ul aria-live="polite" className="min-h-[1.6rem] space-y-1 text-sm">
+              {lines.length === 0 && <li className="text-mute">Nothing yet. Follow step 1 above and this log explains each thing the component does.</li>}
+              {lines.map((l, i) => (
+                <li key={l.id} className={`flex gap-3 ${i === 0 ? "anim-rise" : "opacity-60"}`}>
+                  <span className="mono shrink-0 pt-0.5 text-[0.62rem] text-mute">{stamp(l.at)}</span>
+                  <span className={`shrink-0 ${TONE[l.tone]}`} aria-hidden="true">{MARK[l.tone]}</span>
+                  <span className={i === 0 ? TONE[l.tone] : "text-text/70"}>{l.text}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       ) : (
         <CodePanel files={files} maxHeight="640px" />

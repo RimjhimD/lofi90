@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ControlValues } from "@/site/Controls";
+import { say } from "@/site/log";
 import { SecretKeyField, type SecretKeyFieldProps } from "./SecretKeyField";
 
 // Fake keys, assembled at runtime so no key-shaped string sits in the source.
@@ -33,10 +34,10 @@ export default function SecretKeyFieldDemo({ controls = {} }: { controls?: Contr
       </div>
       <div role="group" aria-label="Try a mistake" className="flex flex-wrap justify-center gap-2">
         {[
-          ["Live secret in the public box", () => setPub(SEC_LIVE)],
-          ["Publishable in the secret box", () => setSec(PUB_TEST)],
-          ["Copy a key with stray spaces", () => paste(`  "${SEC_TEST}"\n`)],
-          ["Reset", () => { setPub(PUB_TEST); setSec(SEC_TEST); }],
+          ["Live secret in the public box", () => { setPub(SEC_LIVE); say("A LIVE secret key went into the public field. It turns red and blocks it: that box is sent to the browser.", "bad"); }],
+          ["Publishable in the secret box", () => { setSec(PUB_TEST); say("A publishable key went into the secret field. It warns you: wrong key for this box.", "wait"); }],
+          ["Copy a key with stray spaces", () => { paste(`  "${SEC_TEST}"\n`); say("A messy key (spaces, quotes, line break) is on your clipboard. Paste it into a field and watch it get cleaned.", "wait"); }],
+          ["Reset", () => { setPub(PUB_TEST); setSec(SEC_TEST); say("Both fields reset to the right keys. All clear.", "good"); }],
         ].map(([label, run]) => (
           <button
             key={label as string}

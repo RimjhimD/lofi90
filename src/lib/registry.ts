@@ -47,6 +47,8 @@ export interface Entry {
   usagePath: string;
   promptPath: string;
   props: PropDoc[];
+  /** "Try it": three short steps shown above the live preview. */
+  tryIt: string[];
   /** "How it works": the steps drawn as a flow on the page. */
   flow: FlowStep[];
   useWhen: string[];
@@ -66,6 +68,7 @@ export interface FlowStep {
 export const ENTRIES: Entry[] = [
   {
     slug: "undo-fuse-button",
+    tryIt: ["Pick a folder, then press Delete.", "Watch the fuse burn along the button's edge. That's your undo window.", "Press it again before it burns out to keep the folder, or let it burn to delete."],
     ext: "01",
     name: "Undo Fuse Button",
     type: "button",
@@ -114,6 +117,7 @@ export const ENTRIES: Entry[] = [
   },
   {
     slug: "secret-key-field",
+    tryIt: ["Press “Live secret in the public box”.", "The field turns red and blocks it, and says why.", "Try the other buttons, or paste a messy key and see it cleaned."],
     ext: "02",
     name: "Secret Key Field",
     type: "input",
@@ -165,6 +169,7 @@ export const ENTRIES: Entry[] = [
   },
   {
     slug: "rolodex-carousel",
+    tryIt: ["Drag a card, scroll, or use the ← → arrow keys to flip.", "Type a letter, like M or Y, to jump straight to that name.", "Watch the cards behind tilt and fan as you go."],
     ext: "03",
     name: "Rolodex Carousel",
     type: "section",
@@ -203,6 +208,7 @@ export const ENTRIES: Entry[] = [
   },
   {
     slug: "split-bill-card",
+    tryIt: ["Drag a name (Sam, Maya, Jo) onto a dish, or tap a name and then the dishes.", "Each person's total updates with their share of tax and tip.", "The shares always add up to the exact bill, to the cent."],
     ext: "04",
     name: "Split-the-Bill Card",
     type: "card",
@@ -258,6 +264,7 @@ export const ENTRIES: Entry[] = [
   },
   {
     slug: "island-notification",
+    tryIt: ["Press “New message”. The pill at the top grows into a card.", "Press “Burst of 3”. It shows one and counts the rest, no pile-up.", "Click in the text box and fire one: it waits until you stop typing."],
     ext: "05",
     name: "Island Notification",
     type: "modal",

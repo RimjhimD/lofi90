@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ENTRIES, TYPES } from "@/lib/registry";
 import { Intro } from "@/site/Intro";
-import { ReplayIntro } from "@/site/ReplayIntro";
 import { Exchanges } from "@/site/Exchanges";
 import { Radar } from "@/site/Radar";
 import { Scramble } from "@/site/Scramble";
@@ -72,7 +71,6 @@ export default function Home() {
 
         <Exchanges id="lines" />
       </main>
-      <ReplayIntro />
     </>
   );
 }

@@ -40,7 +40,12 @@ export function AutoReveal() {
 
     scan();
     let queued = 0;
-    const mo = new MutationObserver(() => {
+    // Live previews re-render many times a second; only rescan when a [data-reveal] element arrived.
+    const mo = new MutationObserver((records) => {
+      const fresh = records.some((r) =>
+        Array.from(r.addedNodes).some((n) => n instanceof Element && (n.hasAttribute("data-reveal") || n.querySelector("[data-reveal]"))),
+      );
+      if (!fresh) return;
       cancelAnimationFrame(queued);
       queued = requestAnimationFrame(scan);
     });

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ControlValues } from "@/site/Controls";
+import { say } from "@/site/log";
 import { UndoFuseButton, type UndoFuseButtonProps } from "./UndoFuseButton";
 
 const START = ["Holiday photos 2025", "Old invoices", "Draft — birthday speech"];
@@ -39,17 +40,22 @@ export default function UndoFuseButtonDemo({ controls = {} }: { controls?: Contr
             delayMs={look.delayMs ?? 5000}
             disabled={!items.includes(selected)}
             labels={{ idle: `Delete “${selected.length > 16 ? selected.slice(0, 16) + "…" : selected}”` }}
+            onStart={() => say(`Delete pressed. The fuse is lit: “${selected}” goes in ${Math.round((look.delayMs ?? 5000) / 1000)}s unless you press again.`, "wait")}
             onCommit={() => {
+              say(`Fuse burned out. “${selected}” was deleted for real.`, "bad");
               setItems((xs) => xs.filter((x) => x !== selected));
               setLog(`“${selected}” deleted.`);
             }}
-            onUndo={() => setLog(`“${selected}” kept — nothing was deleted.`)}
+            onUndo={() => {
+              setLog(`“${selected}” kept — nothing was deleted.`);
+              say(`Undo pressed in time. “${selected}” is safe, nothing was deleted.`, "good");
+            }}
           />
         </div>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-[#8A938D]">
         <span aria-live="polite">{log || "Press Delete, then move your mouse away and watch the fuse."}</span>
-        <button type="button" onClick={() => { setItems(START); setSelected(START[0]); setLog(""); }} className="rounded-lg border border-[#3A433F] bg-[#121614] px-2 py-0.5 font-bold text-[#E9EDE8] shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] focus-visible:outline-3 focus-visible:outline-[#C6FF3D]">
+        <button type="button" onClick={() => { setItems(START); setSelected(START[0]); setLog(""); say("Folders restored."); }} className="rounded-lg border border-[#3A433F] bg-[#121614] px-2 py-0.5 font-bold text-[#E9EDE8] shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] focus-visible:outline-3 focus-visible:outline-[#C6FF3D]">
           Reset
         </button>
       </div>

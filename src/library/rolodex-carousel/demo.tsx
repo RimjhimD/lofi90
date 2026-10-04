@@ -1,6 +1,7 @@
 "use client";
 
 import type { ControlValues } from "@/site/Controls";
+import { say } from "@/site/log";
 import { RolodexCarousel, type RolodexCard, type RolodexCarouselProps } from "./RolodexCarousel";
 
 const PEOPLE: [string, string, string][] = [
@@ -37,5 +38,13 @@ const CARDS: RolodexCard[] = PEOPLE.map(([name, role, note], i) => ({
 /** Live preview: a contact rolodex. Try typing M or Y. */
 export default function RolodexCarouselDemo({ controls = {} }: { controls?: ControlValues }) {
   const look = controls as Pick<RolodexCarouselProps, "accent" | "flipMs" | "behind" | "tilt">;
-  return <RolodexCarousel {...look} cards={CARDS} label="Contacts" initialIndex={3} />;
+  return (
+    <RolodexCarousel
+      {...look}
+      cards={CARDS}
+      label="Contacts"
+      initialIndex={3}
+      onChange={(i) => say(`Flipped to ${PEOPLE[i][0]} (${PEOPLE[i][1]}) · card ${i + 1} of ${PEOPLE.length}.`)}
+    />
+  );
 }
