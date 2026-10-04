@@ -43,10 +43,10 @@ export default function IdempotentRunButtonDemo() {
 
   return (
     <div className="flex w-full flex-col items-center gap-5">
-      <div className="w-full max-w-sm rounded-[24px] border-4 border-[#20201C] bg-[#FFFDF6] p-5 shadow-[6px_6px_0_#20201C]">
-        <p className="text-sm font-bold text-[#5c5849]">Glow Studio · Campaigns</p>
+      <div className="w-full max-w-sm rounded-md border-2 border-[#1A1A17] bg-[#FFFFFF] p-5 shadow-[5px_5px_0_#1A1A17]">
+        <p className="text-sm font-bold text-[#5E5A50]">Glow Studio · Campaigns</p>
         <h4 className="text-2xl font-black leading-tight">October promo</h4>
-        <p className="mb-4 text-sm font-semibold text-[#5c5849]">SMS · 400 contacts · “20% off colour this week”</p>
+        <p className="mb-4 text-sm font-semibold text-[#5E5A50]">SMS · 400 contacts · “20% off colour this week”</p>
 
         <IdempotentRunButton
           runKey={runKey}
@@ -57,22 +57,22 @@ export default function IdempotentRunButtonDemo() {
           disabled={scenario === "disabled"}
         />
 
-        <div className="mt-1 flex items-center justify-between gap-2 border-t-[3px] border-dashed border-[#20201C] pt-3">
+        <div className="mt-1 flex items-center justify-between gap-2 border-t-[3px] border-dashed border-[#1A1A17] pt-3">
           <p className="text-sm font-extrabold">
-            Texts actually sent: <span className="rounded-md bg-[#FFB800] px-1.5">{sent}</span>
+            Texts actually sent: <span className="rounded-md bg-[#D7263D] px-1.5 text-white">{sent}</span>
           </p>
           <button
             type="button"
             onClick={() => setBatch((b) => b + 1)}
-            className="rounded-full border-[3px] border-[#20201C] bg-white px-2.5 text-xs font-extrabold shadow-[0_3px_0_#20201C] active:translate-y-0.5 active:shadow-[0_1px_0_#20201C] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#3BB2F6]"
+            className="rounded-[4px] border-2 border-[#1A1A17] bg-white px-2.5 text-xs font-extrabold shadow-[2px_2px_0_#1A1A17] active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_#1A1A17] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#D7263D]"
           >
             New batch = new key
           </button>
         </div>
         <ul aria-label="Send log" className="mt-2 space-y-1 font-mono text-[11px] font-bold">
-          {log.length === 0 && <li className="text-[#5c5849]">Press Send, then press it again fast.</li>}
+          {log.length === 0 && <li className="text-[#5E5A50]">Press Send, then press it again fast.</li>}
           {log.map((l) => (
-            <li key={l.id} className={l.kind === "sent" ? "text-[#0F7A5F]" : l.kind === "blocked" ? "text-[#1F6FA3]" : "text-[#B42318]"}>
+            <li key={l.id} className={l.kind === "sent" ? "text-[#14523F]" : l.kind === "blocked" ? "text-[#5E5A50]" : "text-[#B42318]"}>
               {l.kind === "sent" ? "✓" : l.kind === "blocked" ? "🛡" : "✕"} {l.text}
             </li>
           ))}
@@ -86,7 +86,7 @@ export default function IdempotentRunButtonDemo() {
             type="button"
             aria-pressed={scenario === s.id}
             onClick={() => setScenario(s.id)}
-            className="rounded-full border-[3px] border-[#20201C] bg-white px-3 py-0.5 text-sm font-extrabold shadow-[0_3px_0_#20201C] active:translate-y-0.5 active:shadow-[0_1px_0_#20201C] aria-pressed:bg-[#FFB800] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#3BB2F6]"
+            className="rounded-[4px] border-2 border-[#1A1A17] bg-white px-3 py-0.5 text-sm font-extrabold shadow-[2px_2px_0_#1A1A17] active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_#1A1A17] aria-pressed:bg-[#1A1A17] aria-pressed:text-[#F2EEE3] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#D7263D]"
           >
             {s.label}
           </button>

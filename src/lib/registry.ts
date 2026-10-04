@@ -187,6 +187,5 @@ export const ENTRIES: Entry[] = [
   },
 ];
 
-export const typeOf = (id: ComponentType) => TYPES.find((t) => t.id === id)!;
 export const findEntry = (slug: string) => ENTRIES.find((e) => e.slug === slug);
 export const pad = (n: number) => String(n).padStart(2, "0");

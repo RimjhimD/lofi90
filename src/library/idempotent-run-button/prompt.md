@@ -4,13 +4,13 @@ Props (typed interface): runKey (string that names this exact action, e.g. "prom
 
 Rules: keep finished keys in a module-level Map (plus sessionStorage when storage is "session") and an in-flight Set, so two buttons with the same key on one page still run once. Only write the key after onRun succeeds, so a failed run can be retried safely. Changing runKey resets the button to Ready.
 
-Look: board-game style. Thick #20201C outlines, hard offset shadow, a red #FF5D5D button with a round cream badge holding a play icon, the label, and a small mono tag under it that shows "key: <runKey>".
+Look: switchboard style. 2px #1A1A17 ink lines, a hard offset shadow and square-ish corners. A signal red #D7263D button with white text, a round white badge holding a play icon, the label, and a small mono tag under it that shows "key: <runKey>".
 
 States:
 - Ready: play icon grows on hover; status line says "Same key within 60s runs only once."
-- Running: yellow, a white stripe sweeps across the button in a loop, spinner, aria-busy, extra presses ignored.
-- Done: mint, check icon, shows the result string, a small pop; status says how long the key is locked.
-- Blocked (same key pressed again inside the window): light blue, a shield with a check slams down into the badge from above (overshoot and settle), and the button jumps and bounces off it. Label: "Already done · 12s ago". Status: what was stopped and when it is free again. Count down every second; when the window ends the shield cracks away (drops and spins out) and the button is ready again.
+- Running: bone #E8E2D2, a white stripe sweeps across the button in a loop, spinner, aria-busy, extra presses ignored.
+- Done: bottle green #0E3B2E with bone text, check icon, shows the result string, a small pop; status says how long the key is locked.
+- Blocked (same key pressed again inside the window): pale green #DCE9E2, a green shield with a check slams down into the badge from above (overshoot and settle), and the button jumps and bounces off it. Label: "Already done · 12s ago". Status: what was stopped and when it is free again. Count down every second; when the window ends the shield cracks away (drops and spins out) and the button is ready again.
 - Error: pale red, "!" badge, shake, label "Try again", status says nothing was saved so retrying is safe.
 - Disabled: grey, no hover lift, not clickable.
 

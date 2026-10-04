@@ -48,8 +48,8 @@ export default function PermissionPrimerDemo() {
 
   return (
     <div className="flex w-full flex-col items-center gap-5">
-      <div className="w-full max-w-sm rounded-[24px] border-4 border-[#20201C] bg-[#FFFDF6] p-5 text-center shadow-[6px_6px_0_#20201C]">
-        <p className="text-sm font-bold text-[#5c5849]">{app.app}</p>
+      <div className="w-full max-w-sm rounded-md border-2 border-[#1A1A17] bg-[#FFFFFF] p-5 text-center shadow-[5px_5px_0_#1A1A17]">
+        <p className="text-sm font-bold text-[#5E5A50]">{app.app}</p>
         <div className="my-3 text-5xl" aria-hidden="true">{app.emoji}</div>
         <button
           type="button"
@@ -57,7 +57,7 @@ export default function PermissionPrimerDemo() {
             setLog("");
             setOpen(true);
           }}
-          className="w-full rounded-full border-4 border-[#20201C] bg-[#3BB2F6] px-5 py-3 font-black shadow-[0_5px_0_#20201C] transition-transform hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_1px_0_#20201C] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#FFB800]"
+          className="w-full rounded-[4px] border-2 border-[#1A1A17] bg-[#D7263D] px-5 py-3 font-black text-white shadow-[3px_3px_0_#1A1A17] transition-transform hover:-translate-y-0.5 active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_#1A1A17] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#0E3B2E]"
         >
           {app.action}
         </button>
@@ -83,7 +83,7 @@ export default function PermissionPrimerDemo() {
             type="button"
             aria-pressed={kind === k}
             onClick={() => setKind(k)}
-            className="rounded-full border-[3px] border-[#20201C] bg-white px-3 py-0.5 text-sm font-extrabold capitalize shadow-[0_3px_0_#20201C] active:translate-y-0.5 active:shadow-[0_1px_0_#20201C] aria-pressed:bg-[#FFB800] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#3BB2F6]"
+            className="rounded-[4px] border-2 border-[#1A1A17] bg-white px-3 py-0.5 text-sm font-extrabold capitalize shadow-[2px_2px_0_#1A1A17] active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_#1A1A17] aria-pressed:bg-[#1A1A17] aria-pressed:text-[#F2EEE3] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#D7263D]"
           >
             {k === "geolocation" ? "location" : k}
           </button>
@@ -97,7 +97,7 @@ export default function PermissionPrimerDemo() {
             type="button"
             aria-pressed={outcome === o}
             onClick={() => setOutcome(o)}
-            className="rounded-full border-[3px] border-[#20201C] bg-white px-3 py-0.5 font-extrabold shadow-[0_3px_0_#20201C] active:translate-y-0.5 active:shadow-[0_1px_0_#20201C] aria-pressed:bg-[#00C49A] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#3BB2F6]"
+            className="rounded-[4px] border-2 border-[#1A1A17] bg-white px-3 py-0.5 font-extrabold shadow-[2px_2px_0_#1A1A17] active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_#1A1A17] aria-pressed:bg-[#0E3B2E] aria-pressed:text-[#F2EEE3] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#D7263D]"
           >
             {o === "allow" ? "Allow" : o === "block" ? "Block" : "Real browser"}
           </button>

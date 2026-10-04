@@ -1,21 +1,40 @@
 import Link from "next/link";
+import { ENTRIES, TYPES } from "@/lib/registry";
 
+/** Logo lamp plus a row of type lamps. A type's lamp is lit when it has components. */
 export function Header() {
   return (
-    <header className="relative z-20 mx-auto flex max-w-[1240px] items-center gap-4 px-6 py-4">
-      <Link href="/" className="flex items-center gap-3 font-title text-3xl text-board title-shadow" aria-label="lofi90 home">
-        <span aria-hidden="true" className="flex h-4 items-end gap-0.5">
-          {[5, 8, 11, 14].map((h) => (
-            <i key={h} className="block w-1 rounded-sm bg-board shadow-[2px_2px_0_#20201C]" style={{ height: h }} />
-          ))}
-        </span>
-        lofi90
-      </Link>
-      <nav aria-label="Site" className="ml-auto hidden gap-2 sm:flex">
-        <Link href="/" className="chunk px-4 py-1 text-[0.95rem]">Home</Link>
-        <Link href="/#inbox" className="chunk px-4 py-1 text-[0.95rem]">Components</Link>
-        <a href="https://github.com/RimjhimD/lofi90" className="chunk px-4 py-1 text-[0.95rem]">GitHub</a>
-      </nav>
+    <header className="sticky top-0 z-40 border-b-2 border-ink bg-bone">
+      <div className="mx-auto flex max-w-[1240px] items-center gap-6 px-6 py-3">
+        <Link href="/" aria-label="lofi90 home" className="flex items-center gap-2.5 font-display text-[1.9rem] font-black leading-none tracking-wide">
+          <span aria-hidden="true" className="h-3.5 w-3.5 rounded-full bg-signal shadow-[0_0_10px_#ff5a6e]" />
+          LOFI90
+        </Link>
+        <nav aria-label="Component types" className="ml-auto hidden gap-0.5 xl:flex">
+          {TYPES.map((t) => {
+            const count = ENTRIES.filter((e) => e.type === t.id).length;
+            return count > 0 ? (
+              <Link
+                key={t.id}
+                href={`/#ex-${t.id}`}
+                data-lamp={t.id}
+                className="mono flex items-center gap-1.5 border border-transparent px-2 py-1.5 hover:border-ink focus-visible:border-ink focus-visible:outline-none"
+              >
+                <i className="lamp" data-on="true" style={{ width: 8, height: 8 }} />
+                {t.id}
+              </Link>
+            ) : (
+              <span key={t.id} data-lamp={t.id} className="mono flex items-center gap-1.5 px-2 py-1.5 text-muted" title="No components on this line yet">
+                <i className="lamp" style={{ width: 8, height: 8 }} />
+                {t.id}
+              </span>
+            );
+          })}
+        </nav>
+        <a href="https://github.com/RimjhimD/lofi90" className="sb-btn ml-auto xl:ml-2">
+          GitHub
+        </a>
+      </div>
     </header>
   );
 }

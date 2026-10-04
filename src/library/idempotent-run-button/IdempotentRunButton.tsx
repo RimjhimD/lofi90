@@ -244,16 +244,16 @@ export function IdempotentRunButton({
               : `Same key within ${short(windowMs)} runs only once.`;
 
   const tone = disabled
-    ? "bg-[#E7E1D2] text-[#6B665A]"
+    ? "bg-[#E8E2D2] text-[#5E5A50]"
     : status === "running"
-      ? "bg-[#FFB800] text-[#20201C]"
+      ? "bg-[#E8E2D2] text-[#1A1A17]"
       : status === "done"
-        ? "bg-[#00C49A] text-[#20201C]"
+        ? "bg-[#0E3B2E] text-[#F2EEE3]"
         : status === "blocked"
-          ? "bg-[#CDEBFF] text-[#20201C]"
+          ? "bg-[#DCE9E2] text-[#1A1A17]"
           : status === "error"
-            ? "bg-[#FFE3E3] text-[#20201C]"
-            : "bg-[#FF5D5D] text-[#20201C]";
+            ? "bg-[#FBE4E6] text-[#1A1A17]"
+            : "bg-[#D7263D] text-white";
 
   return (
     <div className={`flex w-full max-w-sm flex-col items-stretch gap-2 ${className}`}>
@@ -264,28 +264,28 @@ export function IdempotentRunButton({
         disabled={disabled}
         aria-busy={busy}
         aria-describedby={statusId}
-        className={`group relative flex h-16 items-center gap-3 rounded-[20px] border-4 border-[#20201C] px-3 pr-4 text-left font-extrabold shadow-[0_5px_0_#20201C] transition-[transform,box-shadow,background-color] duration-150 hover:-translate-y-0.5 hover:shadow-[0_7px_0_#20201C] active:translate-y-1 active:shadow-[0_1px_0_#20201C] focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[#3BB2F6] disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_5px_0_#20201C] ${tone}`}
+        className={`group relative flex h-16 items-center gap-3 rounded-md border-2 border-[#1A1A17] px-3 pr-4 text-left font-extrabold shadow-[3px_3px_0_#1A1A17] transition-[transform,box-shadow,background-color] duration-150 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_#1A1A17] active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_#1A1A17] focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[#0E3B2E] disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[3px_3px_0_#1A1A17] ${tone}`}
       >
-        <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-[16px]">
-          {busy && <span ref={sweepRef} className="absolute inset-y-0 left-0 w-1/3 -skew-x-12 bg-white/45" />}
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-md">
+          {busy && <span ref={sweepRef} className="absolute inset-y-0 left-0 w-1/3 -skew-x-12 bg-white/70" />}
         </span>
 
-        <span aria-hidden="true" className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full border-[3px] border-[#20201C] bg-[#FFFDF6]">
+        <span aria-hidden="true" className="relative grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 border-[#1A1A17] bg-[#FFFFFF]">
           {status === "blocked" ? (
             <span ref={shieldRef} className="absolute -inset-2 grid place-items-center">
-              <svg viewBox="0 0 48 52" className="h-14 w-14 drop-shadow-[2px_2px_0_#20201C]">
-                <path d="M24 3 6 10v14c0 12 7.6 20.4 18 25 10.4-4.6 18-13 18-25V10L24 3Z" fill="#3BB2F6" stroke="#20201C" strokeWidth="4" strokeLinejoin="round" />
-                <path d="M16 26.5 22 32l11-12" fill="none" stroke="#FFFDF6" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+              <svg viewBox="0 0 48 52" className="h-14 w-14 drop-shadow-[2px_2px_0_#1A1A17]">
+                <path d="M24 3 6 10v14c0 12 7.6 20.4 18 25 10.4-4.6 18-13 18-25V10L24 3Z" fill="#14523F" stroke="#1A1A17" strokeWidth="4" strokeLinejoin="round" />
+                <path d="M16 26.5 22 32l11-12" fill="none" stroke="#FFFFFF" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
           ) : status === "done" ? (
-            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="#20201C" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="#1A1A17" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12.5l4.5 4.5L19 7.5" />
             </svg>
           ) : status === "error" ? (
             <span className="text-xl font-black leading-none text-[#B42318]">!</span>
           ) : (
-            <svg viewBox="0 0 24 24" className="h-5 w-5 translate-x-px transition-transform duration-200 group-hover:scale-125" fill="#20201C">
+            <svg viewBox="0 0 24 24" className="h-5 w-5 translate-x-px transition-transform duration-200 group-hover:scale-125" fill="#1A1A17">
               <path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.4-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5Z" />
             </svg>
           )}
@@ -293,19 +293,19 @@ export function IdempotentRunButton({
 
         <span className="relative min-w-0 flex-1 leading-tight">
           <span className="block truncate text-base">{label}</span>
-          <span className="mt-0.5 inline-block max-w-full truncate rounded-md border-2 border-[#20201C] bg-[#FFFDF6] px-1.5 font-mono text-[11px] font-bold leading-4 text-[#20201C]">
+          <span className="mt-0.5 inline-block max-w-full truncate rounded-md border-2 border-[#1A1A17] bg-[#FFFFFF] px-1.5 font-mono text-[11px] font-bold leading-4 text-[#1A1A17]">
             key: {runKey}
           </span>
         </span>
 
-        {busy && <span aria-hidden="true" className="relative h-5 w-5 shrink-0 animate-spin rounded-full border-[3px] border-[#20201C] border-t-transparent" />}
+        {busy && <span aria-hidden="true" className="relative h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-[#1A1A17] border-t-transparent" />}
       </button>
 
       <p
         id={statusId}
         role="status"
         aria-live="polite"
-        className={`min-h-10 px-1 text-sm font-semibold ${status === "error" ? "text-[#B42318]" : "text-[#4A4639]"}`}
+        className={`min-h-10 px-1 text-sm font-semibold ${status === "error" ? "text-[#B42318]" : "text-[#5E5A50]"}`}
       >
         {note}
       </p>

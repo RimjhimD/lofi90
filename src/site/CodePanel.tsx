@@ -19,7 +19,7 @@ export function CopyButton({ text, label = "Copy" }: { text: string; label?: str
         setCopied(true);
         window.setTimeout(() => setCopied(false), 1400);
       }}
-      className="chunk px-3 text-sm"
+      className="sb-btn py-1"
     >
       {copied ? "Copied ✓" : label}
     </button>
@@ -31,29 +31,26 @@ export function CodePanel({ files, title, maxHeight = "34rem" }: { files: CodeFi
   const [index, setIndex] = useState(0);
   const file = files[index];
   return (
-    <div className="flex h-full min-w-0 flex-col overflow-hidden rounded-[22px] border-[5px] border-ink bg-white shadow-[8px_8px_0_#20201C]">
-      <div className="flex flex-wrap items-center gap-2 border-b-4 border-ink bg-board px-3 py-2">
-        <span aria-hidden="true" className="flex gap-1.5">
-          <i className="block h-3 w-3 rounded-full border-2 border-ink bg-p1" />
-          <i className="block h-3 w-3 rounded-full border-2 border-ink bg-p2" />
-          <i className="block h-3 w-3 rounded-full border-2 border-ink bg-p5" />
-        </span>
-        {title && <span className="font-title text-base">{title}</span>}
-        <div role="group" aria-label="Files" className="flex flex-wrap gap-1.5">
+    <div className="flex h-full min-w-0 flex-col border-2 border-ink bg-white">
+      <div className="flex flex-wrap items-stretch border-b-2 border-ink">
+        {title && <span className="mono flex items-center bg-ink px-3 text-bone">{title}</span>}
+        <div role="group" aria-label="Files" className="flex">
           {files.map((f, i) => (
             <button
               key={f.label}
               type="button"
               aria-pressed={i === index}
               onClick={() => setIndex(i)}
-              className="rounded-full border-[3px] border-ink bg-white px-2.5 text-sm font-extrabold aria-pressed:bg-p3 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-p2"
+              className="mono border-r border-ink px-3 py-2 normal-case tracking-normal aria-pressed:bg-bone-2 aria-pressed:shadow-[inset_0_-3px_0_#D7263D] focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-signal"
             >
               {f.label}
             </button>
           ))}
         </div>
-        <span className="ml-auto text-xs font-bold text-[#6b665a]">{file.code.split("\n").length} lines</span>
-        <CopyButton text={file.code} />
+        <span className="mono ml-auto flex items-center px-3 text-muted">{file.code.split("\n").length} lines</span>
+        <span className="flex items-center pr-2">
+          <CopyButton text={file.code} />
+        </span>
       </div>
       <div className="code-block min-h-0 flex-1 overflow-auto" style={{ maxHeight }} dangerouslySetInnerHTML={{ __html: file.html }} />
     </div>

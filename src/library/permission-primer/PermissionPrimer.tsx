@@ -108,30 +108,30 @@ function reducedMotion(): boolean {
 }
 
 function Icon({ permission }: { permission: PermissionKind }) {
-  const common = { fill: "none", stroke: "#20201C", strokeWidth: 3, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  const common = { fill: "none", stroke: "#1A1A17", strokeWidth: 3, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   return (
     <svg viewBox="0 0 48 48" className="h-11 w-11" aria-hidden="true">
       {permission === "camera" && (
         <>
-          <rect x="5" y="14" width="26" height="20" rx="5" {...common} fill="#3BB2F6" />
-          <path d="M31 21l11-6v18l-11-6z" {...common} fill="#3BB2F6" />
+          <rect x="5" y="14" width="26" height="20" rx="5" {...common} fill="#E8E2D2" />
+          <path d="M31 21l11-6v18l-11-6z" {...common} fill="#E8E2D2" />
         </>
       )}
       {permission === "microphone" && (
         <>
-          <rect x="17" y="5" width="14" height="24" rx="7" {...common} fill="#FF5D5D" />
+          <rect x="17" y="5" width="14" height="24" rx="7" {...common} fill="#D7263D" />
           <path d="M11 22a13 13 0 0 0 26 0M24 35v8M17 43h14" {...common} />
         </>
       )}
       {permission === "geolocation" && (
         <>
-          <path d="M24 44s14-13 14-24a14 14 0 0 0-28 0c0 11 14 24 14 24z" {...common} fill="#00C49A" />
-          <circle cx="24" cy="20" r="5" {...common} fill="#FFFDF6" />
+          <path d="M24 44s14-13 14-24a14 14 0 0 0-28 0c0 11 14 24 14 24z" {...common} fill="#D7263D" />
+          <circle cx="24" cy="20" r="5" {...common} fill="#FFFFFF" />
         </>
       )}
       {permission === "notifications" && (
         <>
-          <path d="M12 34V22a12 12 0 0 1 24 0v12l3 4H9z" {...common} fill="#FFB800" />
+          <path d="M12 34V22a12 12 0 0 1 24 0v12l3 4H9z" {...common} fill="#E8E2D2" />
           <path d="M20 42a4 4 0 0 0 8 0" {...common} />
         </>
       )}
@@ -246,32 +246,32 @@ export function PermissionPrimer({
   const card = (
     <div
       ref={cardRef}
-      className="relative w-full max-w-[420px] rounded-[26px] border-4 border-[#20201C] bg-[#FFFDF6] p-5 text-[#20201C] shadow-[8px_8px_0_#20201C]"
+      className="relative w-full max-w-[420px] rounded-md border-2 border-[#1A1A17] bg-[#FFFFFF] p-5 text-[#1A1A17] shadow-[6px_6px_0_#1A1A17]"
     >
       {/* Where the real browser prompt will appear: top-left, by the address bar. */}
       {shown === "asking" && (
-        <div aria-hidden="true" className="absolute -left-3 -top-14 flex items-center gap-2 rounded-full border-[3px] border-[#20201C] bg-[#FFB800] px-3 py-1 text-xs font-extrabold shadow-[3px_3px_0_#20201C] motion-safe:animate-bounce">
+        <div aria-hidden="true" className="absolute -left-3 -top-14 flex items-center gap-2 rounded-[4px] border-2 border-[#1A1A17] bg-[#D7263D] px-3 py-1 text-xs font-extrabold text-white shadow-[3px_3px_0_#1A1A17] motion-safe:animate-bounce">
           ↖ Your browser is asking up here
         </div>
       )}
 
       <div className="flex items-start gap-3">
         <div
-          className={`grid h-16 w-16 shrink-0 place-items-center rounded-2xl border-4 border-[#20201C] ${
-            shown === "granted" ? "bg-[#00C49A]" : shown === "denied" ? "bg-[#FFE3E3]" : "bg-[#FFF6E0]"
+          className={`grid h-16 w-16 shrink-0 place-items-center rounded-md border-2 border-[#1A1A17] ${
+            shown === "granted" ? "bg-[#0E3B2E]" : shown === "denied" ? "bg-[#FBE4E6]" : "bg-[#F2EEE3]"
           }`}
         >
           {shown === "granted" ? (
-            <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="#20201C" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="#F2EEE3" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M5 12.5l4.5 4.5L19 7.5" />
             </svg>
           ) : shown === "checking" ? (
-            <span aria-hidden="true" className="h-8 w-8 animate-spin rounded-full border-4 border-[#20201C] border-t-transparent" />
+            <span aria-hidden="true" className="h-8 w-8 animate-spin rounded-full border-2 border-[#1A1A17] border-t-transparent" />
           ) : (
             <span className="relative">
               <Icon permission={permission} />
               {(shown === "denied" || shown === "unsupported") && (
-                <span aria-hidden="true" className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full border-[3px] border-[#20201C] bg-[#E5484D] text-xs font-black text-white">
+                <span aria-hidden="true" className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full border-2 border-[#1A1A17] bg-[#D7263D] text-xs font-black text-white">
                   ✕
                 </span>
               )}
@@ -282,7 +282,7 @@ export function PermissionPrimer({
           <h2 id={titleId} className="text-xl font-black leading-tight">
             {heading}
           </h2>
-          <p id={descId} className="mt-1 text-sm font-semibold leading-snug text-[#4d4a40]">
+          <p id={descId} className="mt-1 text-sm font-semibold leading-snug text-[#5E5A50]">
             {shown === "denied"
               ? `Your browser is blocking ${copy.noun} for this site, so it won't ask again by itself. You can turn it back on in a few clicks:`
               : shown === "unsupported"
@@ -300,7 +300,7 @@ export function PermissionPrimer({
         <ul className="mt-4 space-y-1.5">
           {benefits.slice(0, 3).map((b) => (
             <li key={b} className="flex items-start gap-2 text-sm font-bold">
-              <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 border-[#20201C] bg-[#00C49A] text-[10px]">✓</span>
+              <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 border-[#1A1A17] bg-[#0E3B2E] text-[10px] text-[#F2EEE3]">✓</span>
               {b}
             </li>
           ))}
@@ -310,8 +310,8 @@ export function PermissionPrimer({
       {shown === "denied" && (
         <ol className="mt-4 space-y-2">
           {steps.map((s, i) => (
-            <li key={s} className="flex items-start gap-2.5 rounded-xl border-[3px] border-[#20201C] bg-[#FFF6E0] px-3 py-2 text-sm font-bold">
-              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 border-[#20201C] bg-white text-xs font-black">{i + 1}</span>
+            <li key={s} className="flex items-start gap-2.5 rounded-md border-2 border-[#1A1A17] bg-[#F2EEE3] px-3 py-2 text-sm font-bold">
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 border-[#1A1A17] bg-white text-xs font-black">{i + 1}</span>
               {s}
             </li>
           ))}
@@ -323,7 +323,7 @@ export function PermissionPrimer({
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="rounded-full px-4 py-2 text-sm font-extrabold underline decoration-2 underline-offset-4 hover:bg-[#FFF6E0] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#3BB2F6]"
+            className="rounded-[4px] px-4 py-2 text-sm font-extrabold underline decoration-2 underline-offset-4 hover:bg-[#F2EEE3] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#D7263D]"
           >
             {shown === "unsupported" || shown === "denied" ? "Continue without" : "Not now"}
           </button>
@@ -333,9 +333,9 @@ export function PermissionPrimer({
             type="button"
             onClick={ask}
             disabled={shown !== "prompt"}
-            className="flex items-center gap-2 rounded-full border-4 border-[#20201C] bg-[#FFB800] px-5 py-2 text-sm font-black shadow-[0_4px_0_#20201C] transition-transform hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_1px_0_#20201C] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#3BB2F6] disabled:cursor-wait disabled:opacity-70 disabled:hover:translate-y-0"
+            className="flex items-center gap-2 rounded-[4px] border-2 border-[#1A1A17] bg-[#D7263D] px-5 py-2 text-sm font-black text-white shadow-[3px_3px_0_#1A1A17] transition-transform hover:-translate-y-0.5 active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_#1A1A17] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#0E3B2E] disabled:cursor-wait disabled:opacity-70 disabled:hover:translate-y-0"
           >
-            {shown === "asking" && <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-[3px] border-[#20201C] border-t-transparent" />}
+            {shown === "asking" && <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />}
             {shown === "asking" ? "Waiting for you…" : copy.allow}
           </button>
         )}
@@ -343,7 +343,7 @@ export function PermissionPrimer({
           <button
             type="button"
             onClick={retry}
-            className="rounded-full border-4 border-[#20201C] bg-[#3BB2F6] px-5 py-2 text-sm font-black shadow-[0_4px_0_#20201C] transition-transform hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_1px_0_#20201C] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#20201C]"
+            className="rounded-[4px] border-2 border-[#1A1A17] bg-[#D7263D] px-5 py-2 text-sm font-black text-white shadow-[3px_3px_0_#1A1A17] transition-transform hover:-translate-y-0.5 active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_#1A1A17] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#1A1A17]"
           >
             Try again
           </button>
@@ -352,7 +352,7 @@ export function PermissionPrimer({
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="rounded-full border-4 border-[#20201C] bg-[#00C49A] px-5 py-2 text-sm font-black shadow-[0_4px_0_#20201C] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#20201C]"
+            className="rounded-[4px] border-2 border-[#1A1A17] bg-[#0E3B2E] px-5 py-2 text-sm font-black text-[#F2EEE3] shadow-[3px_3px_0_#1A1A17] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#1A1A17]"
           >
             Done
           </button>
@@ -384,7 +384,7 @@ export function PermissionPrimer({
       onClick={(e) => {
         if (e.target === e.currentTarget) onOpenChange(false);
       }}
-      className="m-auto w-[min(420px,calc(100vw-2rem))] overflow-visible bg-transparent p-0 backdrop:bg-[#20201C]/55 backdrop:backdrop-blur-[2px]"
+      className="m-auto w-[min(420px,calc(100vw-2rem))] overflow-visible bg-transparent p-0 backdrop:bg-[#1A1A17]/55 backdrop:backdrop-blur-[2px]"
     >
       {card}
     </dialog>

@@ -20,3 +20,9 @@ export const STATES: Record<string, StateSample[]> = {
   "idempotent-run-button": IDEMPOTENT_RUN_BUTTON_STATES,
   "permission-primer": PERMISSION_PRIMER_STATES,
 };
+
+/** Which state each home-page card shows as its mini preview. */
+export const CARD_STATE: Record<string, string> = {
+  "idempotent-run-button": "blocked",
+  "permission-primer": "prompt",
+};
