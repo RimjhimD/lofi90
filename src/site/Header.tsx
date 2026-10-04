@@ -18,7 +18,7 @@ export function Header() {
           <span aria-hidden="true" className="h-3.5 w-3.5 rounded-full bg-signal shadow-[0_0_10px_#ff5a6e]" />
           LOFI90
         </Link>
-        <nav aria-label="Site" className="flex items-center gap-0.5">
+        <nav aria-label="Site" className="ml-auto flex items-center gap-0.5">
           {LINKS.map((l) => {
             const on = l.match(path);
             return (
