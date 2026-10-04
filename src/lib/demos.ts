@@ -1,12 +1,12 @@
 import type { ComponentType as ReactComponent, ReactNode } from "react";
-import IdempotentRunButtonDemo from "@/library/idempotent-run-button/demo";
-import PermissionPrimerDemo from "@/library/permission-primer/demo";
-import { IDEMPOTENT_RUN_BUTTON_STATES } from "@/library/idempotent-run-button/states";
-import { PERMISSION_PRIMER_STATES } from "@/library/permission-primer/states";
+import MergeTagInputDemo from "@/library/merge-tag-input/demo";
+import RetryCountdownLoaderDemo from "@/library/retry-countdown-loader/demo";
+import { MERGE_TAG_INPUT_STATES } from "@/library/merge-tag-input/states";
+import { RETRY_COUNTDOWN_LOADER_STATES } from "@/library/retry-countdown-loader/states";
 
 export const DEMOS: Record<string, ReactComponent> = {
-  "idempotent-run-button": IdempotentRunButtonDemo,
-  "permission-primer": PermissionPrimerDemo,
+  "merge-tag-input": MergeTagInputDemo,
+  "retry-countdown-loader": RetryCountdownLoaderDemo,
 };
 
 export interface StateSample {
@@ -17,12 +17,12 @@ export interface StateSample {
 }
 
 export const STATES: Record<string, StateSample[]> = {
-  "idempotent-run-button": IDEMPOTENT_RUN_BUTTON_STATES,
-  "permission-primer": PERMISSION_PRIMER_STATES,
+  "merge-tag-input": MERGE_TAG_INPUT_STATES,
+  "retry-countdown-loader": RETRY_COUNTDOWN_LOADER_STATES,
 };
 
 /** Which state each home-page card shows as its mini preview. */
 export const CARD_STATE: Record<string, string> = {
-  "idempotent-run-button": "blocked",
-  "permission-primer": "prompt",
+  "merge-tag-input": "blank",
+  "retry-countdown-loader": "waiting",
 };

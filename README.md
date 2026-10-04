@@ -8,8 +8,8 @@ Live site: https://lofi90.vercel.app (coming soon)
 
 | Ext | Component | Type | Page |
 |---|---|---|---|
-| 01 | Idempotent Run Button | button | `/components/idempotent-run-button` |
-| 02 | Permission Primer | modal | `/components/permission-primer` |
+| 01 | Merge Tag Input | input | `/components/merge-tag-input` |
+| 02 | Retry Countdown Loader | loader | `/components/retry-countdown-loader` |
 
 Every component page has a live demo (375 / 768 / full width), the usage example, the full source, a props table and the final prompt that built it.
 
@@ -18,8 +18,8 @@ Every component page has a live demo (375 / 768 / full width), the usage example
 Each component lives in `src/library/<slug>/` and only needs React + Tailwind CSS — no other packages.
 
 ```
-src/library/idempotent-run-button/
-  IdempotentRunButton.tsx   the component (copy this file)
+src/library/merge-tag-input/
+  MergeTagInput.tsx         the component (copy this file)
   usage.tsx                 how to use it in a real app
   demo.tsx                  the live demo on the site
   prompt.md                 the final prompt
