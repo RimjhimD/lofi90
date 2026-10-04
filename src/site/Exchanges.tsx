@@ -1,61 +1,66 @@
 import Link from "next/link";
 import { ENTRIES, TYPES, pad } from "@/lib/registry";
 import { CardPreview } from "@/site/CardPreview";
+import { TiltCard } from "@/site/TiltCard";
 
 const TAGLINES: Record<string, string> = {
-  button: "Things that act once",
-  input: "Things that listen",
-  form: "Things that ask properly",
-  card: "Things that tell the truth",
-  modal: "Things that interrupt politely",
-  table: "Things that line up",
-  loader: "Things that wait out loud",
-  navbar: "Things that route the call",
-  section: "Things that explain",
-  chart: "Things that measure",
+  button: "Actions with second thoughts built in",
+  input: "Fields that catch the mistake before it ships",
+  form: "Forms that ask properly",
+  card: "Surfaces that hold one thing well",
+  modal: "Layers that interrupt only when it helps",
+  table: "Dense data, readable",
+  loader: "Waiting, explained",
+  navbar: "Getting around without getting lost",
+  section: "Page-sized ideas",
+  chart: "Numbers you can feel",
 };
 
-/** Built components grouped by type ("exchange"), each card carrying a live mini preview. */
+/** Built components grouped by type, each card carrying a live, inert mini preview. */
 export function Exchanges({ id }: { id?: string }) {
-  const exchanges = TYPES.map((t, i) => ({ ...t, no: pad(i + 1), entries: ENTRIES.filter((e) => e.type === t.id) })).filter((t) => t.entries.length);
+  const groups = TYPES.map((t, i) => ({ ...t, no: pad(i + 1), entries: ENTRIES.filter((e) => e.type === t.id) })).filter((t) => t.entries.length);
   return (
-        <div id={id} className="scroll-mt-20">
-          {exchanges.map((t) => (
-            <section key={t.id} id={`ex-${t.id}`} aria-labelledby={`ex-${t.id}-title`} className="scroll-mt-20 pt-12">
-              <div className="mb-6 flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-rule pb-2.5">
-                <h2 id={`ex-${t.id}-title`} className="font-display text-[2.4rem] font-bold uppercase leading-none">
-                  Exchange {t.no} · {t.id}
-                </h2>
-                <span className="mono text-muted">{TAGLINES[t.id]}</span>
-              </div>
-              <ul className="grid grid-cols-[repeat(auto-fill,minmax(290px,1fr))] gap-5">
-                {t.entries.map((e, i) => {
-                  return (
-                    <li key={e.slug} className="anim-rise" style={{ animationDelay: `${i * 90}ms` }}>
-                      <Link
-                        href={`/components/${e.slug}`}
-                        data-line={e.type}
-                        className="group relative flex h-full flex-col border-2 border-ink bg-white transition-[transform,box-shadow] duration-150 hover:-translate-x-[3px] hover:-translate-y-[3px] hover:shadow-[6px_6px_0_#0E3B2E] focus-visible:-translate-x-[3px] focus-visible:-translate-y-[3px] focus-visible:shadow-[6px_6px_0_#0E3B2E] focus-visible:outline-none"
-                      >
-                        <span className="lamp absolute right-2.5 top-2.5 z-10" aria-hidden="true" />
-                        <div aria-hidden="true" className="relative grid h-[190px] place-items-center overflow-hidden border-b-2 border-ink bg-bone-2">
-                          <CardPreview slug={e.slug} />
-                        </div>
-                        <div className="flex flex-1 items-start gap-3 px-4 py-3.5">
-                          <i data-jack className="jack mt-0.5" style={{ width: 22, height: 22, borderWidth: 3 }} />
-                          <div className="min-w-0">
-                            <b className="block font-display text-[1.4rem] font-bold leading-tight">{e.name}</b>
-                            <span className="mono text-[0.66rem] text-muted">Line {e.ext} · {e.type}</span>
-                            <p className="mt-1.5 text-[0.92rem] leading-snug text-muted">{e.summary}</p>
-                          </div>
-                        </div>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          ))}
-        </div>
+    <div id={id} className="scroll-mt-28">
+      {groups.map((t) => (
+        <section key={t.id} id={`type-${t.id}`} aria-labelledby={`type-${t.id}-title`} className="scroll-mt-28 pt-14">
+          <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <span className="mono text-acc">Type {t.no}</span>
+            <h2 id={`type-${t.id}-title`} className="font-display text-3xl font-semibold capitalize tracking-tight">
+              {t.label}
+            </h2>
+            <span className="text-sm text-mute">{TAGLINES[t.id]}</span>
+          </div>
+          <ul className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5">
+            {t.entries.map((e, i) => (
+              <li key={e.slug} className="anim-rise" style={{ animationDelay: `${i * 90}ms` }}>
+                <TiltCard>
+                  <Link
+                    href={`/components/${e.slug}`}
+                    className="group flex h-full flex-col overflow-hidden rounded-[14px] border border-line bg-panel transition-[border-color,box-shadow] duration-300 hover:border-acc/60 hover:shadow-[0_0_40px_-12px_rgba(198,255,61,.45)] focus-visible:border-acc focus-visible:outline-none"
+                  >
+                    <div className="flex items-center justify-between px-4 pt-3">
+                      <span className="mono text-[0.62rem] text-mute">
+                        {e.type} · {e.ext}
+                      </span>
+                      <i className="led" data-on="true" data-pulse="true" style={{ width: 7, height: 7 }} />
+                    </div>
+                    <div aria-hidden="true" className="relative m-3 grid h-[200px] place-items-center overflow-hidden rounded-[10px] bg-[#F4F5F1] bg-[radial-gradient(#dfe2dc_1px,transparent_1.2px)] bg-[length:14px_14px]">
+                      <CardPreview slug={e.slug} />
+                    </div>
+                    <div className="px-4 pb-4">
+                      <h3 className="font-display text-lg font-semibold">{e.name}</h3>
+                      <p className="mt-1 text-sm leading-snug text-mute">{e.summary}</p>
+                      <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-acc">
+                        Open <span className="transition-transform group-hover:translate-x-1">→</span>
+                      </span>
+                    </div>
+                  </Link>
+                </TiltCard>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
   );
 }

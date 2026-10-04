@@ -2,33 +2,38 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { ENTRIES } from "@/lib/registry";
 
 const KEY = "lofi90-intro-seen";
-const LINE = "Connecting you to the components…";
+const LINES = [
+  "> boot lofi90 control room",
+  `> checking ${ENTRIES.length} components ........... ok`,
+  "> loading prompts ................. ok",
+  "> calibrating radar ............... ok",
+  "> all systems nominal",
+];
+const CHAR_MS = 14;
 
-type Phase = "off" | "ringing" | "answered" | "leaving" | "gone";
+type Phase = "off" | "typing" | "flash" | "leaving" | "gone";
 
-/** An incoming call: the lamp flashes and buzzes, the operator plugs in, the line connects, the board lifts away. Once per visit. */
+/** The console boots: status lines type themselves out, the name flashes, then the screen wipes up. Once per visit. */
 export function Intro() {
   const [phase, setPhase] = useState<Phase>("off");
-  const [typed, setTyped] = useState(0);
+  const [chars, setChars] = useState(0);
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const seen = sessionStorage.getItem(KEY);
     const replay = () => {
-      setTyped(0);
-      setPhase("ringing");
+      setChars(0);
+      setPhase("typing");
     };
     window.addEventListener("lofi90:replay-intro", replay);
-    // sessionStorage only exists in the browser, so decide on the first tick after mount.
     const t = window.setTimeout(() => {
       if (seen || reduce) {
         setPhase("gone");
         document.documentElement.dataset.ready = "true";
-      } else {
-        setPhase("ringing");
-      }
+      } else setPhase("typing");
     }, 0);
     return () => {
       clearTimeout(t);
@@ -36,80 +41,68 @@ export function Intro() {
     };
   }, []);
 
+  const total = LINES.join("\n").length;
   useEffect(() => {
-    if (phase === "ringing") {
+    if (phase === "typing") {
       delete document.documentElement.dataset.ready;
-      const t = window.setTimeout(() => setPhase("answered"), 1700);
-      return () => clearTimeout(t);
+      const id = window.setInterval(() => setChars((c) => Math.min(total, c + 2)), CHAR_MS * 2);
+      return () => clearInterval(id);
     }
-    if (phase === "answered") {
-      const timers = Array.from(LINE, (_, i) => window.setTimeout(() => setTyped(i + 1), 450 + i * 28));
-      timers.push(window.setTimeout(() => setPhase("leaving"), 450 + LINE.length * 28 + 650));
-      return () => timers.forEach(clearTimeout);
+    if (phase === "flash") {
+      const t = window.setTimeout(() => setPhase("leaving"), 650);
+      return () => clearTimeout(t);
     }
     if (phase === "leaving") {
       const t = window.setTimeout(() => {
         setPhase("gone");
         sessionStorage.setItem(KEY, "1");
         document.documentElement.dataset.ready = "true";
-      }, 800);
+      }, 700);
       return () => clearTimeout(t);
     }
-  }, [phase]);
+  }, [phase, total]);
+
+  useEffect(() => {
+    if (phase !== "typing" || chars < total) return;
+    const t = window.setTimeout(() => setPhase("flash"), 280);
+    return () => clearTimeout(t);
+  }, [chars, phase, total]);
 
   if (phase === "gone" || phase === "off") return null;
-  const answered = phase !== "ringing";
+  const text = LINES.join("\n").slice(0, chars);
 
   return createPortal(
     <div
       aria-hidden="true"
-      className={`fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-bottle bg-[repeating-linear-gradient(90deg,rgba(255,255,255,.025)_0_2px,transparent_2px_9px)] transition-transform duration-[800ms] [transition-timing-function:cubic-bezier(.7,0,.2,1)] ${
-        phase === "leaving" ? "-translate-y-full" : ""
-      }`}
+      className={`fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-bg transition-[clip-path] duration-700 [transition-timing-function:cubic-bezier(.7,0,.2,1)] ${phase === "leaving" ? "[clip-path:inset(0_0_100%_0)]" : "[clip-path:inset(0_0_0_0)]"}`}
     >
-      <div className="flex flex-col items-center text-center text-bone">
-        {/* the cable drops in from the top when the call is answered */}
-        <svg width="40" height="220" viewBox="0 0 40 220" className="-mb-2 overflow-visible">
-          <path
-            d="M20 -400 C 20 40, 20 120, 20 212"
-            fill="none"
-            stroke="#D7263D"
-            strokeWidth="6"
-            strokeLinecap="round"
-            pathLength={1}
-            strokeDasharray="1"
-            className={answered ? "animate-[draw_.45s_cubic-bezier(.3,.7,.2,1)_forwards] [stroke-dashoffset:1]" : "[stroke-dashoffset:1]"}
-          />
-        </svg>
-
-        <div className={`relative grid place-items-center ${answered ? "" : "animate-[buzz_.5s_linear_infinite]"}`}>
-          {!answered && (
-            <>
-              <span className="absolute h-40 w-40 rounded-full border-2 border-glow/60 animate-[ring_1.1s_ease-out_infinite]" />
-              <span className="absolute h-40 w-40 rounded-full border-2 border-glow/60 animate-[ring_1.1s_.55s_ease-out_infinite]" />
-            </>
-          )}
-          <span
-            className={`block h-24 w-24 rounded-full border-[6px] border-[#c9c2ae] transition-[background-color,box-shadow] duration-200 ${
-              answered ? "bg-[#3a3a33] shadow-[inset_0_6px_12px_#000]" : "bg-glow shadow-[0_0_60px_18px_rgba(255,90,110,.55)] animate-[blink_.5s_steps(1)_infinite]"
-            }`}
-          />
-        </div>
-
-        <span className="mono mt-8 text-[#c9c2ae]">{answered ? "Line connected" : "Incoming call"}</span>
-        <b className="mt-1 block font-display text-[clamp(3.2rem,9vw,6.5rem)] font-black leading-[0.9]">LOFI90</b>
-        <span className="mono mt-4 h-5 text-bone">
-          {LINE.slice(0, typed)}
-          {answered && <span className="animate-[blink_1s_steps(1)_infinite]">▌</span>}
-        </span>
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(233,237,232,.07)_1px,transparent_1.2px)] bg-[length:22px_22px]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-acc/10 to-transparent animate-[scan_2.4s_linear_infinite]" />
+      <div className="relative w-[min(560px,88vw)]">
+        <pre className={`whitespace-pre-wrap font-mono text-[0.82rem] leading-7 text-mute transition-opacity duration-300 ${phase === "typing" ? "opacity-100" : "opacity-30"}`}>
+          {text.split("\n").map((l, i) => (
+            <span key={i} className="block">
+              {l.endsWith("ok") ? (
+                <>
+                  {l.slice(0, -2)}
+                  <span className="text-acc">ok</span>
+                </>
+              ) : (
+                l
+              )}
+            </span>
+          ))}
+          <span className="animate-[blink_1s_steps(1)_infinite] text-acc">▌</span>
+        </pre>
+        <b
+          className={`absolute inset-x-0 top-1/2 block -translate-y-1/2 text-center font-display text-[clamp(4rem,14vw,9rem)] font-bold leading-none tracking-tight text-text transition-[opacity,transform,filter] duration-500 ${
+            phase === "typing" ? "scale-90 opacity-0 blur-md" : "scale-100 opacity-100 blur-0 [text-shadow:0_0_40px_rgba(198,255,61,.35)]"
+          }`}
+        >
+          lofi<span className="text-acc">90</span>
+        </b>
       </div>
-
-      <button
-        type="button"
-        onClick={() => setPhase("leaving")}
-        tabIndex={-1}
-        className="mono absolute bottom-5 right-5 border border-bone/40 px-2.5 py-1.5 text-bone"
-      >
+      <button type="button" tabIndex={-1} onClick={() => setPhase("leaving")} className="mono absolute bottom-5 right-5 rounded-md border border-line-2 px-2.5 py-1.5 text-[0.64rem] text-mute hover:text-text">
         Skip ›
       </button>
     </div>,

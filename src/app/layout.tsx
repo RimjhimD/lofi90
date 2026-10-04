@@ -1,25 +1,27 @@
 import type { Metadata } from "next";
-import { Atkinson_Hyperlegible, Big_Shoulders, DM_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { Header } from "@/site/Header";
 import { Sidebar } from "@/site/Sidebar";
+import { Spotlight } from "@/site/Spotlight";
 import "./globals.css";
 
-const shoulders = Big_Shoulders({ weight: ["500", "700", "900"], subsets: ["latin"], variable: "--font-shoulders", display: "swap" });
-const atkinson = Atkinson_Hyperlegible({ weight: ["400", "700"], subsets: ["latin"], variable: "--font-atkinson", display: "swap" });
-const dmMono = DM_Mono({ weight: ["400", "500"], subsets: ["latin"], variable: "--font-dm-mono", display: "swap" });
+const grotesk = Space_Grotesk({ weight: ["500", "600", "700"], subsets: ["latin"], variable: "--font-grotesk", display: "swap" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const jetbrains = JetBrains_Mono({ weight: ["400", "500"], subsets: ["latin"], variable: "--font-jetbrains", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "lofi90 · every line connected", template: "%s · lofi90" },
+  title: { default: "lofi90 · component control room", template: "%s · lofi90" },
   description:
-    "React + TypeScript + Tailwind components for the front desk of a real business: calls, texts, bots and bookings. Every component ships with a live demo, full source and the prompt that built it.",
+    "Unique React + TypeScript + Tailwind components, each with a live playground, every variant and state, its full code and the prompt that built it.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${shoulders.variable} ${atkinson.variable} ${dmMono.variable}`}>
+    <html lang="en" className={`${grotesk.variable} ${inter.variable} ${jetbrains.variable}`}>
       <body className="min-h-screen antialiased">
+        <Spotlight />
         <Header />
-        <div className="lg:grid lg:grid-cols-[250px_minmax(0,1fr)]">
+        <div className="lg:grid lg:grid-cols-[240px_minmax(0,1fr)]">
           <Sidebar />
           <div className="min-w-0">{children}</div>
         </div>

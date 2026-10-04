@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-/** Sticky jump links under the header. The lamp of the section you are reading lights up. */
+/** Sticky jump links under the header. The LED of the section you are reading lights up. */
 export function SectionNav({ sections }: { sections: readonly (readonly [string, string])[] }) {
   const [active, setActive] = useState("");
 
@@ -20,16 +20,16 @@ export function SectionNav({ sections }: { sections: readonly (readonly [string,
   }, [sections]);
 
   return (
-    <nav aria-label="On this page" className="sticky top-[60px] z-30 -mx-6 lg:-mx-10 lg:px-10 mt-12 overflow-x-auto border-y-2 border-ink bg-bone px-6">
+    <nav aria-label="On this page" className="sticky top-[88px] z-30 -mx-6 mt-12 overflow-x-auto border-y border-line bg-bg/85 px-6 backdrop-blur-md lg:-mx-10 lg:px-10">
       <ul className="flex gap-1 py-1.5">
         {sections.map(([id, label]) => (
           <li key={id}>
             <a
               href={`#${id}`}
               aria-current={active === id ? "location" : undefined}
-              className="mono flex shrink-0 items-center gap-1.5 whitespace-nowrap border border-transparent px-2.5 py-1.5 hover:border-ink aria-[current]:border-ink aria-[current]:bg-white focus-visible:outline-3 focus-visible:outline-signal"
+              className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-sm text-mute transition-colors hover:text-text aria-[current]:bg-panel aria-[current]:text-text focus-visible:outline-2 focus-visible:outline-acc"
             >
-              <i className="lamp" data-on={active === id} style={{ width: 8, height: 8 }} />
+              <i className="led" data-on={active === id} style={{ width: 6, height: 6 }} />
               {label}
             </a>
           </li>

@@ -11,7 +11,7 @@ const WIDTHS = [
   { id: "full", label: "Full", max: "100%" },
 ];
 
-/** Live preview on the bone panel, with phone / tablet / desktop widths and a controls panel that drives the component's colour and motion props. */
+/** Live preview on a light screen inside the console, with phone / tablet / desktop widths and a controls panel. */
 export function Stage({ slug }: { slug: string }) {
   const [width, setWidth] = useState("full");
   const Demo = DEMOS[slug];
@@ -19,29 +19,29 @@ export function Stage({ slug }: { slug: string }) {
   const [values, setValues] = useState<ControlValues>(play?.initial ?? {});
   const max = WIDTHS.find((w) => w.id === width)!.max;
   return (
-    <section aria-label="Live preview" className="flex h-full flex-col border-2 border-ink bg-white">
-      <div className="flex flex-wrap items-center gap-2 border-b-2 border-ink px-3 py-2">
-        <div role="group" aria-label="Preview width" className="flex">
+    <section aria-label="Live preview" className="panel flex h-full flex-col overflow-hidden">
+      <div className="flex flex-wrap items-center gap-2 border-b border-line px-3 py-2">
+        <div role="group" aria-label="Preview width" className="flex rounded-lg border border-line p-0.5">
           {WIDTHS.map((w) => (
             <button
               key={w.id}
               type="button"
               aria-pressed={width === w.id}
               onClick={() => setWidth(w.id)}
-              className="mono -ml-0.5 border-2 border-ink bg-white px-2.5 py-1 first:ml-0 aria-pressed:bg-ink aria-pressed:text-bone focus-visible:relative focus-visible:outline-3 focus-visible:outline-signal"
+              className="mono rounded-md px-2.5 py-1 text-[0.64rem] text-mute aria-pressed:bg-panel-2 aria-pressed:text-text focus-visible:outline-2 focus-visible:outline-acc"
             >
               {w.label}
             </button>
           ))}
         </div>
-        <span className="mono ml-auto flex items-center gap-2">
-          <i className="lamp anim-blink" data-on="true" style={{ width: 9, height: 9 }} />
+        <span className="mono ml-auto flex items-center gap-2 text-[0.64rem] text-acc">
+          <i className="led" data-on="true" data-pulse="true" style={{ width: 7, height: 7 }} />
           Live
         </span>
       </div>
-      <div className="grid flex-1 place-items-center bg-bone-2 bg-[radial-gradient(#d5cdb8_1px,transparent_1.2px)] bg-[length:12px_12px] p-4 sm:p-7">
+      <div className="grid flex-1 place-items-center bg-panel-2 p-4 sm:p-6">
         <div
-          className="grid min-h-[420px] w-full place-items-center border-2 border-ink bg-bone px-4 py-8 transition-[max-width] duration-500 [transition-timing-function:cubic-bezier(.3,1.2,.5,1)]"
+          className="grid min-h-[420px] w-full place-items-center rounded-[10px] bg-[#F4F5F1] bg-[radial-gradient(#dfe2dc_1px,transparent_1.2px)] bg-[length:14px_14px] px-4 py-8 text-[#1A1A17] shadow-[0_20px_60px_-30px_rgba(0,0,0,.9)] transition-[max-width] duration-500 [transition-timing-function:cubic-bezier(.3,1.2,.5,1)]"
           style={{ maxWidth: max }}
         >
           <Demo controls={values} />

@@ -4,64 +4,64 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ENTRIES, TYPES, pad } from "@/lib/registry";
 
-/** Every component type as a line on the board: lamp lit when it has components, built components listed under it. */
+/** Every component type as a console channel: LED lit when it has components, built components listed under it. */
 export function Sidebar() {
   const path = usePathname();
-  const item =
-    "mono flex w-full items-center gap-2.5 border border-transparent px-2.5 py-1.5 hover:border-ink focus-visible:border-ink focus-visible:outline-none aria-[current=page]:border-ink aria-[current=page]:bg-white";
-
   return (
-    <aside aria-label="Component types" className="border-b-2 border-ink lg:sticky lg:top-[60px] lg:h-[calc(100vh-60px)] lg:overflow-y-auto lg:border-b-0 lg:border-r-2">
+    <aside aria-label="Component types" className="border-b border-line lg:sticky lg:top-[88px] lg:h-[calc(100vh-88px)] lg:overflow-y-auto lg:border-b-0 lg:border-r">
       <details className="group/side lg:hidden">
-        <summary className="mono flex cursor-pointer list-none items-center justify-between px-5 py-3">
+        <summary className="mono flex cursor-pointer list-none items-center justify-between px-5 py-3 text-mute">
           Component types <span className="transition-transform group-open/side:rotate-180">▾</span>
         </summary>
-        <Lines path={path} item={item} />
+        <Channels path={path} />
       </details>
       <div className="hidden lg:block">
-        <Lines path={path} item={item} />
+        <Channels path={path} />
       </div>
     </aside>
   );
 }
 
-function Lines({ path, item }: { path: string; item: string }) {
+function Channels({ path }: { path: string }) {
+  const row =
+    "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition-colors hover:bg-panel focus-visible:outline-2 focus-visible:outline-acc aria-[current=page]:bg-panel aria-[current=page]:text-text";
   return (
     <div className="px-3 pb-10 pt-5">
-      <Link href="/components" aria-current={path === "/components" ? "page" : undefined} className={item}>
-        <i className="lamp" data-on="true" style={{ width: 9, height: 9 }} />
+      <Link href="/components" aria-current={path === "/components" ? "page" : undefined} className={`${row} font-medium text-text`}>
+        <i className="led" data-on="true" />
         All components
-        <span className="ml-auto text-muted">{pad(ENTRIES.length)}</span>
+        <span className="mono ml-auto text-mute">{pad(ENTRIES.length)}</span>
       </Link>
-      <p className="mono mt-5 mb-1.5 px-2.5 text-[0.62rem] text-muted">Exchanges</p>
-      <ul>
+      <p className="mono mb-1.5 mt-5 px-2.5 text-[0.62rem] text-mute">Types</p>
+      <ul className="space-y-0.5">
         {TYPES.map((t, i) => {
           const entries = ENTRIES.filter((e) => e.type === t.id);
           return (
             <li key={t.id}>
               {entries.length ? (
-                <Link href={`/components#ex-${t.id}`} data-lamp={t.id} className={item}>
-                  <i className="lamp" data-on="true" style={{ width: 9, height: 9 }} />
-                  <span className="text-muted">{pad(i + 1)}</span> {t.id}
-                  <span className="ml-auto text-muted">{entries.length}</span>
+                <Link href={`/components#type-${t.id}`} className={`${row} text-text`}>
+                  <i className="led" data-on="true" />
+                  <span className="mono text-mute">{pad(i + 1)}</span>
+                  <span className="capitalize">{t.id}</span>
+                  <span className="mono ml-auto text-mute">{entries.length}</span>
                 </Link>
               ) : (
-                <span data-lamp={t.id} className="mono flex items-center gap-2.5 px-2.5 py-1.5 text-muted/70" title="No components on this line yet">
-                  <i className="lamp" style={{ width: 9, height: 9 }} />
-                  <span>{pad(i + 1)}</span> {t.id}
-                  <span className="ml-auto">0</span>
+                <span className="flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-mute/60" title="No components here yet">
+                  <i className="led" />
+                  <span className="mono">{pad(i + 1)}</span>
+                  <span className="capitalize">{t.id}</span>
+                  <span className="mono ml-auto">0</span>
                 </span>
               )}
               {entries.length > 0 && (
-                <ul className="mb-1 ml-[18px] border-l border-dashed border-rule pl-2">
+                <ul className="mb-1 ml-[15px] border-l border-line pl-2.5">
                   {entries.map((e) => (
                     <li key={e.slug}>
                       <Link
                         href={`/components/${e.slug}`}
                         aria-current={path === `/components/${e.slug}` ? "page" : undefined}
-                        className="flex items-center gap-2 border border-transparent px-2 py-1 text-[0.92rem] hover:border-ink focus-visible:border-ink focus-visible:outline-none aria-[current=page]:border-ink aria-[current=page]:bg-white"
+                        className="block rounded-md px-2 py-1 text-[0.86rem] text-mute transition-colors hover:text-text focus-visible:outline-2 focus-visible:outline-acc aria-[current=page]:bg-acc/10 aria-[current=page]:text-acc"
                       >
-                        <i aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-signal" />
                         {e.name}
                       </Link>
                     </li>

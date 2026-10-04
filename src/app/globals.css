@@ -1,101 +1,112 @@
 @import "tailwindcss";
 
-/* Switchboard: bone paper, bottle-green panels, signal-red lamps, ink rules. */
+/* Control Room: near-black console, thin panel lines, one lime signal colour. */
 @theme {
-  --color-bone: #f2eee3;
-  --color-bone-2: #e8e2d2;
-  --color-ink: #1a1a17;
-  --color-muted: #5e5a50;
-  --color-signal: #d7263d;
-  --color-glow: #ff5a6e;
-  --color-bottle: #0e3b2e;
-  --color-bottle-2: #14523f;
-  --color-lamp-off: #3a3a33;
-  --color-rule: #cfc7b3;
-  --font-display: var(--font-shoulders), "Arial Narrow", sans-serif;
-  --font-body: var(--font-atkinson), system-ui, sans-serif;
-  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
+  --color-bg: #0b0d0c;
+  --color-panel: #121614;
+  --color-panel-2: #181d1b;
+  --color-line: #222826;
+  --color-line-2: #3a433f;
+  --color-text: #e9ede8;
+  --color-mute: #8a938d;
+  --color-acc: #c6ff3d;
+  --color-warn: #ffb547;
+  --color-err: #ff6b57;
+  --font-display: var(--font-grotesk), system-ui, sans-serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 }
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
-  background: var(--color-bone);
-  color: var(--color-ink);
+  --mx: 50%;
+  --my: 20%;
+  background-color: var(--color-bg);
+  /* the console's dot grid, brighter where the cursor spotlight falls */
+  background-image:
+    radial-gradient(600px circle at var(--mx) var(--my), rgb(198 255 61 / 0.07), transparent 60%),
+    radial-gradient(rgb(233 237 232 / 0.07) 1px, transparent 1.2px);
+  background-size: 100% 100%, 22px 22px;
+  background-attachment: fixed;
+  color: var(--color-text);
   font-family: var(--font-body);
-  font-size: 17px;
-  line-height: 1.55;
+  font-size: 15.5px;
+  line-height: 1.6;
 }
 
-/* Small uppercase label used for metadata, plates and nav. */
+::selection {
+  background: var(--color-acc);
+  color: var(--color-bg);
+}
+
+/* Small uppercase label used for metadata, status and nav. */
 .mono {
   font-family: var(--font-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.1em;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-/* A switchboard lamp. data-on="true", or hovering its .group, lights it. */
-.lamp {
+/* A status LED. data-on="true" lights it lime. */
+.led {
   display: inline-block;
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   flex: none;
   border-radius: 50%;
-  background: var(--color-lamp-off);
-  box-shadow: inset 0 -2px 3px rgb(0 0 0 / 0.5);
-  transition: background-color 0.15s, box-shadow 0.3s;
+  background: var(--color-line-2);
+  transition: background-color 0.2s, box-shadow 0.3s;
 }
-.lamp[data-on="true"],
-.group:hover .lamp,
-.group:focus-visible .lamp {
-  background: var(--color-glow);
-  box-shadow: 0 0 14px 3px rgb(255 90 110 / 0.6), inset 0 -2px 3px rgb(0 0 0 / 0.2);
+.led[data-on="true"] {
+  background: var(--color-acc);
+  box-shadow: 0 0 10px 1px rgb(198 255 61 / 0.55);
 }
-
-/* A jack socket: black hole in a brass-grey ring. */
-.jack {
-  display: inline-block;
-  flex: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #0a0a08;
-  border: 4px solid #c9c2ae;
-  box-shadow: inset 0 3px 6px #000;
+.led[data-pulse="true"] {
+  animation: pulse-led 2s ease-in-out infinite;
 }
 
-/* Square ink button used by the site chrome. */
-.sb-btn {
+/* Console panel. */
+.panel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+}
+
+/* Buttons used by the site chrome. */
+.cr-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border: 2px solid var(--color-ink);
-  background: #fff;
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 0.45rem 0.8rem;
-  transition: transform 0.12s, box-shadow 0.12s, background-color 0.15s;
+  border: 1px solid var(--color-line-2);
+  border-radius: 10px;
+  background: var(--color-panel);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+  transition: border-color 0.2s, transform 0.15s, background-color 0.2s, box-shadow 0.2s;
 }
-.sb-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 3px 3px 0 var(--color-ink);
+.cr-btn:hover {
+  border-color: var(--color-acc);
 }
-.sb-btn:active {
-  transform: none;
-  box-shadow: none;
+.cr-btn:active {
+  transform: translateY(1px);
 }
-.sb-btn:focus-visible {
-  outline: 3px solid var(--color-signal);
-  outline-offset: 2px;
+.cr-btn:focus-visible {
+  outline: 2px solid var(--color-acc);
+  outline-offset: 3px;
 }
-.sb-btn[aria-pressed="true"] {
-  background: var(--color-ink);
-  color: var(--color-bone);
+.cr-btn-acc {
+  background: var(--color-acc);
+  color: var(--color-bg);
+  border-color: var(--color-acc);
+}
+.cr-btn-acc:hover {
+  box-shadow: 0 0 24px -4px rgb(198 255 61 / 0.6);
 }
 
 /* Code blocks from shiki */
@@ -116,24 +127,29 @@ body {
 @keyframes draw {
   to { stroke-dashoffset: 0; }
 }
-@keyframes buzz {
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px) rotate(-2deg); }
-  20%, 40%, 60%, 80% { transform: translateX(4px) rotate(2deg); }
-}
-@keyframes ring {
-  from { transform: scale(0.6); opacity: 0.9; }
-  to { transform: scale(1.5); opacity: 0; }
-}
 @keyframes blink {
   50% { opacity: 0.25; }
 }
+@keyframes pulse-led {
+  50% { box-shadow: 0 0 2px 0 rgb(198 255 61 / 0.3); opacity: 0.7; }
+}
+@keyframes ticker {
+  to { transform: translateX(-50%); }
+}
+@keyframes scan {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100vh); }
+}
+@keyframes flow {
+  to { stroke-dashoffset: -24; }
+}
 
-.anim-rise { animation: rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.anim-rise { animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 .anim-blink { animation: blink 1.2s steps(1) infinite; }
 
 /* Hero pieces wait for the intro to finish (html[data-ready]). */
 .ready-rise { opacity: 0; }
-html[data-ready] .ready-rise { animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+html[data-ready] .ready-rise { animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

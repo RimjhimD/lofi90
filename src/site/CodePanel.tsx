@@ -19,7 +19,7 @@ export function CopyButton({ text, label = "Copy" }: { text: string; label?: str
         setCopied(true);
         window.setTimeout(() => setCopied(false), 1400);
       }}
-      className="sb-btn py-1"
+      className={`mono rounded-md border px-2.5 py-1 text-[0.64rem] transition-colors focus-visible:outline-2 focus-visible:outline-acc ${copied ? "border-acc text-acc" : "border-line-2 text-mute hover:text-text"}`}
     >
       {copied ? "Copied ✓" : label}
     </button>
@@ -31,28 +31,26 @@ export function CodePanel({ files, title, maxHeight = "34rem" }: { files: CodeFi
   const [index, setIndex] = useState(0);
   const file = files[index];
   return (
-    <div className="flex h-full min-w-0 flex-col border-2 border-ink bg-white">
-      <div className="flex flex-wrap items-stretch border-b-2 border-ink">
-        {title && <span className="mono flex items-center bg-ink px-3 text-bone">{title}</span>}
-        <div role="group" aria-label="Files" className="flex">
+    <div className="panel flex h-full min-w-0 flex-col overflow-hidden">
+      <div className="flex flex-wrap items-center gap-1 border-b border-line px-3 py-2">
+        {title && <span className="mono mr-1 text-[0.64rem] text-acc">{title}</span>}
+        <div role="group" aria-label="Files" className="flex gap-1">
           {files.map((f, i) => (
             <button
               key={f.label}
               type="button"
               aria-pressed={i === index}
               onClick={() => setIndex(i)}
-              className="mono border-r border-ink px-3 py-2 normal-case tracking-normal aria-pressed:bg-bone-2 aria-pressed:shadow-[inset_0_-3px_0_#D7263D] focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-signal"
+              className="rounded-md px-2.5 py-1 font-mono text-[0.72rem] text-mute aria-pressed:bg-panel-2 aria-pressed:text-text focus-visible:outline-2 focus-visible:outline-acc"
             >
               {f.label}
             </button>
           ))}
         </div>
-        <span className="mono ml-auto flex items-center px-3 text-muted">{file.code.split("\n").length} lines</span>
-        <span className="flex items-center pr-2">
-          <CopyButton text={file.code} />
-        </span>
+        <span className="mono ml-auto px-2 text-[0.62rem] text-mute">{file.code.split("\n").length} lines</span>
+        <CopyButton text={file.code} />
       </div>
-      <div className="code-block min-h-0 flex-1 overflow-auto" style={{ maxHeight }} dangerouslySetInnerHTML={{ __html: file.html }} />
+      <div className="code-block min-h-0 flex-1 overflow-auto bg-[#0E1110]" style={{ maxHeight }} dangerouslySetInnerHTML={{ __html: file.html }} />
     </div>
   );
 }

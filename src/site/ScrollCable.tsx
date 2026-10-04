@@ -6,8 +6,8 @@ const X = 14;
 const BULGE = 34;
 
 /**
- * A red cable down the left margin that draws itself as you scroll and plugs into a jack beside
- * every section heading (h2) inside it; the jack's lamp lights when the cable reaches it.
+ * A lime signal trace down the left margin that draws itself as you scroll and reaches a node beside
+ * every section heading (h2) inside it; the node's LED lights when the trace gets there.
  * Decorative only. Hidden on small screens; static and fully drawn with reduced motion.
  */
 export function ScrollCable({ children }: { children: React.ReactNode }) {
@@ -65,13 +65,13 @@ export function ScrollCable({ children }: { children: React.ReactNode }) {
       {height > 0 && (
         <div aria-hidden="true" className="pointer-events-none absolute left-0 top-0 hidden w-11 md:block" style={{ height }}>
           <svg width="44" height={height} viewBox={`0 0 44 ${height}`} className="absolute inset-0 overflow-visible">
-            <path d={d} fill="none" stroke="#CFC7B3" strokeWidth="3" strokeDasharray="2 7" strokeLinecap="round" />
-            <path ref={live} d={d} fill="none" stroke="#D7263D" strokeWidth="4" strokeLinecap="round" pathLength={1} strokeDasharray="1" strokeDashoffset="1" />
+            <path d={d} fill="none" stroke="#2A312E" strokeWidth="2" strokeDasharray="2 6" strokeLinecap="round" />
+            <path ref={live} d={d} fill="none" stroke="#C6FF3D" strokeWidth="2.5" style={{ filter: "drop-shadow(0 0 4px rgba(198,255,61,.6))" }} strokeLinecap="round" pathLength={1} strokeDasharray="1" strokeDashoffset="1" />
           </svg>
           {jacks.map((y, i) => (
             <span key={i}>
-              <i className="jack absolute" style={{ top: y - 12, left: X - 12 }} />
-              <i className="lamp absolute" data-on={i < reached} style={{ top: y - 27, left: X - 4.5, width: 9, height: 9 }} />
+              <i className="absolute h-4 w-4 rounded-full border border-line-2 bg-panel" style={{ top: y - 8, left: X - 8 }} />
+              <i className="led absolute" data-on={i < reached} style={{ top: y - 4, left: X - 4 }} />
             </span>
           ))}
         </div>

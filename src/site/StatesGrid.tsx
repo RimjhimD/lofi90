@@ -6,17 +6,17 @@ import { STATES } from "@/lib/demos";
 export function StatesGrid({ slug }: { slug: string }) {
   const states = STATES[slug] ?? [];
   return (
-    <ul className="grid gap-5 md:grid-cols-2">
+    <ul className="grid gap-4 md:grid-cols-2">
       {states.map((s) => (
-        <li key={s.id} className="flex flex-col border-2 border-ink bg-white">
-          <div className="flex items-center gap-2 border-b-2 border-ink px-4 py-2">
-            <b className="font-display text-lg font-bold uppercase">{s.label}</b>
-            <code className="mono ml-auto bg-bone-2 px-1.5 py-0.5 normal-case tracking-normal">{s.id}</code>
+        <li key={s.id} className="panel flex flex-col overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5">
+            <b className="font-display text-sm font-semibold">{s.label}</b>
+            <code className="mono ml-auto rounded bg-panel-2 px-1.5 py-0.5 text-[0.6rem] normal-case tracking-normal text-mute">{s.id}</code>
           </div>
-          <div className="grid min-h-[200px] flex-1 place-items-center bg-bone-2 bg-[radial-gradient(#d5cdb8_1px,transparent_1.2px)] bg-[length:12px_12px] px-5 pb-6 pt-16">
+          <div className="mx-3 grid min-h-[190px] flex-1 place-items-center rounded-[10px] bg-[#F4F5F1] bg-[radial-gradient(#dfe2dc_1px,transparent_1.2px)] bg-[length:14px_14px] px-5 pb-6 pt-16 text-[#1A1A17]">
             <div className="flex w-full justify-center">{s.node}</div>
           </div>
-          <p className="border-t-2 border-ink px-4 py-2 text-sm text-muted">{s.note}</p>
+          <p className="px-4 py-2.5 text-sm text-mute">{s.note}</p>
         </li>
       ))}
     </ul>

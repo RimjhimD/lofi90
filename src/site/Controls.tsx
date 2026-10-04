@@ -13,10 +13,10 @@ export type ControlValues = Record<string, string | number>;
 export function Controls({ controls, values, onChange, onReset }: { controls: Control[]; values: ControlValues; onChange: (key: string, value: string | number) => void; onReset: () => void }) {
   const id = useId();
   return (
-    <div className="border-t-2 border-ink bg-white px-4 py-3">
+    <div className="border-t border-line bg-panel px-4 py-3">
       <div className="mb-2 flex items-center justify-between">
-        <span className="mono text-[0.66rem] text-muted">Controls</span>
-        <button type="button" onClick={onReset} className="mono text-[0.62rem] underline decoration-signal underline-offset-4 hover:text-signal focus-visible:outline-2 focus-visible:outline-signal">
+        <span className="mono flex items-center gap-1.5 text-[0.64rem] text-acc"><i className="led" data-on="true" style={{ width: 6, height: 6 }} /> Controls</span>
+        <button type="button" onClick={onReset} className="mono text-[0.62rem] text-mute hover:text-acc focus-visible:outline-2 focus-visible:outline-acc">
           Reset
         </button>
       </div>
@@ -28,9 +28,9 @@ export function Controls({ controls, values, onChange, onReset }: { controls: Co
             const shown = c.scale ? (Number(v) * c.scale).toFixed(0) : String(v);
             return (
               <label key={c.key} className="flex flex-col gap-1">
-                <span className="flex justify-between text-xs font-bold">
+                <span className="flex justify-between text-xs font-medium text-text/90">
                   {c.label}
-                  <span className="font-mono font-normal text-muted">{shown}{c.unit}</span>
+                  <span className="font-mono text-mute">{shown}{c.unit}</span>
                 </span>
                 <input
                   type="range"
@@ -39,14 +39,14 @@ export function Controls({ controls, values, onChange, onReset }: { controls: Co
                   step={c.step}
                   value={Number(v)}
                   onChange={(e) => onChange(c.key, Number(e.target.value))}
-                  className="w-full accent-[#D7263D]"
+                  className="w-full accent-[#C6FF3D]"
                 />
               </label>
             );
           }
           return (
             <div key={c.key} role="radiogroup" aria-labelledby={labelId} className="flex flex-col gap-1">
-              <span id={labelId} className="text-xs font-bold">{c.label}</span>
+              <span id={labelId} className="text-xs font-medium text-text/90">{c.label}</span>
               <div className="flex flex-wrap gap-1.5">
                 {c.options.map((o) =>
                   c.type === "color" ? (
@@ -58,7 +58,7 @@ export function Controls({ controls, values, onChange, onReset }: { controls: Co
                       aria-label={o.label}
                       title={o.label}
                       onClick={() => onChange(c.key, o.value)}
-                      className="h-6 w-6 rounded-full border-2 border-ink shadow-[inset_0_0_0_2px_#fff] transition-transform hover:scale-110 aria-checked:scale-110 aria-checked:outline-2 aria-checked:outline-offset-2 aria-checked:outline-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+                      className="h-6 w-6 rounded-full border border-line-2 shadow-[inset_0_0_0_2px_#121614] transition-transform hover:scale-110 aria-checked:scale-110 aria-checked:outline-2 aria-checked:outline-offset-2 aria-checked:outline-acc focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc"
                       style={{ background: o.value }}
                     />
                   ) : (
@@ -68,7 +68,7 @@ export function Controls({ controls, values, onChange, onReset }: { controls: Co
                       role="radio"
                       aria-checked={v === o.value}
                       onClick={() => onChange(c.key, o.value)}
-                      className="mono -ml-px border border-ink bg-white px-2 py-1 text-[0.62rem] first:ml-0 aria-checked:bg-ink aria-checked:text-bone focus-visible:relative focus-visible:outline-2 focus-visible:outline-signal"
+                      className="mono rounded-md border border-line-2 px-2 py-1 text-[0.62rem] text-mute aria-checked:border-acc aria-checked:bg-acc/10 aria-checked:text-acc focus-visible:outline-2 focus-visible:outline-acc"
                     >
                       {o.label}
                     </button>

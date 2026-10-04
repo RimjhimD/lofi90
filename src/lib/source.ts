@@ -11,5 +11,5 @@ export async function readRepoFile(relPath: string): Promise<string> {
 
 export async function highlight(code: string, file: string): Promise<string> {
   const lang = file.endsWith(".md") ? "markdown" : file.endsWith(".ts") ? "ts" : "tsx";
-  return codeToHtml(code, { lang, theme: "github-light" });
+  return codeToHtml(code, { lang, theme: "vitesse-dark" });
 }

@@ -36,17 +36,17 @@ const BADGES = ["Keyboard", "Contrast AA", "Reduced motion", "375 / 768 / 1280",
 
 function Section({ id, title, children, lead }: { id: string; title: string; lead?: string; children: React.ReactNode }) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-32 pt-16">
-      <h2 id={`${id}-title`} className="font-display text-[2.4rem] font-bold uppercase leading-none">
+    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-40 pt-16">
+      <h2 id={`${id}-title`} className="font-display text-[1.9rem] font-semibold tracking-tight">
         {title}
       </h2>
-      {lead && <p className="mb-6 mt-2 max-w-[70ch] text-muted">{lead}</p>}
+      {lead && <p className="mb-6 mt-1.5 max-w-[70ch] text-mute">{lead}</p>}
       <div className={lead ? "" : "mt-6"}>{children}</div>
     </section>
   );
 }
 
-const box = "border-2 border-ink bg-white p-5";
+const box = "panel p-5";
 
 export default async function ComponentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -67,21 +67,20 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
   return (
     <main className="mx-auto max-w-[1180px] px-6 pb-32 lg:px-10">
-      <nav aria-label="Breadcrumb" className="mono flex flex-wrap items-center gap-2 pt-6 text-muted">
-        <Link href="/components" className="text-ink underline decoration-signal decoration-2 underline-offset-4">Components</Link>›
-        <Link href={`/components#ex-${entry.type}`} className="hover:text-ink">Exchange {exchange} · {entry.type}</Link>›<span className="text-ink">Line {entry.ext}</span>
+      <nav aria-label="Breadcrumb" className="mono flex flex-wrap items-center gap-2 pt-6 text-[0.66rem] text-mute">
+        <Link href="/components" className="hover:text-text">Components</Link>/
+        <Link href={`/components#type-${entry.type}`} className="hover:text-text">Type {exchange} · {entry.type}</Link>/<span className="text-acc">No. {entry.ext}</span>
       </nav>
 
-      <header className="anim-rise mt-4 border-2 border-ink bg-bottle text-bone">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-4">
-          <i className="lamp" data-on="true" />
-          <h1 className="font-display text-[clamp(2.2rem,4.6vw,3.6rem)] font-black uppercase leading-none">{entry.name}</h1>
-          <span className="mono ml-auto text-bone/80">/components/{entry.slug}</span>
+      <header className="anim-rise mt-4">
+        <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
+          <h1 className="font-display text-[clamp(2.2rem,4.6vw,3.6rem)] font-bold leading-[1.02] tracking-tight">{entry.name}</h1>
+          <span className="mono mb-2 ml-auto flex items-center gap-2 text-[0.64rem] text-mute"><i className="led" data-on="true" data-pulse="true" /> /components/{entry.slug}</span>
         </div>
-        <p className="border-t border-bone/20 px-5 py-4 text-[1.05rem] leading-relaxed text-bone/90 lg:max-w-[85ch]">{entry.why}</p>
-        <ul aria-label="Quality checks" className="flex flex-wrap gap-2 border-t border-bone/20 px-5 py-3">
+        <p className="mt-3 max-w-[80ch] text-[1.02rem] leading-relaxed text-text/80">{entry.why}</p>
+        <ul aria-label="Quality checks" className="mt-4 flex flex-wrap gap-2">
           {BADGES.map((b) => (
-            <li key={b} className="mono border border-bone/50 px-2 py-1 text-[0.66rem]">✓ {b}</li>
+            <li key={b} className="mono rounded-full border border-acc/30 bg-acc/5 px-2.5 py-1 text-[0.6rem] text-acc">✓ {b}</li>
           ))}
         </ul>
       </header>
@@ -101,19 +100,19 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
         <Section id="when" title="When to use it">
           <div className="grid gap-5 md:grid-cols-2">
-            <div className={`${box} border-l-[6px] border-l-bottle`}>
-              <h3 className="mono mb-3 text-bottle">✓ Great for</h3>
+            <div className={`${box} border-l-2 border-l-acc`}>
+              <h3 className="mono mb-3 text-[0.66rem] text-acc">✓ Great for</h3>
               <ul className="space-y-2">
                 {entry.useWhen.map((u) => (
-                  <li key={u}>— {u}</li>
+                  <li key={u} className="text-text/85">— {u}</li>
                 ))}
               </ul>
             </div>
-            <div className={`${box} border-l-[6px] border-l-signal`}>
-              <h3 className="mono mb-3 text-signal">✕ Skip it when</h3>
+            <div className={`${box} border-l-2 border-l-err`}>
+              <h3 className="mono mb-3 text-[0.66rem] text-err">✕ Skip it when</h3>
               <ul className="space-y-2">
                 {entry.avoidWhen.map((u) => (
-                  <li key={u}>— {u}</li>
+                  <li key={u} className="text-text/85">— {u}</li>
                 ))}
               </ul>
             </div>
@@ -133,10 +132,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
         </Section>
 
         <Section id="props" title="Props">
-          <div className="overflow-x-auto border-2 border-ink bg-white">
+          <div className="panel overflow-x-auto">
             <table className="w-full min-w-[720px] border-collapse text-left text-[0.95rem]">
-              <thead className="bg-ink text-bone">
-                <tr className="[&>th]:mono [&>th]:px-4 [&>th]:py-2.5 [&>th]:font-normal">
+              <thead className="border-b border-line text-mute">
+                <tr className="[&>th]:mono [&>th]:px-4 [&>th]:py-3 [&>th]:text-[0.62rem] [&>th]:font-normal">
                   <th>Prop</th>
                   <th>Type</th>
                   <th>Default</th>
@@ -145,13 +144,13 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
               </thead>
               <tbody>
                 {entry.props.map((p) => (
-                  <tr key={p.name} className="[&>td]:border-b [&>td]:border-rule [&>td]:px-4 [&>td]:py-2.5 [&>td]:align-top">
-                    <td className="font-bold">{p.name}</td>
+                  <tr key={p.name} className="[&>td]:border-b [&>td]:border-line [&>td]:px-4 [&>td]:py-2.5 [&>td]:align-top">
+                    <td className="font-mono text-[0.8rem] text-acc">{p.name}</td>
                     <td>
-                      <code className="bg-bone-2 px-1.5 py-0.5 font-mono text-xs">{p.type}</code>
+                      <code className="rounded bg-panel-2 px-1.5 py-0.5 font-mono text-xs text-text/85">{p.type}</code>
                     </td>
-                    <td className="font-mono text-sm">{p.default}</td>
-                    <td className="text-muted">{p.description}</td>
+                    <td className="font-mono text-xs text-mute">{p.default}</td>
+                    <td className="text-text/80">{p.description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -160,12 +159,12 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
         </Section>
 
         <Section id="prompt" title="Build prompt" lead="The final prompt used to build this component.">
-          <div className="border-2 border-ink bg-white">
-            <div className="flex items-center justify-between border-b-2 border-ink px-4 py-2">
-              <span className="mono">prompt.md</span>
+          <div className="panel overflow-hidden">
+            <div className="flex items-center justify-between border-b border-line px-4 py-2">
+              <span className="mono text-[0.64rem] text-acc">prompt.md</span>
               <CopyButton text={prompt} label="Copy prompt" />
             </div>
-            <p className="whitespace-pre-wrap p-5 leading-relaxed">{prompt}</p>
+            <p className="whitespace-pre-wrap p-5 text-[0.95rem] leading-relaxed text-text/85">{prompt}</p>
           </div>
         </Section>
 
@@ -174,22 +173,22 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
             <ul className={`${box} space-y-2.5`}>
               {entry.accessibility.map((a) => (
                 <li key={a} className="flex gap-2.5">
-                  <span aria-hidden="true" className="mt-1 grid h-5 w-5 shrink-0 place-items-center bg-bottle text-[11px] text-bone">✓</span>
+                  <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-acc/15 text-[11px] text-acc">✓</span>
                   {a}
                 </li>
               ))}
             </ul>
-            <div className={`${box} bg-bone-2`}>
-              <h3 className="mono mb-2">Browser support</h3>
-              <p>{entry.support}</p>
+            <div className={box}>
+              <h3 className="mono mb-2 text-[0.66rem] text-mute">Browser support</h3>
+              <p className="text-text/85">{entry.support}</p>
             </div>
           </div>
         </Section>
       </ScrollCable>
 
-      <nav aria-label="More components" className="mt-16 flex flex-wrap justify-between gap-3 border-t-2 border-ink pt-6">
-        <Link href={`/components/${prev.slug}`} className="sb-btn">‹ Line {prev.ext} · {prev.name}</Link>
-        <Link href={`/components/${next.slug}`} className="sb-btn border-signal! bg-signal! text-white">Line {next.ext} · {next.name} ›</Link>
+      <nav aria-label="More components" className="mt-16 flex flex-wrap justify-between gap-3 border-t border-line pt-6">
+        <Link href={`/components/${prev.slug}`} className="cr-btn">← {prev.name}</Link>
+        <Link href={`/components/${next.slug}`} className="cr-btn cr-btn-acc">{next.name} →</Link>
       </nav>
     </main>
   );
