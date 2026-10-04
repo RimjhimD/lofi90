@@ -24,19 +24,21 @@ export function HoverCable() {
 
     const plug = (card: HTMLElement) => {
       unplug();
-      const lamp = document.querySelector<HTMLElement>(`header [data-lamp="${card.dataset.line}"]`);
+      // The sidebar renders twice (mobile drawer + desktop column); use whichever lamp is on screen.
+      const lamp = Array.from(document.querySelectorAll<HTMLElement>(`aside [data-lamp="${card.dataset.line}"] .lamp`)).find((l) => l.offsetParent);
       const jack = card.querySelector<HTMLElement>("[data-jack]");
       if (!jack) return;
       const to = jack.getBoundingClientRect();
       const tx = to.left + to.width / 2;
       const ty = to.top + to.height / 2;
-      // Lamps are hidden on small screens: drop the cable from the top edge above the card instead.
-      const from = lamp && lamp.offsetParent ? lamp.getBoundingClientRect() : null;
-      const fx = from ? from.left + 10 : tx;
-      const fy = from ? from.bottom - 4 : 0;
+      // No visible sidebar (small screens): drop the cable from the top edge above the card instead.
+      const from = lamp ? lamp.getBoundingClientRect() : null;
+      const fx = from ? from.right : tx;
+      const fy = from ? from.top + from.height / 2 : 0;
       const sag = Math.min(260, Math.abs(ty - fy) * 0.5 + 60);
+      const side = !!from;
       const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", `M ${fx} ${fy} C ${fx} ${fy + sag}, ${tx} ${ty - sag}, ${tx} ${ty}`);
+      path.setAttribute("d", side ? `M ${fx} ${fy} C ${fx + sag} ${fy + 40}, ${tx - sag} ${ty + 60}, ${tx} ${ty}` : `M ${fx} ${fy} C ${fx} ${fy + sag}, ${tx} ${ty - sag}, ${tx} ${ty}`);
       path.setAttribute("fill", "none");
       path.setAttribute("stroke", "#D7263D");
       path.setAttribute("stroke-width", "4");

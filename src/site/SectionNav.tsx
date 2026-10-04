@@ -20,7 +20,7 @@ export function SectionNav({ sections }: { sections: readonly (readonly [string,
   }, [sections]);
 
   return (
-    <nav aria-label="On this page" className="sticky top-[62px] z-30 -mx-6 mt-12 overflow-x-auto border-y-2 border-ink bg-bone px-6">
+    <nav aria-label="On this page" className="sticky top-[60px] z-30 -mx-6 lg:-mx-10 lg:px-10 mt-12 overflow-x-auto border-y-2 border-ink bg-bone px-6">
       <ul className="flex gap-1 py-1.5">
         {sections.map(([id, label]) => (
           <li key={id}>

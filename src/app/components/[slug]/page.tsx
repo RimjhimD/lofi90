@@ -64,10 +64,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
   const usageFile = { label: "usage.tsx", code: usage, html: await highlight(usage, "usage.tsx") };
 
   return (
-    <main className="mx-auto max-w-[1280px] px-6 pb-32">
+    <main className="mx-auto max-w-[1180px] px-6 pb-32 lg:px-10">
       <nav aria-label="Breadcrumb" className="mono flex flex-wrap items-center gap-2 pt-6 text-muted">
-        <Link href="/" className="text-ink underline decoration-signal decoration-2 underline-offset-4">Board</Link>›
-        <Link href={`/#ex-${entry.type}`} className="hover:text-ink">Exchange {exchange} · {entry.type}</Link>›<span className="text-ink">Line {entry.ext}</span>
+        <Link href="/components" className="text-ink underline decoration-signal decoration-2 underline-offset-4">Components</Link>›
+        <Link href={`/components#ex-${entry.type}`} className="hover:text-ink">Exchange {exchange} · {entry.type}</Link>›<span className="text-ink">Line {entry.ext}</span>
       </nav>
 
       <header className="anim-rise mt-4 border-2 border-ink bg-bottle text-bone">
@@ -85,7 +85,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
       </header>
 
       {/* 1. Preview and source, side by side */}
-      <div className="mt-6 grid items-stretch gap-5 lg:grid-cols-2">
+      <div className="mt-6 grid items-stretch gap-5 xl:grid-cols-2">
         <Stage slug={entry.slug} />
         <CodePanel files={sourceFiles} title="Source" maxHeight="560px" />
       </div>

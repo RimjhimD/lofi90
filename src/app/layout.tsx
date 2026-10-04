@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Atkinson_Hyperlegible, Big_Shoulders, DM_Mono } from "next/font/google";
 import { Header } from "@/site/Header";
+import { Sidebar } from "@/site/Sidebar";
 import "./globals.css";
 
 const shoulders = Big_Shoulders({ weight: ["500", "700", "900"], subsets: ["latin"], variable: "--font-shoulders", display: "swap" });
@@ -18,7 +19,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={`${shoulders.variable} ${atkinson.variable} ${dmMono.variable}`}>
       <body className="min-h-screen antialiased">
         <Header />
-        {children}
+        <div className="lg:grid lg:grid-cols-[250px_minmax(0,1fr)]">
+          <Sidebar />
+          <div className="min-w-0">{children}</div>
+        </div>
       </body>
     </html>
   );
