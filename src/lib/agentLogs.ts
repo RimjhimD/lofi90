@@ -9,10 +9,8 @@ export interface AgentLog {
   agent: string;
   tools: string[];
   task: string;
-  /** The prompt as I gave it (lightly tidied for spelling). */
+  /** The full prompt: my request written out as clear, reusable instructions. */
   prompt: string;
-  /** Heading for the prompt box when it is a summary rather than my exact words. */
-  promptLabel?: string;
   workflow: string[];
   produced: string[];
   saved: string;
@@ -31,9 +29,25 @@ export const AGENT_LOGS: AgentLog[] = [
     agent: AGENT,
     tools: ["Assistant tool editor", "GoHighLevel API", "Playwright browser"],
     task: "An AI phone receptionist took messages and email requests for the team, but none of them ever landed on the contact record, so no one was alerted. The bot needed tools that write those details to the right CRM fields, described clearly enough that it uses them properly.",
-    promptLabel: "The brief (summarised)",
-    prompt:
-      "The bot takes messages but nothing reaches the CRM. Fix the tools so messages and email requests save to the contact, and make the tool descriptions clear enough that the bot uses them the right way. Do it yourself.",
+    prompt: `You are working on an AI phone receptionist built on an assistant platform that is connected to GoHighLevel (GHL). The bot takes messages and email requests from callers, but none of them ever reach the contact record, so nobody on the team is alerted.
+
+Goal: every caller message and email request is saved to the right contact field, and the right person is notified.
+
+Instructions:
+1. Read the bot's current prompt and its tool list. Find the instruction that tells the bot how to save messages, and check whether that tool can actually write custom fields.
+2. For each piece of information that must be saved, create one extraction tool mapped to one GHL custom field. One tool, one field, one job.
+3. Write each tool's description so the bot uses it correctly:
+   - when to call it, and when not to;
+   - a worked example of exactly what to save, in the caller's own words;
+   - NOT-rules that name the wrong output (for example, NOT "caller wants to leave a message");
+   - what to do when there is nothing to save.
+   Turn on "overwrite existing value" so a caller's correction replaces the first answer.
+4. Change only the save rules in the bot's prompt so they call the new tools. Back up the prompt first, diff before and after, and stay under the 8,000-character limit.
+5. Create the tags and alert workflows that the tools trigger, publish them, and read them back through the API to confirm.
+
+Rules: do not change anything else in the prompt. Do not publish the assistant yourself; tell me when it is ready to publish.
+
+When you finish, report: the tools you created and their exact descriptions, the prompt diff, the workflows and their status, and what still needs a live test call.`,
     workflow: [
       "Read the bot's prompt and tool list: its rules said to save messages with update_user_details, which only writes name, phone and email — every message was going nowhere.",
       "Created two extraction tools, one field each, and wrote their descriptions the way bots follow best: when to run, a worked “save exactly this” example, NOT-clauses naming the wrong output (no summaries like “caller wants to leave a message”), and what to do when there's nothing to save. Overwrite turned on so a caller's correction sticks.",
@@ -57,9 +71,21 @@ export const AGENT_LOGS: AgentLog[] = [
     agent: AGENT,
     tools: ["Playwright browser", "GoHighLevel funnel builder", "GoHighLevel API"],
     task: "On a client's GoHighLevel funnel, both booking buttons linked out to the client's own website. Bookings needed to happen on the funnel page itself, in the GHL calendar, in the client's timezone.",
-    promptLabel: "The brief (summarised)",
-    prompt:
-      "The book-a-call buttons on the funnel go to the client's website. Embed our GHL booking calendar on the funnel page instead, so people book without leaving, and set the timezone the client asked for.",
+    prompt: `You are working in a GoHighLevel (GHL) sub-account. The funnel's "Book a call" buttons currently link to the client's own website, so visitors leave the page to book.
+
+Goal: visitors book a call directly on the funnel page, using the GHL booking calendar, in the client's timezone (America/New_York).
+
+Instructions:
+1. Open the funnel page in the builder and work out how it is built (sections or a single Custom Code block).
+2. Point every booking button to a new on-page section with the id "book" instead of the external link.
+3. In that section, embed the GHL booking calendar as an iframe with the GHL form-embed script. Use the custom value {{custom_values.sales_booking_calendar}} as the iframe source, so the calendar can be changed later without editing the page.
+4. Match the page's existing styling: a short heading, one line of copy, then the calendar.
+5. Save the page, then check the live preview: no booking links point off-site, every booking button scrolls to the calendar, and the calendar loads.
+6. Set the sub-account timezone to America/New_York through the API, then read it back to confirm.
+
+Rules: change only the booking buttons and the new section; leave the rest of the page as it is. Note the character count before and after the edit.
+
+When you finish, report: what changed on the page, the checks you ran on the live preview, and the timezone before and after.`,
     workflow: [
       "Found that the whole page is one Custom Code block, and that the funnel builder runs inside a cross-origin frame that normal page tools can't read.",
       "Reached the builder's frame directly from the automated browser and edited the code in place.",
@@ -83,8 +109,18 @@ export const AGENT_LOGS: AgentLog[] = [
     agent: `${AGENT} with 4 sub-agents`,
     tools: ["Sub-agents", "ESLint", "TypeScript", "Playwright browser"],
     task: "Replace three components I didn't like with four new, more visual ones — an input, a navbar, a carousel and a card — and keep the whole site consistent.",
-    prompt:
-      "Can we change the Rolodex carousel to something else? I'm not understanding what this carousel is doing — do something more animated. Instead of the secret key field, use a navbar, a unique navbar. The split the bill card, use another component, find something unique. Let's do total six for now.",
+    prompt: `You are working on my component gallery: Next.js (App Router), React, TypeScript and Tailwind CSS. No other packages.
+
+Goal: replace three components I am not happy with — a secret key field, a rolodex carousel and a split-the-bill card — with four new, unique and clearly animated components: one input, one navbar, one carousel and one card. The gallery will then have six components in total.
+
+Instructions:
+1. Suggest four ideas for each slot. Each must be unique (not a variation of anything my teammates have built), easy to understand at a glance, and built around one signature motion. Let me pick one per slot before you build.
+2. For each picked component, write a detailed brief and give it to its own sub-agent, so all four are built in parallel. Each sub-agent builds the component, a demo, looping live states, a usage example and the build prompt, following the structure and colour variables of the existing components.
+3. Every component must work with the keyboard, have correct ARIA, respect reduced motion, look right on both a dark and a light background, and fit a 375px-wide screen.
+4. Each sub-agent must pass ESLint and the TypeScript check, and must not edit shared files. It reports back its registry entry and controls instead.
+5. Wire all four into the site, remove the three old components, and test each one in the browser at 375, 768 and full width, on the dark and the light stage.
+
+When you finish, report: what each component does, what you tested, anything that looks off, and the commit.`,
     workflow: [
       "The agent gave me four options per slot as a quick multiple-choice. I picked Tape Measure, Plucked String Nav, Vinyl Crate and Boarding Pass.",
       "It wrote one detailed brief per component (patterns to copy, colour rules, motion, accessibility, must fit 375px) and launched four sub-agents at once.",
@@ -108,8 +144,20 @@ export const AGENT_LOGS: AgentLog[] = [
     agent: AGENT,
     tools: ["Code reading", "Playwright browser"],
     task: "Scrolling the home page kept opening the Undo Fuse Button page on its own.",
-    prompt:
-      "Why, when I go to the home page, I can't scroll — I scroll a bit and it starts going to the components. Why is it going automatically? It's coming to the Undo Fuse Button. Fix that, no one wants that.",
+    prompt: `Bug in my Next.js component gallery: when I scroll the home page, it jumps to the Undo Fuse Button page on its own, before I can read the "Shipped so far" section. Nobody clicked anything.
+
+Goal: find the real cause, fix it, and prove the fix.
+
+Instructions:
+1. Reproduce it: load the home page and scroll slowly through the gallery. Note when the jump happens and which page opens.
+2. Find the root cause in the code before changing anything. Look at what runs on the gallery cards as they scroll into view: live previews, timers, scripted clicks and links.
+3. Fix the cause, not the symptom. Do not remove the live previews.
+4. Verify both ways:
+   - an automated slow scroll through the whole home page stays on "/";
+   - a real click on a gallery card still opens that component's page.
+5. Run ESLint and the TypeScript check.
+
+When you finish, explain in plain words why it happened, what you changed, and the test results. Then commit.`,
     workflow: [
       "Traced it to the live previews on the gallery cards: the fuse preview presses its own button on a timer.",
       "Found that the scripted click bubbled up to the card's link — and only fired once the card scrolled into view.",
@@ -129,8 +177,18 @@ export const AGENT_LOGS: AgentLog[] = [
     agent: AGENT,
     tools: ["Playwright browser", "CSS variables"],
     task: "The width buttons looked broken, previews felt cluttered, and components had no light-background version.",
-    prompt:
-      "The 375, 768, full button is not even working. A preview should look like a proper preview, nothing else that makes it look like a mess. There should also be a light room — the component showing in a dark stage and in a light stage.",
+    prompt: `My component pages need a clean, working preview. Right now the 375 / 768 / Full buttons don't visibly change anything, the preview area is cluttered with extra panels, and the components only look right on a dark background.
+
+Goal: the preview shows only the component, really resizes, and can be viewed on a dark or a light stage.
+
+Instructions:
+1. Look at a well-made component gallery for what a clean preview feels like, but design our own version in our style. Do not copy it.
+2. Rebuild the preview as one framed stage. The 375 / 768 / Full buttons must resize the stage itself, with a ruler above it that shows the real pixel width.
+3. Add a Dark stage / Light stage switch. Move every component's colours onto stage variables, so one switch flips them and everything stays readable.
+4. Move the controls into a closed "Customize" drawer under the preview, and keep only a one-line caption under the stage.
+5. Check every component at 375, 768 and full width, on both stages, with screenshots, and fix anything that breaks.
+
+When you finish, report what changed, show before and after screenshots, and list anything that still looks off.`,
     workflow: [
       "Studied how a clean preview looks on a reference gallery, without copying it.",
       "Rebuilt the stage so the frame itself resizes, with a ruler that reads the real pixel width.",
@@ -154,7 +212,21 @@ export const AGENT_LOGS: AgentLog[] = [
     agent: AGENT,
     tools: ["git", "Vercel (auto-deploy)", "curl", "Playwright browser"],
     task: "“View on GitHub” returned 404 on every component, and the finished site needed to go live.",
-    prompt: "Why does View on GitHub say 404? And now deploy to Vercel — I think this is the final.",
+    prompt: `The "View on GitHub" link on every component page returns a 404, and the finished site needs to go live on Vercel. The Vercel project deploys automatically when main is pushed.
+
+Goal: find out why the links are broken, then publish the site safely and confirm it works.
+
+Instructions:
+1. Find the cause of the 404: compare the file paths in the links with what is actually on GitHub, and check whether my local commits have been pushed.
+2. Before pushing, check that:
+   - the push is a fast-forward (my branch is ahead, not behind);
+   - every commit is in my name, with no AI co-author lines;
+   - nothing in the changes looks like a key, token or password, and no .env file is included.
+   If any check fails, stop and tell me.
+3. Push to main and let Vercel deploy.
+4. Check the live site until every page returns 200: the home page, the components page and every component page. Then open one "View on GitHub" link to confirm it works.
+
+When you finish, report: why it was a 404, the results of each check, the live URLs, and anything that failed.`,
     workflow: [
       "Diagnosed the 404: the links pointed to files that only existed on my computer — 21 commits had never been pushed.",
       "Checked before publishing: fast-forward only (21 ahead, 0 behind), every commit in my name, and a scan of the changes for anything key-shaped.",
