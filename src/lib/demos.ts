@@ -1,12 +1,12 @@
 import type { ComponentType as ReactComponent, ReactNode } from "react";
-import MergeTagInputDemo from "@/library/merge-tag-input/demo";
-import RetryCountdownLoaderDemo from "@/library/retry-countdown-loader/demo";
-import { MERGE_TAG_INPUT_STATES } from "@/library/merge-tag-input/states";
-import { RETRY_COUNTDOWN_LOADER_STATES } from "@/library/retry-countdown-loader/states";
+import UndoFuseButtonDemo from "@/library/undo-fuse-button/demo";
+import SecretKeyFieldDemo from "@/library/secret-key-field/demo";
+import { UNDO_FUSE_BUTTON_STATES } from "@/library/undo-fuse-button/states";
+import { SECRET_KEY_FIELD_STATES } from "@/library/secret-key-field/states";
 
 export const DEMOS: Record<string, ReactComponent> = {
-  "merge-tag-input": MergeTagInputDemo,
-  "retry-countdown-loader": RetryCountdownLoaderDemo,
+  "undo-fuse-button": UndoFuseButtonDemo,
+  "secret-key-field": SecretKeyFieldDemo,
 };
 
 export interface StateSample {
@@ -17,12 +17,12 @@ export interface StateSample {
 }
 
 export const STATES: Record<string, StateSample[]> = {
-  "merge-tag-input": MERGE_TAG_INPUT_STATES,
-  "retry-countdown-loader": RETRY_COUNTDOWN_LOADER_STATES,
+  "undo-fuse-button": UNDO_FUSE_BUTTON_STATES,
+  "secret-key-field": SECRET_KEY_FIELD_STATES,
 };
 
 /** Which state each home-page card shows as its mini preview. */
 export const CARD_STATE: Record<string, string> = {
-  "merge-tag-input": "blank",
-  "retry-countdown-loader": "waiting",
+  "undo-fuse-button": "burning",
+  "secret-key-field": "wrong-box",
 };
