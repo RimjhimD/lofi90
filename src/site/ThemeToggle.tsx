@@ -33,10 +33,10 @@ export function ThemeToggle() {
   return (
     <div role="group" aria-label="Colour theme" className="flex rounded-full border border-line bg-panel p-0.5">
       <button type="button" aria-pressed={theme === "dark"} onClick={() => theme !== "dark" && apply("dark")} className={btn}>
-        <span aria-hidden="true">☾</span> Dark
+        <span aria-hidden="true">☾</span> <span className="sr-only sm:not-sr-only">Dark</span>
       </button>
       <button type="button" aria-pressed={theme === "light"} onClick={() => theme !== "light" && apply("light")} className={btn}>
-        <span aria-hidden="true">☀</span> Light
+        <span aria-hidden="true">☀</span> <span className="sr-only sm:not-sr-only">Light</span>
       </button>
     </div>
   );

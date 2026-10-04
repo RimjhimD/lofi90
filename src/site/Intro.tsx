@@ -23,8 +23,8 @@ function wordTargets(w: number, h: number): { pts: { x: number; y: number; lime:
   c.width = w;
   c.height = h;
   const g = c.getContext("2d")!;
-  const size = Math.min(w * 0.2, 230);
-  g.font = `700 ${size}px ${getComputedStyle(document.body).getPropertyValue("--font-grotesk") || "system-ui"}, system-ui, sans-serif`;
+  const size = Math.min(w * 0.14, 200);
+  g.font = `700 ${size}px ${getComputedStyle(document.body).getPropertyValue("--font-unbounded") || "system-ui"}, system-ui, sans-serif`;
   g.textAlign = "center";
   g.textBaseline = "middle";
   g.fillStyle = "#fff";

@@ -30,7 +30,7 @@ export default function Home() {
               <span className="ready-rise mono flex items-center gap-2 text-[0.68rem] text-mute">
                 <i className="led" data-on="true" data-pulse="true" /> Rimjhim · component control room
               </span>
-              <h1 className="mt-5 font-display font-bold leading-[0.92] tracking-[-0.03em]">
+              <h1 className="mt-5 font-display font-bold leading-[0.92] tracking-tight">
                 <span className="block overflow-hidden">
                   <span className="ready-rise block text-[clamp(4.2rem,11vw,9.5rem)]" style={{ animationDelay: "100ms" }}>
                     lofi<span className="text-acc [text-shadow:0_0_50px_rgba(198,255,61,.35)]">90</span>

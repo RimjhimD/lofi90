@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { JetBrains_Mono, Manrope, Unbounded } from "next/font/google";
 import { Header } from "@/site/Header";
 import { Sidebar } from "@/site/Sidebar";
 import { Spotlight } from "@/site/Spotlight";
 import { AutoReveal } from "@/site/AutoReveal";
 import "./globals.css";
 
-const grotesk = Space_Grotesk({ weight: ["500", "600", "700"], subsets: ["latin"], variable: "--font-grotesk", display: "swap" });
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const unbounded = Unbounded({ weight: ["500", "600", "700"], subsets: ["latin"], variable: "--font-unbounded", display: "swap" });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
 const jetbrains = JetBrains_Mono({ weight: ["400", "500"], subsets: ["latin"], variable: "--font-jetbrains", display: "swap" });
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${grotesk.variable} ${inter.variable} ${jetbrains.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${unbounded.variable} ${manrope.variable} ${jetbrains.variable}`}>
       <head>
         {/* apply the saved theme before first paint, so light mode never flashes dark */}
         <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem("lofi90-theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}` }} />
