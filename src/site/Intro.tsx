@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 const BOOT_COLORS = ["#FF5D5D", "#FFB800", "#3BB2F6", "#9B5DE5", "#00C49A", "#FF5D5D", "#FFB800", "#3BB2F6"];
 const KEY = "lofi90-intro-seen";
@@ -61,6 +62,10 @@ export function Intro() {
   }, [phase]);
 
   if (phase === "gone" || phase === "off") return null;
+  // Portal to <body> so the overlay sits above the header and everything else.
+  return createPortal(overlay(), document.body);
+
+  function overlay() {
 
   return (
     <div
@@ -92,6 +97,7 @@ export function Intro() {
       </button>
     </div>
   );
+  }
 }
 
 function IntroScreen({ filled, line, lit }: { filled: number; line: string; lit: boolean }) {

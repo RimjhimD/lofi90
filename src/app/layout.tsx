@@ -19,7 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="min-h-screen antialiased">
         <FloatingPieces />
         <Header />
-        {children}
+        <div className="relative z-10">{children}</div>
       </body>
     </html>
   );

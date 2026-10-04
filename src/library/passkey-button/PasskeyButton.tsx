@@ -3,7 +3,8 @@
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 
 export type PasskeyIntent = "signin" | "register";
-type Status = "idle" | "working" | "success" | "error";
+export type PasskeyStatus = "idle" | "working" | "success" | "error";
+type Status = PasskeyStatus;
 type Support = "checking" | "supported" | "unsupported";
 
 export interface PasskeyLabels {
@@ -33,6 +34,8 @@ export interface PasskeyButtonProps {
   disabled?: boolean;
   /** Skip browser detection. Useful for previews and tests. */
   supportOverride?: Exclude<Support, "checking">;
+  /** Show one state without running anything. For docs, tests and design reviews. */
+  previewState?: PasskeyStatus;
   className?: string;
 }
 
@@ -83,11 +86,14 @@ export function PasskeyButton({
   labels,
   disabled = false,
   supportOverride,
+  previewState,
   className = "",
 }: PasskeyButtonProps) {
   const text = { ...DEFAULT_LABELS, ...labels };
-  const [status, setStatus] = useState<Status>("idle");
-  const [error, setError] = useState("");
+  const [liveStatus, setStatus] = useState<Status>("idle");
+  const [liveError, setError] = useState("");
+  const status = previewState ?? liveStatus;
+  const error = previewState === "error" ? "Cancelled or timed out. Nothing was shared." : liveError;
   // Passkey support never changes while the page is open, so there is nothing to subscribe to.
   const detected = useSyncExternalStore<Support>(
     noopSubscribe,
@@ -104,7 +110,7 @@ export function PasskeyButton({
   const blocked = disabled || unsupported || busy || support === "checking";
 
   async function run(action: () => Promise<void>) {
-    if (blocked) return;
+    if (blocked || previewState) return;
     setError("");
     setStatus("working");
     try {

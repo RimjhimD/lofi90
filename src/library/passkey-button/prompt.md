@@ -1,6 +1,6 @@
 Build a React + TypeScript + Tailwind "Passkey Button" component for passwordless sign-in. No extra libraries.
 
-Props (typed interface): intent ("signin" | "register"), onSignIn and onRegister (async functions that run the WebAuthn ceremony and throw on failure), optional onUseOtherDevice (phone / security key) and onFallback (e.g. use a password), labels (partial overrides for every piece of text), disabled, supportOverride ("supported" | "unsupported") and className. Nothing is hard-coded.
+Props (typed interface): intent ("signin" | "register"), onSignIn and onRegister (async functions that run the WebAuthn ceremony and throw on failure), optional onUseOtherDevice (phone / security key) and onFallback (e.g. use a password), labels (partial overrides for every piece of text), disabled, supportOverride ("supported" | "unsupported"), previewState (render one state without running anything, for docs and tests) and className. Nothing is hard-coded.
 
 Look: board-game style. Thick #20201C outlines, a hard offset shadow, a yellow #FFB800 button with a round badge on the left holding a fingerprint drawn from 8 separate SVG ridge paths (pathLength=1 so each can be "drawn" with stroke-dashoffset).
 
