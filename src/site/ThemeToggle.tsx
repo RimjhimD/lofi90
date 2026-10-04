@@ -29,7 +29,7 @@ function apply(next: Theme) {
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, read, () => "dark" as Theme);
   const btn =
-    "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium text-mute transition-colors aria-pressed:bg-panel-2 aria-pressed:text-text focus-visible:outline-2 focus-visible:outline-acc";
+    "flex items-center gap-1.5 rounded-full px-2 py-1 text-xs sm:px-2.5 font-medium text-mute transition-colors aria-pressed:bg-panel-2 aria-pressed:text-text focus-visible:outline-2 focus-visible:outline-acc";
   return (
     <div role="group" aria-label="Colour theme" className="flex rounded-full border border-line bg-panel p-0.5">
       <button type="button" aria-pressed={theme === "dark"} onClick={() => theme !== "dark" && apply("dark")} className={btn}>
