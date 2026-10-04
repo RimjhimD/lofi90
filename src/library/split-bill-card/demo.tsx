@@ -14,9 +14,9 @@ const ITEMS: BillItem[] = [
 ];
 
 const PEOPLE: BillPerson[] = [
-  { id: "sam", name: "Sam", color: "#D7263D" },
-  { id: "maya", name: "Maya", color: "#0E3B2E" },
-  { id: "jo", name: "Jo", color: "#7A4D00" },
+  { id: "sam", name: "Sam", color: "#FF6B57" },
+  { id: "maya", name: "Maya", color: "#3DD9FF" },
+  { id: "jo", name: "Jo", color: "#FFB547" },
 ];
 
 const START = { a: ["sam", "maya"], b: ["jo"], d: ["maya", "jo"] };
@@ -28,7 +28,7 @@ export default function SplitBillCardDemo({ controls = {} }: { controls?: Contro
   return (
     <div className="flex w-full flex-col items-center gap-3">
       <SplitBillCard taxRate={0.08} tipRate={0.18} {...look} key={run} title="Luigi's · Table 4" items={ITEMS} people={PEOPLE} initialAssignments={START} />
-      <button type="button" onClick={() => setRun((r) => r + 1)} className="border-2 border-[#1A1A17] bg-white px-3 py-0.5 text-sm font-bold shadow-[2px_2px_0_#1A1A17] focus-visible:outline-3 focus-visible:outline-[#D7263D]">
+      <button type="button" onClick={() => setRun((r) => r + 1)} className="rounded-lg border border-[#3A433F] bg-[#121614] px-3 py-0.5 text-sm font-bold shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] focus-visible:outline-3 focus-visible:outline-[#C6FF3D]">
         Reset the bill
       </button>
     </div>

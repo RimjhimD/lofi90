@@ -9,6 +9,6 @@ Behaviour:
 - A 50 ms timer advances the fuse (measured with performance.now). It waits while the pointer is over the button ("Paused · move away to resume") and while the tab is hidden, so it never finishes while you're not looking.
 - Label counts down: "Deleting in 3s · undo". When it burns out: "Deleted ✓" with a short flash.
 
-Look: switchboard style — 2px #1A1A17 border, hard 3px offset shadow, signal red #D7263D idle, warm #FFF4E5 while burning with an amber #A86A00 fuse and #FFB547 spark, bottle green #0E3B2E when kept, ink when done. Status text in a role="status" region linked with aria-describedby, visible focus ring, reduced motion respected (no flash, no pulsing spark).
+Look: control-room style — dark #121614 panel UI, 1px #3A433F borders, rounded corners, lime #C6FF3D idle button with text colour picked for contrast, amber #FFB547 fuse with a pale glowing spark, a faint amber tint while burning, lime tint when kept, #181D1B when done. Status text in a role="status" region linked with aria-describedby, visible lime focus ring, reduced motion respected (no flash, no pulsing spark).
 
 Look props: color (button colour before it's pressed), fuseColor, spark ("pulse" | "steady" | "none") and size ("sm" | "md" | "lg"), so the site can show colour, motion and size variants and a live controls panel.

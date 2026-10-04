@@ -41,7 +41,7 @@ export function Stage({ slug }: { slug: string }) {
       </div>
       <div className="grid flex-1 place-items-center bg-panel-2 p-4 sm:p-6">
         <div
-          className="grid min-h-[420px] w-full place-items-center rounded-[10px] bg-[#F4F5F1] bg-[radial-gradient(#dfe2dc_1px,transparent_1.2px)] bg-[length:14px_14px] px-4 py-8 text-[#1A1A17] shadow-[0_20px_60px_-30px_rgba(0,0,0,.9)] transition-[max-width] duration-500 [transition-timing-function:cubic-bezier(.3,1.2,.5,1)]"
+          className="grid min-h-[420px] w-full place-items-center rounded-[10px] border border-line bg-bg bg-[radial-gradient(rgba(233,237,232,.07)_1px,transparent_1.2px)] bg-[length:16px_16px] px-4 py-8 transition-[max-width] duration-500 [transition-timing-function:cubic-bezier(.3,1.2,.5,1)]"
           style={{ maxWidth: max }}
         >
           <Demo controls={values} />

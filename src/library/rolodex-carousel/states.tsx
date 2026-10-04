@@ -13,9 +13,9 @@ export const ROLODEX_CAROUSEL_STATES = [
 
 /** The same rolodex with other wheel colours, leans and stack depths. */
 export const ROLODEX_CAROUSEL_VARIANTS = [
-  { group: "Colour", label: "Signal red", node: <RolodexCarousel label="Contacts" cards={MANY} initialIndex={2} accent="#D7263D" /> },
-  { group: "Colour", label: "Bottle green", node: <RolodexCarousel label="Contacts" cards={MANY} initialIndex={2} accent="#0E3B2E" /> },
-  { group: "Colour", label: "Blue", node: <RolodexCarousel label="Contacts" cards={MANY} initialIndex={2} accent="#1D4ED8" /> },
+  { group: "Colour", label: "Lime", node: <RolodexCarousel label="Contacts" cards={MANY} initialIndex={2} accent="#C6FF3D" /> },
+  { group: "Colour", label: "Coral", node: <RolodexCarousel label="Contacts" cards={MANY} initialIndex={2} accent="#FF6B57" /> },
+  { group: "Colour", label: "Cyan", node: <RolodexCarousel label="Contacts" cards={MANY} initialIndex={2} accent="#3DD9FF" /> },
   { group: "Motion", label: "Flat stack (no lean)", node: <RolodexCarousel label="Contacts" cards={MANY} initialIndex={2} tilt={0} /> },
   { group: "Motion", label: "Steep lean", node: <RolodexCarousel label="Contacts" cards={MANY} initialIndex={2} tilt={15} /> },
   { group: "Motion", label: "Slow, heavy flip", node: <RolodexCarousel label="Contacts" cards={MANY} initialIndex={2} flipMs={1100} /> },

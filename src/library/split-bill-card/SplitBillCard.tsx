@@ -71,7 +71,7 @@ export function SplitBillCard({
   initialAssignments = {},
   onChange,
   title = "Dinner",
-  accent = "#D7263D",
+  accent = "#C6FF3D",
   coin = "#FFC94A",
   coinMotion = "drop",
   className = "",
@@ -137,7 +137,7 @@ export function SplitBillCard({
   const maxTotal = Math.max(1, ...Object.values(totals));
 
   return (
-    <div className={`w-full max-w-md text-[#1A1A17] ${className}`} style={{ ["--accent" as string]: accent }}>
+    <div className={`w-full max-w-md text-[#E9EDE8] ${className}`} style={{ ["--accent" as string]: accent }}>
       {/* who is picking: click a person, then tap items. Or drag a person onto an item. */}
       <div role="group" aria-label="Who is choosing" className="mb-3 flex flex-wrap gap-2">
         {people.map((p) => (
@@ -151,9 +151,9 @@ export function SplitBillCard({
               e.dataTransfer.setData("text/plain", p.id);
               setActive(p.id);
             }}
-            className="flex items-center gap-1.5 border-2 border-[#1A1A17] bg-white py-1 pl-1 pr-2.5 text-sm font-bold shadow-[2px_2px_0_#1A1A17] aria-pressed:-translate-y-0.5 aria-pressed:border-[var(--accent)] aria-pressed:shadow-[3px_4px_0_var(--accent)] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] cursor-grab active:cursor-grabbing"
+            className="flex items-center gap-1.5 rounded-lg border border-[#3A433F] bg-[#121614] py-1 pl-1 pr-2.5 text-sm font-bold shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] aria-pressed:-translate-y-0.5 aria-pressed:border-[var(--accent)]  focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] cursor-grab active:cursor-grabbing"
           >
-            <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-full border-2 border-[#1A1A17] text-[0.7rem] text-white" style={{ background: p.color }}>
+            <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-full border border-[#3A433F] text-[0.7rem] font-bold text-[#0B0D0C]" style={{ background: p.color }}>
               {initials(p.name)}
             </span>
             {p.name}
@@ -162,10 +162,10 @@ export function SplitBillCard({
       </div>
 
       {/* the receipt */}
-      <div className="relative bg-white px-5 pb-6 pt-4 shadow-[4px_4px_0_#1A1A17] [clip-path:polygon(0_0,100%_0,100%_calc(100%-8px),95%_100%,90%_calc(100%-8px),85%_100%,80%_calc(100%-8px),75%_100%,70%_calc(100%-8px),65%_100%,60%_calc(100%-8px),55%_100%,50%_calc(100%-8px),45%_100%,40%_calc(100%-8px),35%_100%,30%_calc(100%-8px),25%_100%,20%_calc(100%-8px),15%_100%,10%_calc(100%-8px),5%_100%,0_calc(100%-8px))] border-x-2 border-t-2 border-[#1A1A17]">
+      <div className="relative bg-[#121614] px-5 pb-6 pt-4 shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] [clip-path:polygon(0_0,100%_0,100%_calc(100%-8px),95%_100%,90%_calc(100%-8px),85%_100%,80%_calc(100%-8px),75%_100%,70%_calc(100%-8px),65%_100%,60%_calc(100%-8px),55%_100%,50%_calc(100%-8px),45%_100%,40%_calc(100%-8px),35%_100%,30%_calc(100%-8px),25%_100%,20%_calc(100%-8px),15%_100%,10%_calc(100%-8px),5%_100%,0_calc(100%-8px))] border-x-2 border-t-2 border-[#3A433F]">
         <p className="text-center font-mono text-xs font-bold uppercase tracking-[0.2em]">{title}</p>
-        <p className="mb-3 text-center font-mono text-[0.68rem] text-[#5E5A50]">Tap an item to add {people.find((p) => p.id === active)?.name ?? "someone"} · tap again to remove</p>
-        <ul aria-label="Items" className="divide-y divide-dashed divide-[#C9C2AE] font-mono text-sm">
+        <p className="mb-3 text-center font-mono text-[0.68rem] text-[#8A938D]">Tap an item to add {people.find((p) => p.id === active)?.name ?? "someone"} · tap again to remove</p>
+        <ul aria-label="Items" className="divide-y divide-dashed divide-[#3A433F] font-mono text-sm">
           {items.map((it) => {
             const ps = who[it.id] ?? [];
             const mine = ps.includes(active);
@@ -187,19 +187,19 @@ export function SplitBillCard({
                     const pid = e.dataTransfer.getData("text/plain");
                     if (pid) toggle(it.id, pid, true);
                   }}
-                  className={`flex w-full items-center gap-2 px-1.5 py-2 text-left transition-colors focus-visible:outline-2 focus-visible:outline-[var(--accent)] ${dragOver === it.id ? "bg-[#FFF4E5]" : mine ? "bg-[#F2EEE3]" : "hover:bg-[#FAF8F2]"}`}
+                  className={`flex w-full items-center gap-2 px-1.5 py-2 text-left transition-colors focus-visible:outline-2 focus-visible:outline-[var(--accent)] ${dragOver === it.id ? "bg-[#FFB547]/10" : mine ? "bg-[#181D1B]" : "hover:bg-[#181D1B]"}`}
                 >
                   <span className="min-w-0 flex-1 truncate">{it.name}</span>
                   <span aria-hidden="true" className="flex -space-x-1.5">
                     {ps.map((pid) => {
                       const p = people.find((x) => x.id === pid)!;
                       return (
-                        <span key={pid} className="grid h-5 w-5 place-items-center rounded-full border-2 border-white text-[0.5rem] font-bold text-white motion-safe:animate-[pop_.3s_cubic-bezier(.3,1.6,.5,1)]" style={{ background: p.color }}>
+                        <span key={pid} className="grid h-5 w-5 place-items-center rounded-full border-2 border-[#121614] text-[0.5rem] font-bold text-[#0B0D0C] motion-safe:animate-[pop_.3s_cubic-bezier(.3,1.6,.5,1)]" style={{ background: p.color }}>
                           {initials(p.name)}
                         </span>
                       );
                     })}
-                    {!ps.length && <span className="text-[0.65rem] text-[#B42318]">unclaimed</span>}
+                    {!ps.length && <span className="text-[0.65rem] text-[#FF6B57]">unclaimed</span>}
                   </span>
                   <span className="w-16 text-right tabular-nums">{fmt(it.cents)}</span>
                 </button>
@@ -207,7 +207,7 @@ export function SplitBillCard({
             );
           })}
         </ul>
-        <dl className="mt-3 space-y-0.5 border-t-2 border-[#1A1A17] pt-2 font-mono text-xs">
+        <dl className="mt-3 space-y-0.5 border-t-2 border-[#3A433F] pt-2 font-mono text-xs">
           <div className="flex justify-between"><dt>Food</dt><dd className="tabular-nums">{fmt(food)}</dd></div>
           <div className="flex justify-between"><dt>Tax {Math.round(taxRate * 100)}%</dt><dd className="tabular-nums">{fmt(tax)}</dd></div>
           <div className="flex justify-between"><dt>Tip {Math.round(tipRate * 100)}%</dt><dd className="tabular-nums">{fmt(tip)}</dd></div>
@@ -217,7 +217,7 @@ export function SplitBillCard({
 
       {/* who owes what: each total is a stack of coins */}
       <div aria-labelledby={`${id}-owes`} className="mt-4">
-        <p id={`${id}-owes`} className="mb-2 text-xs font-bold uppercase tracking-wider text-[#5E5A50]">Each person pays</p>
+        <p id={`${id}-owes`} className="mb-2 text-xs font-bold uppercase tracking-wider text-[#8A938D]">Each person pays</p>
         <ul className="flex items-end justify-around gap-3">
           {people.map((p) => {
             const coins = Math.round((totals[p.id] / maxTotal) * 8);
@@ -225,11 +225,11 @@ export function SplitBillCard({
               <li key={p.id} className="flex flex-col items-center gap-1">
                 <span aria-hidden="true" className="flex h-[84px] flex-col-reverse items-center">
                   {Array.from({ length: coins }, (_, i) => (
-                    <i key={i} className={`-mt-1.5 block h-3 w-9 rounded-[50%] border-2 border-[#1A1A17]/60 ${coinMotion === "drop" ? "motion-safe:animate-[coin_.35s_cubic-bezier(.3,1.5,.5,1)_both]" : coinMotion === "pop" ? "motion-safe:animate-[pop_.3s_cubic-bezier(.3,1.6,.5,1)_both]" : ""}`} style={{ background: coin, animationDelay: `${i * 30}ms` }} />
+                    <i key={i} className={`-mt-1.5 block h-3 w-9 rounded-[50%] border border-[#3A433F]/60 ${coinMotion === "drop" ? "motion-safe:animate-[coin_.35s_cubic-bezier(.3,1.5,.5,1)_both]" : coinMotion === "pop" ? "motion-safe:animate-[pop_.3s_cubic-bezier(.3,1.6,.5,1)_both]" : ""}`} style={{ background: coin, animationDelay: `${i * 30}ms` }} />
                   ))}
                 </span>
                 <b className="font-mono text-sm tabular-nums">{fmt(totals[p.id])}</b>
-                <span className="text-xs text-[#5E5A50]">{p.name}</span>
+                <span className="text-xs text-[#8A938D]">{p.name}</span>
               </li>
             );
           })}
@@ -238,16 +238,16 @@ export function SplitBillCard({
 
       <div role="status" aria-live="polite" className="mt-3 space-y-1 text-sm">
         {unclaimed.length > 0 ? (
-          <p className="flex flex-wrap items-center gap-2 border-l-4 border-[#B42318] bg-[#FBE4E6] px-2.5 py-1.5">
+          <p className="flex flex-wrap items-center gap-2 border-l-4 border-[#FF6B57] bg-[#FF6B57]/10 px-2.5 py-1.5">
             {unclaimed.length} item{unclaimed.length > 1 ? "s" : ""} nobody claimed ({fmt(food + tax + tip - claimed)} left over).
-            <button type="button" onClick={splitUnclaimed} className="border border-[#1A1A17] bg-white px-2 text-xs font-bold focus-visible:outline-2 focus-visible:outline-[var(--accent)]">
+            <button type="button" onClick={splitUnclaimed} className="rounded-lg border border-[#3A433F] bg-[#121614] px-2 text-xs font-bold focus-visible:outline-2 focus-visible:outline-[var(--accent)]">
               Share between everyone
             </button>
           </p>
         ) : (
-          <p className="font-bold text-[#0E3B2E]">✓ Adds up to the cent: {fmt(claimed)}.</p>
+          <p className="font-bold text-[#C6FF3D]">✓ Adds up to the cent: {fmt(claimed)}.</p>
         )}
-        <p className="text-xs text-[#5E5A50]">{said}</p>
+        <p className="text-xs text-[#8A938D]">{said}</p>
       </div>
       <style>{`@keyframes pop{from{transform:scale(0)}}@keyframes coin{from{transform:translateY(-26px);opacity:0}}`}</style>
     </div>

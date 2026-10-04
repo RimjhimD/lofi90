@@ -13,12 +13,12 @@ export const UNDO_FUSE_BUTTON_STATES = [
 
 /** The same button in other colours, motions and sizes. */
 export const UNDO_FUSE_BUTTON_VARIANTS = [
-  { group: "Colour", label: "Signal red", node: <UndoFuseButton onCommit={noop} previewState="idle" color="#D7263D" /> },
-  { group: "Colour", label: "Bottle green", node: <UndoFuseButton onCommit={noop} previewState="idle" color="#0E3B2E" /> },
-  { group: "Colour", label: "Blue", node: <UndoFuseButton onCommit={noop} previewState="idle" color="#1D4ED8" /> },
-  { group: "Colour", label: "Red fuse", node: <UndoFuseButton onCommit={noop} previewState="burning" fuseColor="#D7263D" /> },
-  { group: "Colour", label: "Teal fuse", node: <UndoFuseButton onCommit={noop} previewState="burning" fuseColor="#0F766E" /> },
-  { group: "Colour", label: "Ink fuse", node: <UndoFuseButton onCommit={noop} previewState="burning" fuseColor="#1A1A17" /> },
+  { group: "Colour", label: "Lime", node: <UndoFuseButton onCommit={noop} previewState="idle" color="#C6FF3D" /> },
+  { group: "Colour", label: "Coral", node: <UndoFuseButton onCommit={noop} previewState="idle" color="#FF6B57" /> },
+  { group: "Colour", label: "Cyan", node: <UndoFuseButton onCommit={noop} previewState="idle" color="#3DD9FF" /> },
+  { group: "Colour", label: "Coral fuse", node: <UndoFuseButton onCommit={noop} previewState="burning" fuseColor="#FF6B57" /> },
+  { group: "Colour", label: "Cyan fuse", node: <UndoFuseButton onCommit={noop} previewState="burning" fuseColor="#3DD9FF" /> },
+  { group: "Colour", label: "White fuse", node: <UndoFuseButton onCommit={noop} previewState="burning" fuseColor="#E9EDE8" /> },
   { group: "Motion", label: "Pulsing spark", node: <UndoFuseButton onCommit={noop} previewState="burning" spark="pulse" /> },
   { group: "Motion", label: "Steady spark", node: <UndoFuseButton onCommit={noop} previewState="burning" spark="steady" /> },
   { group: "Motion", label: "No spark", node: <UndoFuseButton onCommit={noop} previewState="burning" spark="none" /> },

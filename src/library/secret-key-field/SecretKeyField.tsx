@@ -81,7 +81,7 @@ export function SecretKeyField({
   placeholder = "Paste your key",
   disabled = false,
   previewRevealed,
-  accent = "#D7263D",
+  accent = "#C6FF3D",
   drain = "ring",
   size = "md",
   className = "",
@@ -148,21 +148,21 @@ export function SecretKeyField({
   }, [peeking, peekMs, drain]);
 
   const iconBtn =
-    `relative grid ${ICON[size]} shrink-0 place-items-center border-l-2 border-[#1A1A17] bg-white text-base hover:bg-[#E8E2D2] focus-visible:z-10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50`;
+    `relative grid ${ICON[size]} shrink-0 place-items-center border-l-2 border-[#3A433F] bg-[#121614] text-base hover:bg-[#181D1B] focus-visible:z-10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50`;
 
   return (
-    <div className={`w-full max-w-md text-[#1A1A17] ${className}`} style={{ ["--accent" as string]: accent }}>
+    <div className={`w-full max-w-md text-[#E9EDE8] ${className}`} style={{ ["--accent" as string]: accent }}>
       <div className="mb-1.5 flex flex-wrap items-center gap-2">
         <label htmlFor={id} className="text-sm font-bold">{label}</label>
         {kind && (
-          <span className={`border px-1.5 py-px text-[0.68rem] font-bold ${kind.secret ? "border-[#1A1A17] bg-[#1A1A17] text-white" : "border-[#1A1A17] bg-white"}`}>
+          <span className={`rounded-md border px-1.5 py-px text-[0.68rem] font-bold ${kind.secret ? "border-[#FF6B57]/40 bg-[#FF6B57]/10 text-[#FF8F7E]" : "border-[#3A433F] bg-[#181D1B] text-[#E9EDE8]"}`}>
             {kind.name}
-            {kind.live !== undefined && <span className={kind.live ? (kind.secret ? "text-[#FF8A8A]" : "text-[#B42318]") : kind.secret ? "text-[#C9C2AE]" : "text-[#5E5A50]"}>{kind.live ? " · LIVE" : " · TEST"}</span>}
+            {kind.live !== undefined && <span className={kind.live ? "text-[#FF6B57]" : "text-[#8A938D]"}>{kind.live ? " · LIVE" : " · TEST"}</span>}
           </span>
         )}
       </div>
 
-      <div className={`relative flex border-2 bg-white focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-[var(--accent)] ${error ? "border-[#B42318]" : "border-[#1A1A17]"}`}>
+      <div className={`relative flex border-2 bg-[#121614] focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-[var(--accent)] ${error ? "border-[#FF6B57]" : "border-[#3A433F]"}`}>
         <input
           id={id}
           type={revealed ? "text" : "password"}
@@ -185,8 +185,8 @@ export function SecretKeyField({
           className={`min-w-0 flex-1 bg-transparent px-3 ${FIELD[size]} font-mono tracking-wide outline-none disabled:cursor-not-allowed`}
         />
         {value && !revealed && (
-          <span aria-hidden="true" className="hidden items-center pr-2 font-mono text-xs text-[#5E5A50] sm:flex">
-            ends <b className="ml-1 text-[#1A1A17]">{tail}</b>
+          <span aria-hidden="true" className="hidden items-center pr-2 font-mono text-xs text-[#8A938D] sm:flex">
+            ends <b className="ml-1 text-[#E9EDE8]">{tail}</b>
           </span>
         )}
         <button
@@ -227,18 +227,18 @@ export function SecretKeyField({
       </div>
 
       <div id={`${id}-status`} role="status" aria-live="polite" className="mt-2 space-y-1 text-sm">
-        {error && <p className="border-l-4 border-[#B42318] bg-[#FBE4E6] px-2.5 py-1.5 font-semibold text-[#8A1C14]">✕ {error}</p>}
-        {!error && warning && <p className="border-l-4 border-[#A86A00] bg-[#FFF4E5] px-2.5 py-1.5 text-[#6B4300]">! {warning}</p>}
-        {note && <p className="text-[#5E5A50]">{note}</p>}
+        {error && <p className="border-l-4 border-[#FF6B57] bg-[#FF6B57]/10 px-2.5 py-1.5 font-semibold text-[#FF8F7E]">✕ {error}</p>}
+        {!error && warning && <p className="border-l-4 border-[#FFB547] bg-[#FFB547]/10 px-2.5 py-1.5 text-[#FFD08A]">! {warning}</p>}
+        {note && <p className="text-[#8A938D]">{note}</p>}
         {clearing > 0 && (
-          <p className="flex flex-wrap items-center gap-2 text-[#5E5A50]">
+          <p className="flex flex-wrap items-center gap-2 text-[#8A938D]">
             Clipboard clears in {Math.ceil(clearing / 1000)}s.
-            <button type="button" onClick={() => { setClearing(0); setNote("Kept on the clipboard."); }} className="border border-[#1A1A17] bg-white px-1.5 text-xs font-bold text-[#1A1A17] focus-visible:outline-2 focus-visible:outline-[var(--accent)]">
+            <button type="button" onClick={() => { setClearing(0); setNote("Kept on the clipboard."); }} className="rounded-lg border border-[#3A433F] bg-[#121614] px-1.5 text-xs font-bold text-[#E9EDE8] focus-visible:outline-2 focus-visible:outline-[var(--accent)]">
               Keep it
             </button>
           </p>
         )}
-        {!value && !note && <p className="text-xs text-[#5E5A50]">Hold ◎ to peek for up to {Math.round(peekMs / 1000)}s. ⧉ copies without showing it.</p>}
+        {!value && !note && <p className="text-xs text-[#8A938D]">Hold ◎ to peek for up to {Math.round(peekMs / 1000)}s. ⧉ copies without showing it.</p>}
       </div>
     </div>
   );

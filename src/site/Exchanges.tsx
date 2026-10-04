@@ -44,7 +44,7 @@ export function Exchanges({ id }: { id?: string }) {
                       </span>
                       <i className="led" data-on="true" data-pulse="true" style={{ width: 7, height: 7 }} />
                     </div>
-                    <div aria-hidden="true" className="relative m-3 grid h-[200px] place-items-center overflow-hidden rounded-[10px] bg-[#F4F5F1] bg-[radial-gradient(#dfe2dc_1px,transparent_1.2px)] bg-[length:14px_14px]">
+                    <div aria-hidden="true" className="relative m-3 grid h-[200px] place-items-center overflow-hidden rounded-[10px] border border-line bg-bg bg-[radial-gradient(rgba(233,237,232,.07)_1px,transparent_1.2px)] bg-[length:16px_16px]">
                       <CardPreview slug={e.slug} />
                     </div>
                     <div className="px-4 pb-4">

@@ -29,7 +29,7 @@ const CARDS: RolodexCard[] = PEOPLE.map(([name, role, note], i) => ({
   body: (
     <div className="flex items-end justify-between gap-2">
       <span className="font-mono text-xs">+1 555 01{String(i).padStart(2, "0")}</span>
-      <span className="text-right text-xs text-[#5E5A50]">{note}</span>
+      <span className="text-right text-xs text-[#8A938D]">{note}</span>
     </div>
   ),
 }));

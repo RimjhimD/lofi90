@@ -45,6 +45,16 @@ const DEFAULT_LABELS: FuseLabels = {
   undone: "Kept",
 };
 
+/** Dark text on light colours, white on dark ones, so any button colour stays readable. */
+function textOn(hex: string): string {
+  const n = parseInt(hex.replace("#", ""), 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.25 ? "#0B0D0C" : "#FFFFFF";
+}
+
 const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /**
@@ -59,8 +69,8 @@ export function UndoFuseButton({
   labels,
   disabled = false,
   previewState,
-  color = "#D7263D",
-  fuseColor = "#A86A00",
+  color = "#C6FF3D",
+  fuseColor = "#FFB547",
   spark: sparkStyle = "pulse",
   size = "md",
   className = "",
@@ -151,12 +161,12 @@ export function UndoFuseButton({
 
   const tone =
     state === "burning"
-      ? "bg-[#FFF4E5] text-[#1A1A17]"
+      ? "bg-[#FFB547]/10 text-[#E9EDE8]"
       : state === "done"
-        ? "bg-[#1A1A17] text-[#F2EEE3]"
+        ? "bg-[#181D1B] text-[#E9EDE8]"
         : state === "undone"
-          ? "bg-[#0E3B2E] text-[#F2EEE3]"
-          : "text-white";
+          ? "bg-[#C6FF3D]/15 text-[#C6FF3D]"
+          : "";
 
   return (
     <div className={`inline-flex flex-col items-center gap-2 ${className}`}>
@@ -169,8 +179,8 @@ export function UndoFuseButton({
         onKeyDown={(e) => e.key === "Escape" && live === "burning" && press()}
         disabled={disabled}
         aria-describedby={statusId}
-        style={state === "idle" && !disabled ? { background: color } : undefined}
-        className={`relative ${SIZES[size]} border-2 border-[#1A1A17] font-bold shadow-[3px_3px_0_#1A1A17] transition-[background-color,color,box-shadow,transform] duration-150 hover:-translate-x-px hover:-translate-y-px hover:shadow-[4px_4px_0_#1A1A17] active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_#1A1A17] focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[#D7263D] disabled:cursor-not-allowed disabled:bg-[#E8E2D2] disabled:text-[#5E5A50] disabled:shadow-none ${tone}`}
+        style={state === "idle" && !disabled ? { background: color, color: textOn(color) } : undefined}
+        className={`relative ${SIZES[size]} rounded-lg border border-[#3A433F] font-bold shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] transition-[background-color,color,box-shadow,transform] duration-150 hover:-translate-x-px hover:-translate-y-px hover:shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] active:translate-x-px active:translate-y-px active:shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[#C6FF3D] disabled:cursor-not-allowed disabled:bg-[#181D1B] disabled:text-[#8A938D] disabled:shadow-none ${tone}`}
       >
         {label}
         {state === "burning" && box.w > 0 && (
@@ -182,6 +192,7 @@ export function UndoFuseButton({
               y="1.5"
               width={box.w - 3}
               height={box.h - 3}
+              rx="9"
               fill="none"
               stroke={fuseColor}
               strokeWidth="3"
@@ -190,12 +201,12 @@ export function UndoFuseButton({
               strokeDashoffset={-progress}
             />
             {sparkStyle !== "none" && (
-              <circle ref={spark} r="5" fill="#FFB547" className={`drop-shadow-[0_0_6px_#FF7A1A] ${sparkStyle === "pulse" ? "motion-safe:animate-pulse" : ""}`} />
+              <circle ref={spark} r="5" fill="#FFF3C4" className={`drop-shadow-[0_0_8px_#FFB547] ${sparkStyle === "pulse" ? "motion-safe:animate-pulse" : ""}`} />
             )}
           </svg>
         )}
       </button>
-      <p id={statusId} role="status" aria-live="polite" className="min-h-5 text-center text-xs font-semibold text-[#5E5A50]">
+      <p id={statusId} role="status" aria-live="polite" className="min-h-5 text-center text-xs font-semibold text-[#8A938D]">
         {state === "burning"
           ? held && !previewState
             ? "Paused while you're here. Click or press Esc to undo."

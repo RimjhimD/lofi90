@@ -37,7 +37,7 @@ const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefe
  * A desk rolodex: cards hang from a rod and flip over a hinge. Scroll, drag, use the arrow keys,
  * or type a letter to spin straight to that A–Z tab.
  */
-export function RolodexCarousel({ cards, label, initialIndex = 0, onChange, accent = "#D7263D", flipMs = 450, behind = 4, tilt = 7, className = "" }: RolodexCarouselProps) {
+export function RolodexCarousel({ cards, label, initialIndex = 0, onChange, accent = "#C6FF3D", flipMs = 450, behind = 4, tilt = 7, className = "" }: RolodexCarouselProps) {
   const id = useId();
   const [index, setIndex] = useState(() => Math.min(Math.max(0, initialIndex), cards.length - 1));
   const [spinning, setSpinning] = useState(false);
@@ -86,7 +86,7 @@ export function RolodexCarousel({ cards, label, initialIndex = 0, onChange, acce
       style={{ ["--accent" as string]: accent }}
       aria-roledescription="carousel"
       aria-label={label}
-      className={`w-full max-w-md select-none text-[#1A1A17] ${className}`}
+      className={`w-full max-w-md select-none text-[#E9EDE8] ${className}`}
     >
       {/* A–Z index: click a letter to spin there. Letters with no cards are dimmed. */}
       <div role="group" aria-label="Jump to letter" className="mb-3 flex flex-wrap justify-center gap-px">
@@ -97,7 +97,7 @@ export function RolodexCarousel({ cards, label, initialIndex = 0, onChange, acce
             disabled={!usedLetters.has(L)}
             onClick={() => jumpToLetter(L)}
             aria-pressed={tabOf(current) === L}
-            className="h-6 w-[22px] border border-transparent font-mono text-[0.68rem] font-bold hover:border-[#1A1A17] aria-pressed:bg-[#1A1A17] aria-pressed:text-white disabled:text-[#C9C2AE] disabled:hover:border-transparent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--accent)]"
+            className="h-6 w-[22px] border border-transparent font-mono text-[0.68rem] font-bold hover:border-[#3A433F] aria-pressed:bg-[#C6FF3D] aria-pressed:text-[#0B0D0C] disabled:text-[#3A433F] disabled:hover:border-transparent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--accent)]"
           >
             {L}
           </button>
@@ -139,12 +139,12 @@ export function RolodexCarousel({ cards, label, initialIndex = 0, onChange, acce
         className="relative mx-auto h-[270px] cursor-grab touch-none [perspective:900px] active:cursor-grabbing focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]"
       >
         {/* the rod and the two side wheels the cards hang from */}
-        <div aria-hidden="true" className="absolute inset-x-6 bottom-9 h-2 rounded-full bg-[#5E5A50]" />
-        <div aria-hidden="true" className="absolute bottom-3 left-2 h-14 w-14 rounded-full border-[6px] border-[#1A1A17]" style={{ background: accent, transform: `rotate(${index * 24}deg)`, transition: `transform ${flipMs}ms cubic-bezier(.3,1.3,.5,1)` }}>
-          <span className="absolute left-1/2 top-0.5 h-3 w-1 -translate-x-1/2 bg-white" />
+        <div aria-hidden="true" className="absolute inset-x-6 bottom-9 h-2 rounded-full bg-[#8A938D]" />
+        <div aria-hidden="true" className="absolute bottom-3 left-2 h-14 w-14 rounded-full border-[6px] border-[#3A433F]" style={{ background: accent, transform: `rotate(${index * 24}deg)`, transition: `transform ${flipMs}ms cubic-bezier(.3,1.3,.5,1)` }}>
+          <span className="absolute left-1/2 top-0.5 h-3 w-1 -translate-x-1/2 bg-[#121614]" />
         </div>
-        <div aria-hidden="true" className="absolute bottom-3 right-2 h-14 w-14 rounded-full border-[6px] border-[#1A1A17]" style={{ background: accent, transform: `rotate(${index * 24}deg)`, transition: `transform ${flipMs}ms cubic-bezier(.3,1.3,.5,1)` }}>
-          <span className="absolute left-1/2 top-0.5 h-3 w-1 -translate-x-1/2 bg-white" />
+        <div aria-hidden="true" className="absolute bottom-3 right-2 h-14 w-14 rounded-full border-[6px] border-[#3A433F]" style={{ background: accent, transform: `rotate(${index * 24}deg)`, transition: `transform ${flipMs}ms cubic-bezier(.3,1.3,.5,1)` }}>
+          <span className="absolute left-1/2 top-0.5 h-3 w-1 -translate-x-1/2 bg-[#121614]" />
         </div>
 
         {cards.map((c, i) => {
@@ -176,29 +176,29 @@ export function RolodexCarousel({ cards, label, initialIndex = 0, onChange, acce
               }}
             >
               {/* the A–Z tab sticking up from the card's top edge */}
-              <span aria-hidden="true" className="absolute -top-5 h-5 w-6 border-2 border-b-0 border-[#1A1A17] bg-[#F2EEE3] text-center font-mono text-[0.68rem] font-bold leading-[18px]" style={{ left: `${tabLeft}%` }}>
+              <span aria-hidden="true" className="absolute -top-5 h-5 w-6 border-2 border-b-0 border-[#3A433F] bg-[#181D1B] text-center font-mono text-[0.68rem] font-bold leading-[18px]" style={{ left: `${tabLeft}%` }}>
                 {L}
               </span>
-              <div className="flex h-full flex-col border-2 border-[#1A1A17] bg-white p-4 shadow-[0_6px_0_rgba(26,26,23,.15)] [background-image:repeating-linear-gradient(transparent_0_23px,#EDE6D6_23px_24px)]">
-                <b className="font-mono text-[0.7rem] text-[#5E5A50]">{String(i + 1).padStart(2, "0")} / {String(cards.length).padStart(2, "0")}</b>
+              <div className="flex h-full flex-col rounded-lg border border-[#3A433F] bg-[#121614] p-4 shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] [background-image:repeating-linear-gradient(transparent_0_23px,#1C2220_23px_24px)]">
+                <b className="font-mono text-[0.7rem] text-[#8A938D]">{String(i + 1).padStart(2, "0")} / {String(cards.length).padStart(2, "0")}</b>
                 <h3 className="mt-1 text-xl font-black leading-tight">{c.title}</h3>
-                {c.subtitle && <p className="text-sm text-[#5E5A50]">{c.subtitle}</p>}
+                {c.subtitle && <p className="text-sm text-[#8A938D]">{c.subtitle}</p>}
                 {c.body && <div className="mt-auto text-sm">{c.body}</div>}
               </div>
               {/* the two punched holes the card hangs from */}
-              <span aria-hidden="true" className="absolute -bottom-1 left-[30%] h-3 w-5 rounded-full border-2 border-[#1A1A17] bg-[#F2EEE3]" />
-              <span aria-hidden="true" className="absolute -bottom-1 right-[30%] h-3 w-5 rounded-full border-2 border-[#1A1A17] bg-[#F2EEE3]" />
+              <span aria-hidden="true" className="absolute -bottom-1 left-[30%] h-3 w-5 rounded-full border border-[#3A433F] bg-[#181D1B]" />
+              <span aria-hidden="true" className="absolute -bottom-1 right-[30%] h-3 w-5 rounded-full border border-[#3A433F] bg-[#181D1B]" />
             </div>
           );
         })}
       </div>
 
       <div className="mt-2 flex items-center justify-center gap-2">
-        <button type="button" onClick={() => go(index - 1)} disabled={index === 0} aria-label="Previous card" className="h-9 w-9 border-2 border-[#1A1A17] bg-white font-bold shadow-[2px_2px_0_#1A1A17] active:translate-x-px active:translate-y-px active:shadow-none disabled:opacity-40 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]">
+        <button type="button" onClick={() => go(index - 1)} disabled={index === 0} aria-label="Previous card" className="h-9 w-9 rounded-lg border border-[#3A433F] bg-[#121614] font-bold shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] active:translate-x-px active:translate-y-px active:shadow-none disabled:opacity-40 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]">
           ▲
         </button>
-        <p id={`${id}-help`} className="min-w-44 text-center text-xs text-[#5E5A50]">Scroll, drag, ↑ ↓, or type a letter</p>
-        <button type="button" onClick={() => go(index + 1)} disabled={index === cards.length - 1} aria-label="Next card" className="h-9 w-9 border-2 border-[#1A1A17] bg-white font-bold shadow-[2px_2px_0_#1A1A17] active:translate-x-px active:translate-y-px active:shadow-none disabled:opacity-40 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]">
+        <p id={`${id}-help`} className="min-w-44 text-center text-xs text-[#8A938D]">Scroll, drag, ↑ ↓, or type a letter</p>
+        <button type="button" onClick={() => go(index + 1)} disabled={index === cards.length - 1} aria-label="Next card" className="h-9 w-9 rounded-lg border border-[#3A433F] bg-[#121614] font-bold shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] active:translate-x-px active:translate-y-px active:shadow-none disabled:opacity-40 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]">
           ▼
         </button>
       </div>

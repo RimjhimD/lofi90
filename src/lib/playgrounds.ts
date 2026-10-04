@@ -1,12 +1,12 @@
 import type { Control, ControlValues } from "@/site/Controls";
 
 const ACCENTS = [
-  { value: "#D7263D", label: "Signal red" },
-  { value: "#1A1A17", label: "Ink" },
-  { value: "#0E3B2E", label: "Bottle green" },
-  { value: "#1D4ED8", label: "Blue" },
-  { value: "#C2410C", label: "Burnt orange" },
-  { value: "#0F766E", label: "Teal" },
+  { value: "#C6FF3D", label: "Lime" },
+  { value: "#3DD9FF", label: "Cyan" },
+  { value: "#FFB547", label: "Amber" },
+  { value: "#FF6B57", label: "Coral" },
+  { value: "#B79CFF", label: "Lilac" },
+  { value: "#E9EDE8", label: "White" },
 ];
 const SIZES = [
   { value: "sm", label: "S" },
@@ -22,7 +22,7 @@ export interface Playground {
 /** The live controls shown under each component's preview. Keys are the component's own prop names. */
 export const PLAYGROUNDS: Record<string, Playground> = {
   "undo-fuse-button": {
-    initial: { color: "#D7263D", fuseColor: "#A86A00", spark: "pulse", size: "md", delayMs: 5000 },
+    initial: { color: "#C6FF3D", fuseColor: "#FFB547", spark: "pulse", size: "md", delayMs: 5000 },
     controls: [
       { key: "color", label: "Button colour", type: "color", options: ACCENTS },
       {
@@ -30,10 +30,10 @@ export const PLAYGROUNDS: Record<string, Playground> = {
         label: "Fuse colour",
         type: "color",
         options: [
-          { value: "#A86A00", label: "Amber" },
-          { value: "#D7263D", label: "Red" },
-          { value: "#1A1A17", label: "Ink" },
-          { value: "#0F766E", label: "Teal" },
+          { value: "#FFB547", label: "Amber" },
+          { value: "#FF6B57", label: "Coral" },
+          { value: "#3DD9FF", label: "Cyan" },
+          { value: "#E9EDE8", label: "White" },
         ],
       },
       { key: "spark", label: "Spark", type: "segment", options: [{ value: "pulse", label: "Pulse" }, { value: "steady", label: "Steady" }, { value: "none", label: "None" }] },
@@ -42,7 +42,7 @@ export const PLAYGROUNDS: Record<string, Playground> = {
     ],
   },
   "secret-key-field": {
-    initial: { accent: "#D7263D", drain: "ring", size: "md", peekMs: 3000, visibleChars: 4 },
+    initial: { accent: "#C6FF3D", drain: "ring", size: "md", peekMs: 3000, visibleChars: 4 },
     controls: [
       { key: "accent", label: "Accent", type: "color", options: ACCENTS },
       { key: "drain", label: "Peek countdown", type: "segment", options: [{ value: "ring", label: "Ring" }, { value: "bar", label: "Bar" }, { value: "none", label: "None" }] },
@@ -52,7 +52,7 @@ export const PLAYGROUNDS: Record<string, Playground> = {
     ],
   },
   "rolodex-carousel": {
-    initial: { accent: "#D7263D", flipMs: 450, behind: 4, tilt: 7 },
+    initial: { accent: "#C6FF3D", flipMs: 450, behind: 4, tilt: 7 },
     controls: [
       { key: "accent", label: "Wheel colour", type: "color", options: ACCENTS },
       { key: "flipMs", label: "Flip speed", type: "slider", min: 150, max: 1200, step: 50, unit: "ms" },
@@ -61,7 +61,7 @@ export const PLAYGROUNDS: Record<string, Playground> = {
     ],
   },
   "split-bill-card": {
-    initial: { accent: "#D7263D", coin: "#FFC94A", coinMotion: "drop", taxRate: 0.08, tipRate: 0.18 },
+    initial: { accent: "#C6FF3D", coin: "#FFC94A", coinMotion: "drop", taxRate: 0.08, tipRate: 0.18 },
     controls: [
       { key: "accent", label: "Accent", type: "color", options: ACCENTS },
       {

@@ -17,9 +17,9 @@ export const SECRET_KEY_FIELD_STATES = [
 
 /** The same field in other accents, countdown styles and sizes. */
 export const SECRET_KEY_FIELD_VARIANTS = [
-  { group: "Colour", label: "Signal red", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed accent="#D7263D" /> },
-  { group: "Colour", label: "Blue", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed accent="#1D4ED8" /> },
-  { group: "Colour", label: "Teal", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed accent="#0F766E" /> },
+  { group: "Colour", label: "Lime", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed accent="#C6FF3D" /> },
+  { group: "Colour", label: "Cyan", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed accent="#3DD9FF" /> },
+  { group: "Colour", label: "Amber", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed accent="#FFB547" /> },
   { group: "Motion", label: "Ring countdown", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed drain="ring" /> },
   { group: "Motion", label: "Bar countdown", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed drain="bar" /> },
   { group: "Motion", label: "No countdown", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed drain="none" /> },

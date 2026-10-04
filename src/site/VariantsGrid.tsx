@@ -19,7 +19,7 @@ export function VariantsGrid({ slug }: { slug: string }) {
             {variants.map((v, i) =>
               v.group !== g ? null : (
                 <li key={i} className="panel flex flex-col overflow-hidden">
-                  <div className="m-3 mb-0 grid min-h-[170px] flex-1 place-items-center overflow-hidden rounded-[10px] bg-[#F4F5F1] bg-[radial-gradient(#dfe2dc_1px,transparent_1.2px)] bg-[length:14px_14px] px-4 py-8 text-[#1A1A17]">
+                  <div className="m-3 mb-0 grid min-h-[170px] flex-1 place-items-center overflow-hidden rounded-[10px] border border-line bg-bg bg-[radial-gradient(rgba(233,237,232,.07)_1px,transparent_1.2px)] bg-[length:16px_16px] px-4 py-8">
                     <div key={runs[i] ?? 0} className="flex w-full justify-center">
                       {v.node}
                     </div>
