@@ -6,18 +6,18 @@ import { Exchanges } from "@/site/Exchanges";
 import { Radar } from "@/site/Radar";
 import { Scramble } from "@/site/Scramble";
 import { CountUp } from "@/site/CountUp";
-import { STATES, VARIANTS } from "@/lib/demos";
+import { PLAYGROUNDS } from "@/lib/playgrounds";
 
 const PHRASES = ["think twice.", "guard your keys.", "spin to the M's.", "split to the cent."];
 
 export default function Home() {
   const types = new Set(ENTRIES.map((e) => e.type)).size;
-  const looks = Object.values(VARIANTS).flat().length + Object.values(STATES).flat().length;
+  const controls = Object.values(PLAYGROUNDS).reduce((n, p) => n + p.controls.length, 0);
   const stats = [
     { label: "Components live", node: <><CountUp to={ENTRIES.length} pad={2} /><span className="text-mute">/30</span></> },
     { label: "Types covered", node: <><CountUp to={types} pad={2} /><span className="text-mute">/{TYPES.length}</span></> },
     { label: "Prompts published", node: <CountUp to={100} suffix="%" /> },
-    { label: "Variants & states", node: <CountUp to={looks} /> },
+    { label: "Live controls", node: <CountUp to={controls} /> },
   ];
 
   return (
@@ -44,7 +44,7 @@ export default function Home() {
                 Thirty components · ninety days · every prompt published
               </p>
               <p className="ready-rise mt-3 max-w-[50ch] text-text/75" style={{ animationDelay: "460ms" }}>
-                Unique React + TypeScript + Tailwind components. Each one runs live with a playground, every variant and state, its full code and the prompt that built it.
+                Unique React + TypeScript + Tailwind components. Each one runs live with a playground of controls, every state, its full code and the prompt that built it.
               </p>
               <div className="ready-rise mt-7 flex flex-wrap gap-3" style={{ animationDelay: "560ms" }}>
                 <Link href="#lines" className="cr-btn cr-btn-acc">

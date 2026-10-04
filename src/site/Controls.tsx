@@ -13,14 +13,14 @@ export type ControlValues = Record<string, string | number>;
 export function Controls({ controls, values, onChange, onReset }: { controls: Control[]; values: ControlValues; onChange: (key: string, value: string | number) => void; onReset: () => void }) {
   const id = useId();
   return (
-    <div className="border-t border-line bg-panel px-4 py-3">
-      <div className="mb-2 flex items-center justify-between">
+    <div className="border-t border-line bg-bg/40 px-5 py-5 lg:border-l lg:border-t-0">
+      <div className="mb-4 flex items-center justify-between">
         <span className="mono flex items-center gap-1.5 text-[0.64rem] text-acc"><i className="led" data-on="true" style={{ width: 6, height: 6 }} /> Controls</span>
         <button type="button" onClick={onReset} className="mono text-[0.62rem] text-mute hover:text-acc focus-visible:outline-2 focus-visible:outline-acc">
           Reset
         </button>
       </div>
-      <div className="grid gap-x-5 gap-y-3 sm:grid-cols-2">
+      <div className="grid gap-4">
         {controls.map((c) => {
           const v = values[c.key];
           const labelId = `${id}-${c.key}`;

@@ -3,13 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ENTRIES, TYPES, findEntry, pad } from "@/lib/registry";
 import { highlight, readRepoFile } from "@/lib/source";
-import { Stage } from "@/site/Stage";
+import { Showcase } from "@/site/Showcase";
 import { CodePanel, CopyButton } from "@/site/CodePanel";
 import { Flow } from "@/site/Flow";
-import { StatesGrid } from "@/site/StatesGrid";
-import { VariantsGrid } from "@/site/VariantsGrid";
-import { ScrollCable } from "@/site/ScrollCable";
-import { SectionNav } from "@/site/SectionNav";
+import { StatesRow } from "@/site/StatesRow";
 
 export function generateStaticParams() {
   return ENTRIES.map((e) => ({ slug: e.slug }));
@@ -21,38 +18,26 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return entry ? { title: entry.name, description: entry.summary } : {};
 }
 
-const SECTIONS = [
-  ["how", "How it works"],
-  ["when", "When to use it"],
-  ["usage", "Usage"],
-  ["variants", "Variants"],
-  ["states", "States"],
-  ["props", "Props"],
-  ["prompt", "Build prompt"],
-  ["a11y", "Accessibility"],
-] as const;
-
-const BADGES = ["Keyboard", "Contrast AA", "Reduced motion", "375 / 768 / 1280", "0 deps"];
+const REPO = "https://github.com/RimjhimD/lofi90/blob/main/";
 
 function Section({ id, title, children, lead }: { id: string; title: string; lead?: string; children: React.ReactNode }) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-40 pt-16">
-      <h2 id={`${id}-title`} className="font-display text-[1.9rem] font-semibold tracking-tight">
+    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-28 pt-14">
+      <h2 id={`${id}-title`} className="flex items-center gap-3 font-display text-2xl font-semibold tracking-tight">
+        <span aria-hidden="true" className="h-6 w-1 rounded-full bg-acc shadow-[0_0_12px_rgba(198,255,61,.6)]" />
         {title}
       </h2>
-      {lead && <p className="mb-6 mt-1.5 max-w-[70ch] text-mute">{lead}</p>}
-      <div className={lead ? "" : "mt-6"}>{children}</div>
+      {lead && <p className="mt-1.5 max-w-[70ch] text-sm text-mute">{lead}</p>}
+      <div className="mt-5">{children}</div>
     </section>
   );
 }
-
-const box = "panel p-5";
 
 export default async function ComponentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const entry = findEntry(slug);
   if (!entry) notFound();
-  const exchange = pad(TYPES.findIndex((t) => t.id === entry.type) + 1);
+  const typeNo = pad(TYPES.findIndex((t) => t.id === entry.type) + 1);
   const index = ENTRIES.indexOf(entry);
   const next = ENTRIES[(index + 1) % ENTRIES.length];
   const prev = ENTRIES[(index - 1 + ENTRIES.length) % ENTRIES.length];
@@ -66,125 +51,113 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
   const usageFile = { label: "usage.tsx", code: usage, html: await highlight(usage, "usage.tsx") };
 
   return (
-    <main className="mx-auto max-w-[1180px] px-6 pb-32 lg:px-10">
-      <nav aria-label="Breadcrumb" className="mono flex flex-wrap items-center gap-2 pt-6 text-[0.66rem] text-mute">
-        <Link href="/components" className="hover:text-text">Components</Link>/
-        <Link href={`/components#type-${entry.type}`} className="hover:text-text">Type {exchange} · {entry.type}</Link>/<span className="text-acc">No. {entry.ext}</span>
+    <main className="mx-auto max-w-[1120px] px-6 pb-32 lg:px-10">
+      <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 pt-8 text-sm text-mute">
+        <Link href="/" className="hover:text-text">Home</Link>/<Link href="/components" className="hover:text-text">Components</Link>/<span className="text-text">{entry.name}</span>
       </nav>
 
-      <header className="anim-rise mt-4">
-        <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
-          <h1 className="font-display text-[clamp(2.2rem,4.6vw,3.6rem)] font-bold leading-[1.02] tracking-tight">{entry.name}</h1>
-          <span className="mono mb-2 ml-auto flex items-center gap-2 text-[0.64rem] text-mute"><i className="led" data-on="true" data-pulse="true" /> /components/{entry.slug}</span>
+      <header className="anim-rise mt-5 flex flex-wrap items-end justify-between gap-6">
+        <div className="max-w-[72ch]">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <span className="mono flex items-center gap-1.5 rounded-full border border-acc/40 bg-acc/10 px-2.5 py-1 text-[0.6rem] text-acc">
+              <i className="led" data-on="true" style={{ width: 5, height: 5 }} /> Type: {entry.type}
+            </span>
+            <span className="mono text-[0.62rem] text-mute">Type {typeNo}</span>
+            <span className="mono text-[0.62rem] text-mute">No. {entry.ext}</span>
+          </div>
+          <h1 className="bg-gradient-to-r from-text via-text to-acc bg-clip-text font-display text-[clamp(2.4rem,5vw,3.8rem)] font-bold leading-[1.02] tracking-tight text-transparent">{entry.name}</h1>
+          <p className="mt-4 text-[1.02rem] leading-relaxed text-text/75">{entry.why}</p>
         </div>
-        <p className="mt-3 max-w-[80ch] text-[1.02rem] leading-relaxed text-text/80">{entry.why}</p>
-        <ul aria-label="Quality checks" className="mt-4 flex flex-wrap gap-2">
-          {BADGES.map((b) => (
-            <li key={b} className="mono rounded-full border border-acc/30 bg-acc/5 px-2.5 py-1 text-[0.6rem] text-acc">✓ {b}</li>
-          ))}
-        </ul>
+        <a href={`${REPO}${entry.files[0].path}`} className="cr-btn shrink-0 text-sm">
+          View on GitHub ↗
+        </a>
       </header>
 
-      {/* 1. Preview and source, side by side */}
-      <div className="mt-6 grid items-stretch gap-5 xl:grid-cols-2">
-        <Stage slug={entry.slug} />
-        <CodePanel files={sourceFiles} title="Source" maxHeight="560px" />
-      </div>
+      <Showcase slug={entry.slug} files={sourceFiles} />
 
-      <SectionNav sections={SECTIONS} />
+      <Section id="usage" title="Usage" lead="Copy the component file into your project (React + Tailwind, no other packages), then use it like this.">
+        <CodePanel files={[usageFile]} />
+      </Section>
 
-      <ScrollCable>
-        <Section id="how" title="How it works" lead="The flow from the user's first tap to the end result, including what happens when things go wrong.">
-          <Flow steps={entry.flow} />
-        </Section>
+      <Section id="states" title="States">
+        <StatesRow slug={entry.slug} />
+      </Section>
 
-        <Section id="when" title="When to use it">
-          <div className="grid gap-5 md:grid-cols-2">
-            <div className={`${box} border-l-2 border-l-acc`}>
-              <h3 className="mono mb-3 text-[0.66rem] text-acc">✓ Great for</h3>
-              <ul className="space-y-2">
-                {entry.useWhen.map((u) => (
-                  <li key={u} className="text-text/85">— {u}</li>
+      <Section id="how" title="How it works">
+        <Flow steps={entry.flow} />
+      </Section>
+
+      <Section id="when" title="When to use it">
+        <div className="grid gap-3 md:grid-cols-2">
+          {[
+            { title: "Great for", items: entry.useWhen, mark: "✓", tone: "text-acc" },
+            { title: "Skip it when", items: entry.avoidWhen, mark: "✕", tone: "text-err" },
+          ].map((g) => (
+            <div key={g.title} className="panel p-5">
+              <h3 className={`mono mb-3 text-[0.64rem] ${g.tone}`}>{g.title}</h3>
+              <ul className="space-y-2 text-sm">
+                {g.items.map((u) => (
+                  <li key={u} className="flex gap-2.5 text-text/85">
+                    <span aria-hidden="true" className={g.tone}>{g.mark}</span>
+                    {u}
+                  </li>
                 ))}
               </ul>
             </div>
-            <div className={`${box} border-l-2 border-l-err`}>
-              <h3 className="mono mb-3 text-[0.66rem] text-err">✕ Skip it when</h3>
-              <ul className="space-y-2">
-                {entry.avoidWhen.map((u) => (
-                  <li key={u} className="text-text/85">— {u}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </Section>
+          ))}
+        </div>
+      </Section>
 
-        <Section id="usage" title="Usage" lead="Copy the component file into your project (React + Tailwind, no other packages), then use it like this.">
-          <CodePanel files={[usageFile]} />
-        </Section>
-
-        <Section id="variants" title="Variants" lead="The same component in other colours, motions and sizes. Press replay to watch a tile's motion again, or use the controls under the live preview.">
-          <VariantsGrid slug={entry.slug} />
-        </Section>
-
-        <Section id="states" title="States" lead="Every state the component can be in, rendered live.">
-          <StatesGrid slug={entry.slug} />
-        </Section>
-
-        <Section id="props" title="Props">
-          <div className="panel overflow-x-auto">
-            <table className="w-full min-w-[720px] border-collapse text-left text-[0.95rem]">
-              <thead className="border-b border-line text-mute">
-                <tr className="[&>th]:mono [&>th]:px-4 [&>th]:py-3 [&>th]:text-[0.62rem] [&>th]:font-normal">
-                  <th>Prop</th>
-                  <th>Type</th>
-                  <th>Default</th>
-                  <th>What it does</th>
+      <Section id="props" title="Props">
+        <div className="panel overflow-x-auto">
+          <table className="w-full min-w-[720px] border-collapse text-left text-sm">
+            <thead className="text-mute">
+              <tr className="[&>th]:border-b [&>th]:border-line [&>th]:px-4 [&>th]:py-3 [&>th]:text-xs [&>th]:font-medium">
+                <th>Prop</th>
+                <th>Type</th>
+                <th>Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entry.props.map((p) => (
+                <tr key={p.name} className="[&>td]:border-b [&>td]:border-line/70 [&>td]:px-4 [&>td]:py-3 [&>td]:align-top last:[&>td]:border-b-0">
+                  <td className="font-mono text-[0.8rem] font-medium text-text">{p.name}</td>
+                  <td className="font-mono text-[0.78rem] text-acc/90">{p.type}</td>
+                  <td className="font-mono text-[0.78rem] text-mute">{p.default}</td>
+                  <td className="text-text/75">{p.description}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {entry.props.map((p) => (
-                  <tr key={p.name} className="[&>td]:border-b [&>td]:border-line [&>td]:px-4 [&>td]:py-2.5 [&>td]:align-top">
-                    <td className="font-mono text-[0.8rem] text-acc">{p.name}</td>
-                    <td>
-                      <code className="rounded bg-panel-2 px-1.5 py-0.5 font-mono text-xs text-text/85">{p.type}</code>
-                    </td>
-                    <td className="font-mono text-xs text-mute">{p.default}</td>
-                    <td className="text-text/80">{p.description}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Section>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Section>
 
-        <Section id="prompt" title="Build prompt" lead="The final prompt used to build this component.">
-          <div className="panel overflow-hidden">
-            <div className="flex items-center justify-between border-b border-line px-4 py-2">
-              <span className="mono text-[0.64rem] text-acc">prompt.md</span>
+      <Section id="a11y" title="Accessibility">
+        <ul className="grid gap-3 md:grid-cols-2">
+          {[...entry.accessibility, entry.support].map((a) => (
+            <li key={a} className="panel flex gap-3 p-4 text-sm text-text/85">
+              <span aria-hidden="true" className="text-acc">✓</span>
+              {a}
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section id="prompt" title="Build prompt">
+        <details className="panel group overflow-hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 text-sm font-medium">
+            The final prompt used to build this component
+            <span aria-hidden="true" className="text-mute transition-transform group-open:rotate-180">⌄</span>
+          </summary>
+          <div className="border-t border-line">
+            <div className="flex justify-end px-4 pt-3">
               <CopyButton text={prompt} label="Copy prompt" />
             </div>
-            <p className="whitespace-pre-wrap p-5 text-[0.95rem] leading-relaxed text-text/85">{prompt}</p>
+            <p className="whitespace-pre-wrap px-5 pb-5 pt-2 text-sm leading-relaxed text-text/80">{prompt}</p>
           </div>
-        </Section>
-
-        <Section id="a11y" title="Accessibility & support">
-          <div className="grid gap-5 md:grid-cols-[2fr_1fr]">
-            <ul className={`${box} space-y-2.5`}>
-              {entry.accessibility.map((a) => (
-                <li key={a} className="flex gap-2.5">
-                  <span aria-hidden="true" className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-acc/15 text-[11px] text-acc">✓</span>
-                  {a}
-                </li>
-              ))}
-            </ul>
-            <div className={box}>
-              <h3 className="mono mb-2 text-[0.66rem] text-mute">Browser support</h3>
-              <p className="text-text/85">{entry.support}</p>
-            </div>
-          </div>
-        </Section>
-      </ScrollCable>
+        </details>
+      </Section>
 
       <nav aria-label="More components" className="mt-16 flex flex-wrap justify-between gap-3 border-t border-line pt-6">
         <Link href={`/components/${prev.slug}`} className="cr-btn">← {prev.name}</Link>
