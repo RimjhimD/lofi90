@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Baloo_2, Luckiest_Guy } from "next/font/google";
 import { Header } from "@/site/Header";
-import { FloatingPieces } from "@/site/FloatingPieces";
+import { LiveBoard } from "@/site/board/LiveBoard";
 import "./globals.css";
 
 const luckiest = Luckiest_Guy({ weight: "400", subsets: ["latin"], variable: "--font-luckiest", display: "swap" });
@@ -17,7 +17,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${luckiest.variable} ${baloo.variable}`}>
       <body className="min-h-screen antialiased">
-        <FloatingPieces />
+        <LiveBoard />
         <Header />
         <div className="relative z-10">{children}</div>
       </body>
