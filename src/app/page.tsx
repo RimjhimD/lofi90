@@ -7,7 +7,7 @@ import { Scramble } from "@/site/Scramble";
 import { CountUp } from "@/site/CountUp";
 import { PLAYGROUNDS } from "@/lib/playgrounds";
 
-const PHRASES = ["think twice.", "guard your keys.", "spin to the M's.", "split to the cent."];
+const PHRASES = ["think twice.", "pull to measure.", "ring when you pluck.", "spin on the deck.", "tear to check in."];
 
 export default function Home() {
   const types = new Set(ENTRIES.map((e) => e.type)).size;

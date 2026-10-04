@@ -41,43 +41,30 @@ export const PLAYGROUNDS: Record<string, Playground> = {
       { key: "delayMs", label: "Fuse length", type: "slider", min: 2000, max: 10000, step: 1000, unit: "s", scale: 0.001 },
     ],
   },
-  "secret-key-field": {
-    initial: { accent: "#C6FF3D", drain: "ring", size: "md", peekMs: 3000, visibleChars: 4 },
+  "tape-measure-input": {
+    initial: { accent: "#C6FF3D", size: "md", step: 5 },
     controls: [
-      { key: "accent", label: "Accent", type: "color", options: ACCENTS },
-      { key: "drain", label: "Peek countdown", type: "segment", options: [{ value: "ring", label: "Ring" }, { value: "bar", label: "Bar" }, { value: "none", label: "None" }] },
+      { key: "accent", label: "Tape colour", type: "color", options: ACCENTS },
       { key: "size", label: "Size", type: "segment", options: SIZES },
-      { key: "peekMs", label: "Peek time", type: "slider", min: 1000, max: 8000, step: 500, unit: "s", scale: 0.001 },
-      { key: "visibleChars", label: "Characters shown", type: "slider", min: 2, max: 8, step: 1 },
+      { key: "step", label: "Snaps to", type: "slider", min: 1, max: 20, step: 1, unit: " cm" },
     ],
   },
-  "rolodex-carousel": {
-    initial: { accent: "#C6FF3D", flipMs: 450, behind: 4, tilt: 7 },
+  "string-nav": {
+    initial: { accent: "#C6FF3D", tension: 5, wobble: 9, size: "md" },
     controls: [
-      { key: "accent", label: "Wheel colour", type: "color", options: ACCENTS },
-      { key: "flipMs", label: "Flip speed", type: "slider", min: 150, max: 1200, step: 50, unit: "ms" },
-      { key: "behind", label: "Cards behind", type: "slider", min: 1, max: 6, step: 1 },
-      { key: "tilt", label: "Lean", type: "slider", min: 0, max: 16, step: 1, unit: "°" },
+      { key: "accent", label: "Bead colour", type: "color", options: ACCENTS },
+      { key: "tension", label: "Tension", type: "slider", min: 1, max: 10, step: 1 },
+      { key: "wobble", label: "Wobble", type: "slider", min: 0, max: 16, step: 1, unit: "px" },
+      { key: "size", label: "Size", type: "segment", options: SIZES },
     ],
   },
-  "split-bill-card": {
-    initial: { accent: "#C6FF3D", coin: "#FFC94A", coinMotion: "drop", taxRate: 0.08, tipRate: 0.18 },
+  "vinyl-crate-carousel": {
+    initial: { accent: "#C6FF3D", rpm: "33", flipMs: 450, size: "md" },
     controls: [
-      { key: "accent", label: "Accent", type: "color", options: ACCENTS },
-      {
-        key: "coin",
-        label: "Coins",
-        type: "color",
-        options: [
-          { value: "#FFC94A", label: "Gold" },
-          { value: "#D9DDE3", label: "Silver" },
-          { value: "#E0965A", label: "Copper" },
-          { value: "#9BE3C2", label: "Mint" },
-        ],
-      },
-      { key: "coinMotion", label: "Coin motion", type: "segment", options: [{ value: "drop", label: "Drop" }, { value: "pop", label: "Pop" }, { value: "none", label: "None" }] },
-      { key: "taxRate", label: "Tax", type: "slider", min: 0, max: 0.2, step: 0.01, unit: "%", scale: 100 },
-      { key: "tipRate", label: "Tip", type: "slider", min: 0, max: 0.3, step: 0.01, unit: "%", scale: 100 },
+      { key: "accent", label: "Glow", type: "color", options: ACCENTS },
+      { key: "rpm", label: "Speed", type: "segment", options: [{ value: "33", label: "33 rpm" }, { value: "45", label: "45 rpm" }] },
+      { key: "flipMs", label: "Flip speed", type: "slider", min: 200, max: 1200, step: 50, unit: "ms" },
+      { key: "size", label: "Size", type: "segment", options: SIZES },
     ],
   },
   "island-notification": {
@@ -87,6 +74,14 @@ export const PLAYGROUNDS: Record<string, Playground> = {
       { key: "morphMs", label: "Morph speed", type: "slider", min: 200, max: 1200, step: 50, unit: "ms" },
       { key: "duration", label: "Stays open", type: "slider", min: 2000, max: 8000, step: 500, unit: "s", scale: 0.001 },
       { key: "hold", label: "Wait while typing", type: "segment", options: [{ value: "on", label: "On" }, { value: "off", label: "Off" }] },
+    ],
+  },
+  "boarding-pass-card": {
+    initial: { accent: "#C6FF3D", tearDistance: 110, size: "md" },
+    controls: [
+      { key: "accent", label: "Stamp colour", type: "color", options: ACCENTS },
+      { key: "tearDistance", label: "Pull to tear", type: "slider", min: 60, max: 220, step: 10, unit: "px" },
+      { key: "size", label: "Size", type: "segment", options: SIZES },
     ],
   },
 };

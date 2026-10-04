@@ -4,10 +4,16 @@ import { ENTRIES, TYPES } from "@/lib/registry";
 export function Ticker() {
   const events = [
     ...ENTRIES.map((e) => [`${e.slug}`, "online", "acc"] as const),
-    ["undo-fuse-button", "undo window closed · nothing deleted", "mute"] as const,
-    ["secret-key-field", "secret key blocked in a public field", "warn"] as const,
-    ["rolodex-carousel", "spun A → M in 7 flips", "mute"] as const,
-    ["split-bill-card", "split $71.82 to the cent", "acc"] as const,
+    ...(
+      [
+        ["undo-fuse-button", "undo window closed · nothing deleted", "mute"],
+        ["tape-measure-input", "pulled out to 120 cm · snapped", "acc"],
+        ["string-nav", "plucked “work” · bead rode over", "mute"],
+        ["vinyl-crate-carousel", "pulled out a record · spinning at 33 rpm", "acc"],
+        ["island-notification", "3 arrived · 1 showing, 2 waiting", "warn"],
+        ["boarding-pass-card", "stub torn · checked in, seat 14A", "acc"],
+      ] as const
+    ).filter(([slug]) => ENTRIES.some((e) => e.slug === slug)),
     ["library", `${ENTRIES.length} of 30 components · ${new Set(ENTRIES.map((e) => e.type)).size} of ${TYPES.length} types`, "mute"] as const,
   ];
   const tone = { acc: "text-acc", warn: "text-warn", mute: "text-mute" };

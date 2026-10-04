@@ -9,10 +9,11 @@ Live site: https://lofi90.vercel.app (coming soon)
 | Ext | Component | Type | Page |
 |---|---|---|---|
 | 01 | Undo Fuse Button | button | `/components/undo-fuse-button` |
-| 02 | Secret Key Field | input | `/components/secret-key-field` |
-| 03 | Rolodex Carousel | section | `/components/rolodex-carousel` |
-| 04 | Split-the-Bill Card | card | `/components/split-bill-card` |
+| 02 | Tape Measure Input | input | `/components/tape-measure-input` |
+| 03 | Plucked String Nav | navbar | `/components/string-nav` |
+| 04 | Vinyl Crate Carousel | section | `/components/vinyl-crate-carousel` |
 | 05 | Island Notification | modal | `/components/island-notification` |
+| 06 | Boarding Pass Card | card | `/components/boarding-pass-card` |
 
 Every component page has a live demo (375 / 768 / full width), the usage example, the full source, a props table and the final prompt that built it.
 
