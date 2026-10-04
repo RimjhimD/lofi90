@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DEMOS } from "@/lib/demos";
 import { PLAYGROUNDS } from "@/lib/playgrounds";
 import { Controls, type ControlValues } from "@/site/Controls";
@@ -19,6 +19,27 @@ export function Showcase({ slug, files }: { slug: string; files: CodeFile[] }) {
   const Demo = DEMOS[slug];
   const play = PLAYGROUNDS[slug];
   const [values, setValues] = useState<ControlValues>(play?.initial ?? {});
+  const [slow, setSlow] = useState(false);
+  const stage = useRef<HTMLDivElement>(null);
+
+  // Slow-mo: every animation and transition inside the stage plays at a quarter speed. New ones are
+  // caught as they start, so a morph or a flip triggered while slow-mo is on is slowed too.
+  useEffect(() => {
+    const el = stage.current;
+    if (!el || !el.getAnimations) return;
+    const rate = slow ? 0.25 : 1;
+    const apply = () =>
+      el.getAnimations({ subtree: true }).forEach((a) => {
+        if (a.playbackRate !== rate) a.playbackRate = rate;
+      });
+    apply();
+    if (!slow) return;
+    const id = window.setInterval(apply, 50);
+    return () => {
+      clearInterval(id);
+      el.getAnimations({ subtree: true }).forEach((a) => (a.playbackRate = 1));
+    };
+  }, [slow, tab]);
   const tabBtn =
     "rounded-md px-3 py-1.5 text-sm font-medium text-mute transition-colors aria-selected:bg-panel-2 aria-selected:text-text focus-visible:outline-2 focus-visible:outline-acc";
 
@@ -34,7 +55,19 @@ export function Showcase({ slug, files }: { slug: string; files: CodeFile[] }) {
           </button>
         </div>
         {tab === "preview" && (
-          <div role="group" aria-label="Preview width" className="ml-auto flex rounded-lg border border-line bg-panel p-1">
+          <button
+            type="button"
+            aria-pressed={slow}
+            onClick={() => setSlow((v) => !v)}
+            title="Play the component's animations at a quarter speed"
+            className="ml-auto flex items-center gap-2 rounded-lg border border-line bg-panel px-3 py-1.5 text-sm font-medium text-mute transition-colors hover:text-text aria-pressed:border-acc/60 aria-pressed:text-acc focus-visible:outline-2 focus-visible:outline-acc"
+          >
+            <span aria-hidden="true" className={slow ? "animate-spin [animation-duration:4s]" : ""}>◐</span>
+            Slow-mo {slow ? "×¼" : ""}
+          </button>
+        )}
+        {tab === "preview" && (
+          <div role="group" aria-label="Preview width" className="flex rounded-lg border border-line bg-panel p-1">
             {WIDTHS.map((w) => (
               <button key={w.id} type="button" aria-pressed={width === w.id} onClick={() => setWidth(w.id)} className="mono rounded-md px-2.5 py-1 text-[0.62rem] text-mute aria-pressed:bg-panel-2 aria-pressed:text-text focus-visible:outline-2 focus-visible:outline-acc">
                 {w.label}
@@ -46,13 +79,14 @@ export function Showcase({ slug, files }: { slug: string; files: CodeFile[] }) {
 
       {tab === "preview" ? (
         <div className="panel grid overflow-hidden lg:grid-cols-[minmax(0,1fr)_280px]">
-          <div className="relative grid min-h-[480px] place-items-center overflow-hidden p-6">
+          <div ref={stage} className="screen relative grid min-h-[480px] place-items-center overflow-hidden p-6">
+            <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-acc shadow-[0_0_18px_4px_rgba(198,255,61,.4)] animate-[scan-down_1.4s_cubic-bezier(.65,0,.35,1)_.2s_both]" />
             <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(233,237,232,.06)_1px,transparent_1.2px)] bg-[length:18px_18px]" />
             <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(198,255,61,.12),transparent_65%)] blur-2xl" />
             <span className="mono absolute left-4 top-4 flex items-center gap-1.5 text-[0.6rem] text-acc">
               <i className="led" data-on="true" data-pulse="true" style={{ width: 6, height: 6 }} /> Live
             </span>
-            <div className="relative grid w-full place-items-center transition-[max-width] duration-500" style={{ maxWidth: width === "full" ? "100%" : WIDTHS.find((w) => w.id === width)!.max }}>
+            <div className="stage-on relative grid w-full place-items-center transition-[max-width] duration-500" style={{ maxWidth: width === "full" ? "100%" : WIDTHS.find((w) => w.id === width)!.max }}>
               <Demo controls={values} />
             </div>
           </div>

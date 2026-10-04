@@ -20,6 +20,44 @@
 html {
   scroll-behavior: smooth;
   color-scheme: dark;
+  --dot: rgb(233 237 232 / 0.07);
+  --glow: rgb(198 255 61 / 0.07);
+}
+
+/* Light theme: same layout, daylight console. Set by the theme switch on <html data-theme="light">. */
+html[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: #f3f4ef;
+  --color-panel: #ffffff;
+  --color-panel-2: #eceee8;
+  --color-line: #dde0d8;
+  --color-line-2: #c4c9bf;
+  --color-text: #141714;
+  --color-mute: #5d645d;
+  --color-acc: #4d7c0f;
+  --color-warn: #a15c00;
+  --color-err: #c2412d;
+  --dot: rgb(20 23 20 / 0.09);
+  --glow: rgb(77 124 15 / 0.08);
+}
+html[data-theme="light"] .cr-btn-acc {
+  color: #ffffff;
+}
+
+/* A console screen: always dark, whatever the page theme, so components keep the colours they were
+   designed with. Used for live previews, state tiles and card previews. */
+.screen {
+  --color-bg: #0b0d0c;
+  --color-panel: #121614;
+  --color-panel-2: #181d1b;
+  --color-line: #222826;
+  --color-line-2: #3a433f;
+  --color-text: #e9ede8;
+  --color-mute: #8a938d;
+  --color-acc: #c6ff3d;
+  background-color: #0b0d0c;
+  color: #e9ede8;
+  color-scheme: dark;
 }
 
 body {
@@ -28,8 +66,8 @@ body {
   background-color: var(--color-bg);
   /* the console's dot grid, brighter where the cursor spotlight falls */
   background-image:
-    radial-gradient(600px circle at var(--mx) var(--my), rgb(198 255 61 / 0.07), transparent 60%),
-    radial-gradient(rgb(233 237 232 / 0.07) 1px, transparent 1.2px);
+    radial-gradient(600px circle at var(--mx) var(--my), var(--glow), transparent 60%),
+    radial-gradient(var(--dot) 1px, transparent 1.2px);
   background-size: 100% 100%, 22px 22px;
   background-attachment: fixed;
   color: var(--color-text);
@@ -145,6 +183,70 @@ body {
 }
 
 .anim-rise { animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+/* ---- Slow-motion system ---------------------------------------------------------------- */
+
+/* Anything with data-reveal drifts up and pulls into focus, slowly, when it scrolls into view. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(34px) scale(0.985);
+  filter: blur(10px);
+  transition:
+    opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.6s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Every page change "tunes in": the content focuses up from a blur behind a lime scan line. */
+@keyframes tune-in {
+  from { opacity: 0; filter: blur(14px) saturate(0.4); transform: translateY(16px) scale(0.99); }
+  60% { opacity: 1; }
+  to { opacity: 1; filter: none; transform: none; }
+}
+@keyframes scan-down {
+  0% { transform: translateY(-4vh); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translateY(104vh); opacity: 0; }
+}
+.page-tune { animation: tune-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.page-scan {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  z-index: 60;
+  pointer-events: none;
+  background: var(--color-acc);
+  box-shadow: 0 0 24px 6px rgb(198 255 61 / 0.35);
+  animation: scan-down 1.15s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+/* A live preview "powers on": a scan line crosses the stage, then the component sharpens in. */
+@keyframes power-on {
+  from { opacity: 0; filter: blur(12px) brightness(1.6); transform: scale(0.97); }
+  to { opacity: 1; filter: none; transform: none; }
+}
+.stage-on { animation: power-on 1.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Theme switch: the new theme is revealed top to bottom behind a scan line (View Transitions). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  animation: theme-wipe 1.1s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+@keyframes theme-wipe {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
 .anim-blink { animation: blink 1.2s steps(1) infinite; }
 
 /* Hero pieces wait for the intro to finish (html[data-ready]). */
@@ -158,4 +260,6 @@ html[data-ready] .ready-rise { animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 
     scroll-behavior: auto !important;
   }
   .ready-rise { opacity: 1; }
+  [data-reveal] { opacity: 1; transform: none; filter: none; }
+  .page-scan { display: none; }
 }

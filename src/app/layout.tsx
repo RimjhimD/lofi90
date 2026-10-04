@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { Header } from "@/site/Header";
 import { Sidebar } from "@/site/Sidebar";
 import { Spotlight } from "@/site/Spotlight";
+import { AutoReveal } from "@/site/AutoReveal";
 import "./globals.css";
 
 const grotesk = Space_Grotesk({ weight: ["500", "600", "700"], subsets: ["latin"], variable: "--font-grotesk", display: "swap" });
@@ -17,9 +18,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${grotesk.variable} ${inter.variable} ${jetbrains.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${grotesk.variable} ${inter.variable} ${jetbrains.variable}`}>
+      <head>
+        {/* apply the saved theme before first paint, so light mode never flashes dark */}
+        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem("lofi90-theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}` }} />
+      </head>
       <body className="min-h-screen antialiased">
         <Spotlight />
+        <AutoReveal />
         <Header />
         <div className="lg:grid lg:grid-cols-[240px_minmax(0,1fr)]">
           <Sidebar />

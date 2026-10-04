@@ -23,7 +23,7 @@ export function Exchanges({ id }: { id?: string }) {
     <div id={id} className="scroll-mt-28">
       {groups.map((t) => (
         <section key={t.id} id={`type-${t.id}`} aria-labelledby={`type-${t.id}-title`} className="scroll-mt-28 pt-14">
-          <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+          <div data-reveal className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
             <span className="mono text-acc">Type {t.no}</span>
             <h2 id={`type-${t.id}-title`} className="font-display text-3xl font-semibold capitalize tracking-tight">
               {t.label}
@@ -32,7 +32,7 @@ export function Exchanges({ id }: { id?: string }) {
           </div>
           <ul className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5">
             {t.entries.map((e, i) => (
-              <li key={e.slug} className="anim-rise" style={{ animationDelay: `${i * 90}ms` }}>
+              <li key={e.slug} data-reveal style={{ ["--reveal-delay" as string]: `${i * 120}ms` }}>
                 <TiltCard>
                   <Link
                     href={`/components/${e.slug}`}
@@ -44,7 +44,7 @@ export function Exchanges({ id }: { id?: string }) {
                       </span>
                       <i className="led" data-on="true" data-pulse="true" style={{ width: 7, height: 7 }} />
                     </div>
-                    <div aria-hidden="true" className="relative m-3 grid h-[200px] place-items-center overflow-hidden rounded-[10px] border border-line bg-bg bg-[radial-gradient(rgba(233,237,232,.07)_1px,transparent_1.2px)] bg-[length:16px_16px]">
+                    <div aria-hidden="true" className="screen relative m-3 grid h-[200px] place-items-center overflow-hidden rounded-[10px] border border-line bg-bg bg-[radial-gradient(rgba(233,237,232,.07)_1px,transparent_1.2px)] bg-[length:16px_16px]">
                       <CardPreview slug={e.slug} />
                     </div>
                     <div className="px-4 pb-4">

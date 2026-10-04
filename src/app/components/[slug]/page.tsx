@@ -22,7 +22,7 @@ const REPO = "https://github.com/RimjhimD/lofi90/blob/main/";
 
 function Section({ id, title, children, lead }: { id: string; title: string; lead?: string; children: React.ReactNode }) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-28 pt-14">
+    <section id={id} aria-labelledby={`${id}-title`} data-reveal className="scroll-mt-28 pt-14">
       <h2 id={`${id}-title`} className="flex items-center gap-3 font-display text-2xl font-semibold tracking-tight">
         <span aria-hidden="true" className="h-6 w-1 rounded-full bg-acc shadow-[0_0_12px_rgba(198,255,61,.6)]" />
         {title}

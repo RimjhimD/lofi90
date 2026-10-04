@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ENTRIES } from "@/lib/registry";
 import { Ticker } from "@/site/Ticker";
+import { ThemeToggle } from "@/site/ThemeToggle";
 
 const LINKS = [
   { href: "/", label: "Home", match: (p: string) => p === "/" },
@@ -39,8 +40,11 @@ export function Header() {
           <a href="https://github.com/RimjhimD/lofi90" className={link}>
             GitHub ↗
           </a>
-          <span className="mono ml-2 hidden items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-[0.62rem] text-mute md:flex">
+          <span className="mono ml-2 hidden items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-[0.62rem] text-mute xl:flex">
             <i className="led" data-on="true" style={{ width: 6, height: 6 }} /> {ENTRIES.length} live
+          </span>
+          <span className="ml-2">
+            <ThemeToggle />
           </span>
         </nav>
       </div>
