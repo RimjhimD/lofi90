@@ -2,7 +2,7 @@
 export interface AgentLog {
   slug: string;
   no: string;
-  kind: "Research" | "Design" | "Build" | "Debug" | "QA" | "Release";
+  kind: "Prompting" | "Integration" | "Build" | "Debug" | "QA" | "Release";
   title: string;
   summary: string;
   date: string;
@@ -11,6 +11,8 @@ export interface AgentLog {
   task: string;
   /** The prompt as I gave it (lightly tidied for spelling). */
   prompt: string;
+  /** Heading for the prompt box when it is a summary rather than my exact words. */
+  promptLabel?: string;
   workflow: string[];
   produced: string[];
   saved: string;
@@ -20,54 +22,56 @@ const AGENT = "Claude Code (Claude Opus)";
 
 export const AGENT_LOGS: AgentLog[] = [
   {
-    slug: "team-inventory-research",
+    slug: "bot-tool-descriptions",
     no: "01",
-    kind: "Research",
-    title: "Map what every teammate already built",
-    summary: "Read nine teammates' galleries and turned them into a list of taken ideas, so nothing I build gets rejected as a repeat.",
-    date: "4 Oct 2026",
+    kind: "Prompting",
+    title: "Make a voice bot's tools save what callers actually say",
+    summary: "A client's AI receptionist took messages that never reached the CRM. The agent rewired its tools and rewrote their descriptions so the bot saves the caller's own words.",
+    date: "2 Oct 2026",
     agent: AGENT,
-    tools: ["Built-in browser", "File writing"],
-    task: "Before choosing my components I needed to know what everyone on the challenge had already built, because duplicates and slight variations of anyone's earlier component are rejected.",
+    tools: ["Assistant tool editor", "GoHighLevel API", "Playwright browser"],
+    task: "An AI phone receptionist took messages and email requests for the team, but none of them ever landed on the contact record, so no one was alerted. The bot needed tools that write those details to the right CRM fields, described clearly enough that it uses them properly.",
+    promptLabel: "The brief (summarised)",
     prompt:
-      "Look at this site — have you seen what they put here? And see their components. […] Merge tag input already exists. Have you not seen Shinzuu's work, how unique each button and form is? Do something like that, that does not match with mine but brings out unique components.",
+      "The bot takes messages but nothing reaches the CRM. Fix the tools so messages and email requests save to the contact, and make the tool descriptions clear enough that the bot uses them the right way. Do it yourself.",
     workflow: [
-      "Opened each teammate's gallery in the browser and read every component page.",
-      "Grouped what is taken by type: buttons, inputs, forms, loaders, cards, sections, navbars, modals, tables.",
-      "Saved it as a team inventory with a rule: re-check this list before every build.",
-      "Checked every new idea against the list before suggesting it to me.",
+      "Read the bot's prompt and tool list: its rules said to save messages with update_user_details, which only writes name, phone and email — every message was going nowhere.",
+      "Created two extraction tools, one field each, and wrote their descriptions the way bots follow best: when to run, a worked “save exactly this” example, NOT-clauses naming the wrong output (no summaries like “caller wants to leave a message”), and what to do when there's nothing to save. Overwrite turned on so a caller's correction sticks.",
+      "Edited only the four save rules in the prompt to call the new tools, kept a backup, diffed before and after, and stayed under the 8,000-character limit.",
+      "Built the tags and three alert workflows the tools trigger, published them and read them back through the API.",
     ],
     produced: [
-      "A team inventory of 9 galleries: who built what, how many, and their theme.",
-      "A taken-concepts list across 9 component types.",
-      "Two of my own ideas dropped early because they already existed on the team (a merge tag input and an orbit loader).",
+      "Two extraction tools with clear, testable descriptions, each mapped to its own contact field.",
+      "Prompt save rules fixed, with nothing else changed (checked by diff).",
+      "Three alert workflows live, so the right person hears about each message. A real test call is the next check.",
     ],
-    saved: "Hours of clicking through other people's sites by hand, and components that would have been rejected as repeats.",
+    saved: "Messages that were silently lost now have a path to the CRM and to the person who needs them, and the description pattern is reusable for every bot after this one.",
   },
   {
-    slug: "site-design-mockups",
+    slug: "funnel-calendar-embed",
     no: "02",
-    kind: "Design",
-    title: "Find the site's look with 31 clickable mockups",
-    summary: "Instead of describing styles, the agent built each direction as a real page and opened them one by one until I could choose.",
-    date: "4 Oct 2026",
+    kind: "Integration",
+    title: "Put the booking calendar inside a funnel page",
+    summary: "The “Book a call” buttons sent visitors off to another website. Now they scroll to a GoHighLevel calendar embedded right on the page.",
+    date: "3 Oct 2026",
     agent: AGENT,
-    tools: ["HTML mockups", "Chrome"],
-    task: "Pick a visual direction for the gallery without coding each idea into the real site first.",
+    tools: ["Playwright browser", "GoHighLevel funnel builder", "GoHighLevel API"],
+    task: "On a client's GoHighLevel funnel, both booking buttons linked out to the client's own website. Bookings needed to happen on the funnel page itself, in the GHL calendar, in the client's timezone.",
+    promptLabel: "The brief (summarised)",
     prompt:
-      "Don't like any of the designs you're giving. Give something unique, like the designs from before — pocket phone, vending machine… List me all the ideas we generated here from the start and open them one by one in Chrome. Don't wait for me to say next, keep opening them one by one.",
+      "The book-a-call buttons on the funnel go to the client's website. Embed our GHL booking calendar on the funnel page instead, so people book without leaving, and set the timezone the client asked for.",
     workflow: [
-      "Built every direction as a standalone HTML page, no build step.",
-      "Opened them in Chrome one after another so I reacted to real pages, not descriptions.",
-      "Narrowed it down from what I liked and didn't: no floating backgrounds, a sidebar of all types, navbar on the right.",
-      "Built the chosen Control Room look into the real Next.js site.",
+      "Found that the whole page is one Custom Code block, and that the funnel builder runs inside a cross-origin frame that normal page tools can't read.",
+      "Reached the builder's frame directly from the automated browser and edited the code in place.",
+      "Pointed every booking button to a new on-page #book section and embedded the GHL calendar there through a custom value, so the calendar can be swapped later without touching the page.",
+      "Checked the live preview: no links left to the old site, both buttons scroll to the calendar, and the calendar loads. Then set the account timezone to America/New_York through the API.",
     ],
     produced: [
-      "31 clickable mockups: switchboard, pocket phone, vending machine, darkroom, transit map, control room and more.",
-      "A locked direction: Control Room, dark #0B0D0C with lime #C6FF3D.",
-      "The site rebuilt in that theme: intro, sidebar, live ticker, component pages.",
+      "An inline booking calendar on the funnel page.",
+      "Zero booking links left pointing off-site.",
+      "Account timezone corrected and confirmed by the API.",
     ],
-    saved: "Making 31 directions by hand wasn't realistic. Seeing them as real pages made it possible to choose quickly instead of guessing from descriptions.",
+    saved: "Visitors book without leaving the page, and changing the calendar later is one custom value instead of a page edit.",
   },
   {
     slug: "parallel-component-build",

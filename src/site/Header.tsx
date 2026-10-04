@@ -35,9 +35,8 @@ export function Header() {
                 </span>
                 {l.label === "Agent logs" ? (
                   <>
-                    <span className="hidden sm:inline">Agent&nbsp;</span>
+                    <span className="hidden sm:inline">Agent logs</span>
                     <span className="sm:hidden">Logs</span>
-                    <span className="hidden sm:inline">logs</span>
                   </>
                 ) : (
                   l.label

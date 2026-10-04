@@ -65,10 +65,10 @@ export default async function AgentLogPage({ params }: { params: Promise<{ slug:
         <p className="leading-relaxed text-text/85">{log.task}</p>
       </Block>
 
-      <Block label="The prompt">
+      <Block label={log.promptLabel ? "The brief" : "The prompt"}>
         <figure className="relative rounded-xl border border-line bg-panel">
           <div className="flex items-center justify-between border-b border-line px-4 py-2">
-            <span className="mono text-[0.58rem] text-mute">As I gave it</span>
+            <span className="mono text-[0.58rem] text-mute">{log.promptLabel ?? "As I gave it"}</span>
             <CopyButton text={log.prompt} label="Copy" />
           </div>
           <blockquote className="px-5 py-4 font-mono text-[0.86rem] leading-relaxed text-text/90">“{log.prompt}”</blockquote>

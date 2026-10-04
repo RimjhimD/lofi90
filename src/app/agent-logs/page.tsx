@@ -15,7 +15,7 @@ export default function AgentLogsPage() {
         </span>
         <h1 className="mt-3 font-display text-[clamp(2.4rem,5vw,4rem)] font-bold leading-[1.02] tracking-tight">Agent logs</h1>
         <p className="mt-3 max-w-[62ch] text-mute">
-          Real tasks I handed to an AI agent while building this site. Each one shows the prompt I gave, how the agent worked through it, and what came out.
+          Real tasks I handed to an AI agent, from client work to building this site. Each one shows what I asked for, how the agent worked through it, and what came out.
         </p>
       </header>
 
