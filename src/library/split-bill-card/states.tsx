@@ -17,9 +17,9 @@ const item = (name: string) => click(`button[aria-label^="${name},"]`);
 
 /** The real card being split on a loop: pick a person, tap their dishes. */
 function Scene({ period, steps, start = {} }: { period: number; steps: Step[]; start?: Record<string, string[]> }) {
-  const { ref, run } = useLoop(period, steps);
+  const { ref, run, stop } = useLoop(period, steps);
   return (
-    <div ref={ref}>
+    <div ref={ref} onClick={stop}>
       <SplitBillCard key={run} items={ITEMS} people={PEOPLE} initialAssignments={start} />
     </div>
   );

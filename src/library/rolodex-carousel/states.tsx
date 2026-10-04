@@ -10,9 +10,9 @@ const prev = click('button[aria-label="Previous card"]');
 
 /** The real rolodex flipping on a loop. */
 function Scene({ start, period, steps }: { start: number; period: number; steps: Step[] }) {
-  const { ref, run } = useLoop(period, steps);
+  const { ref, run, stop } = useLoop(period, steps);
   return (
-    <div ref={ref}>
+    <div ref={ref} onClick={stop}>
       <RolodexCarousel key={run} label="Contacts" cards={MANY} initialIndex={start} />
     </div>
   );

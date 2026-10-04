@@ -36,7 +36,13 @@ export function useLoop(period: number, steps: Step[]) {
     };
   }, [run, visible, period]);
 
-  return { ref, run };
+  // Scripted clicks must stay inside the scene: on a gallery card the scene sits inside a link, and a
+  // click bubbling out would open the component page on its own.
+  const stop = (e: { stopPropagation: () => void; preventDefault: () => void }) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+  return { ref, run, stop };
 }
 
 /** Click the first element matching `selector` inside the scene. */

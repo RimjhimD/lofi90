@@ -15,9 +15,9 @@ type Field = Omit<SecretKeyFieldProps, "value" | "onChange">;
 function Typing(props: Field) {
   const [v, setV] = useState("");
   const steps = [[0, () => setV("")] as const, ...Array.from(PUB, (_, i) => [500 + i * 45, () => setV(PUB.slice(0, i + 1))] as const)];
-  const { ref } = useLoop(500 + PUB.length * 45 + 2600, steps.map(([ms, fn]) => [ms, () => fn()]));
+  const { ref, stop } = useLoop(500 + PUB.length * 45 + 2600, steps.map(([ms, fn]) => [ms, () => fn()]));
   return (
-    <div ref={ref}>
+    <div ref={ref} onClick={stop}>
       <SecretKeyField {...props} value={v} onChange={noop} />
     </div>
   );
@@ -25,12 +25,12 @@ function Typing(props: Field) {
 
 /** Hold the eye button: the key shows, the ring drains, it hides itself. */
 function Peek(props: Field & { value: string }) {
-  const { ref, run } = useLoop(5200, [
+  const { ref, run, stop } = useLoop(5200, [
     [600, pointer('button[aria-label="Hold to show the key"]', "pointerdown")],
     [4200, pointer("button[aria-label]", "pointerup")],
   ]);
   return (
-    <div ref={ref}>
+    <div ref={ref} onClick={stop}>
       <SecretKeyField key={run} {...props} onChange={noop} />
     </div>
   );
@@ -40,12 +40,12 @@ function Peek(props: Field & { value: string }) {
 function Swap(props: Field & { from: string; to: string }) {
   const { from, to, ...rest } = props;
   const [v, setV] = useState(from);
-  const { ref } = useLoop(4400, [
+  const { ref, stop } = useLoop(4400, [
     [0, () => setV(from)],
     [1000, () => setV(to)],
   ]);
   return (
-    <div ref={ref}>
+    <div ref={ref} onClick={stop}>
       <SecretKeyField {...rest} value={v} onChange={noop} />
     </div>
   );

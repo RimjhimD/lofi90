@@ -7,9 +7,9 @@ const noop = () => {};
 
 /** A looping scene: the real button pressed (and pressed again) on a timer, then reset. */
 function Scene({ period, delayMs, steps }: { period: number; delayMs: number; steps: Step[] }) {
-  const { ref, run } = useLoop(period, steps);
+  const { ref, run, stop } = useLoop(period, steps);
   return (
-    <div ref={ref}>
+    <div ref={ref} onClick={stop}>
       <UndoFuseButton key={run} onCommit={noop} delayMs={delayMs} />
     </div>
   );

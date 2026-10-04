@@ -14,12 +14,12 @@ const frame = (node: React.ReactNode) => <div className="relative h-[150px] w-[4
 /** The real island on a loop: notifications arrive, show for a moment, and go. */
 function Arrive({ batch, duration, period }: { batch: IslandItem[]; duration: number; period: number }) {
   const [items, setItems] = useState<IslandItem[]>([]);
-  const { ref } = useLoop(period, [
+  const { ref, stop } = useLoop(period, [
     [0, () => setItems([])],
     [700, () => setItems(batch)],
   ]);
   return (
-    <div ref={ref}>
+    <div ref={ref} onClick={stop}>
       {frame(<IslandNotification position="absolute" items={items} duration={duration} onDismiss={(id) => setItems((xs) => xs.filter((x) => x.id !== id))} />)}
     </div>
   );
@@ -28,10 +28,10 @@ function Arrive({ batch, duration, period }: { batch: IslandItem[]; duration: nu
 /** An upload filling the pill's ring, then finishing. */
 function Upload() {
   const [p, setP] = useState(0);
-  const { ref } = useLoop(5400, [[0, () => setP(0)], ...Array.from({ length: 10 }, (_, i) => [500 + i * 320, () => setP((i + 1) / 10)] as [number, () => void])]);
+  const { ref, stop } = useLoop(5400, [[0, () => setP(0)], ...Array.from({ length: 10 }, (_, i) => [500 + i * 320, () => setP((i + 1) / 10)] as [number, () => void])]);
   const done = p >= 1;
   const item: IslandItem = done ? { id: "u", title: "Upload finished", body: "12 photos are in the album.", tone: "success", icon: "✓", progress: 1 } : { id: "u", title: "Uploading photos", progress: p };
-  return <div ref={ref}>{frame(<IslandNotification position="absolute" items={[item]} duration={60000} onDismiss={noop} />)}</div>;
+  return <div ref={ref} onClick={stop}>{frame(<IslandNotification position="absolute" items={[item]} duration={60000} onDismiss={noop} />)}</div>;
 }
 
 /** Every state, playing live on a loop (Quiet and Waiting hold still). */
