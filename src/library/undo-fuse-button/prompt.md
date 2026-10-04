@@ -13,3 +13,5 @@ Behaviour:
 Look: control-room style — dark #121614 panel UI, 1px #3A433F borders, rounded corners, lime #C6FF3D idle button with text colour picked for contrast, amber #FFB547 fuse with a pale glowing spark, a faint tint of fuseColor while burning and of color when kept (color-mix), spark derived from fuseColor, #181D1B when done. Status text in a role="status" region linked with aria-describedby, visible focus ring in var(--k-acc-text) so it holds 3:1 on light and dark stages, clear hover (lift + brighten) and pressed (sink) states, reduced motion respected (no flash, no pulsing spark).
 
 Look props: color (button colour before it's pressed), fuseColor, spark ("pulse" | "steady" | "none") and size ("sm" | "md" | "lg"), so the site can show colour, motion and size variants and a live controls panel.
+
+If disabled becomes true while the fuse burns, the fuse goes out: nothing is committed and it returns to idle.

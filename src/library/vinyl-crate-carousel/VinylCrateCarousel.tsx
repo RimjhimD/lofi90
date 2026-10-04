@@ -80,7 +80,7 @@ const DEFAULT_LABELS: VinylLabels = {
   putBack: "Put back",
   nowPlaying: (rpm) => `Now playing · ${rpm} rpm`,
   discRpm: (rpm) => `${rpm} rpm`,
-  help: "Scroll, drag or ← → to flip · click the record to play",
+  help: "Swipe sideways, drag or ← → to flip · click the record to play",
   helpPlaying: "Esc or Put back returns it to the crate",
   crate: (r) => `Record crate. ${r.title} by ${r.artist} is at the front.`,
   cratePlaying: (r) => `Playing ${r.title}. Press Escape to put it back.`,
@@ -171,7 +171,7 @@ const TIP = -54;
 const LIFT = `0 ${u(-0.12)} ${u(0.42)}`;
 
 /**
- * Albums standing in a record crate. Flip with the buttons, the wheel, a vertical drag or the arrow keys:
+ * Albums standing in a record crate. Flip with the buttons, a sideways swipe or Shift + wheel, a drag or the arrow keys:
  * the front sleeve tips forward to show the one behind. Pull the front record out and the sleeve slides
  * left while the disc slides right and spins.
  */
@@ -231,7 +231,8 @@ export function VinylCrateCarousel({
     onPutBack?.(record);
   }
 
-  // The wheel listener is native so it can stop the page scrolling while it flips; it reads the latest values.
+  // Only a sideways wheel (trackpad swipe, or Shift + wheel) flips records, so a normal scroll always moves the
+  // page. The listener is native so it can claim that sideways gesture; it reads the latest values.
   const latest = useRef({ cur, n, pulled, flipMs, go });
   useEffect(() => {
     latest.current = { cur, n, pulled, flipMs, go };
@@ -244,7 +245,9 @@ export function VinylCrateCarousel({
     let last = 0;
     const onWheel = (e: WheelEvent) => {
       const a = latest.current;
-      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      const sideways = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+      if (!sideways && !e.shiftKey) return;
+      const delta = sideways ? e.deltaX : e.deltaY;
       const dir = Math.sign(delta);
       // At either end (or while playing) let the page scroll as normal.
       if (a.pulled || !dir || (dir > 0 && a.cur >= a.n - 1) || (dir < 0 && a.cur <= 0)) return;

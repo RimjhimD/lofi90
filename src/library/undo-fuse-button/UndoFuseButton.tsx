@@ -148,9 +148,19 @@ export function UndoFuseButton({
     return () => ro.disconnect();
   }, []);
 
+  // Switched off while burning: put the fuse out. Nothing is committed and the window starts fresh next time.
+  useEffect(() => {
+    if (!disabled || previewState || live !== "burning") return;
+    const t = window.setTimeout(() => {
+      setLive("idle");
+      setLeft(delayMs);
+    }, 0);
+    return () => clearTimeout(t);
+  }, [disabled, live, previewState, delayMs]);
+
   // Burn: a short timer that only advances while not paused.
   useEffect(() => {
-    if (previewState || live !== "burning") return;
+    if (previewState || disabled || live !== "burning") return;
     let last = performance.now();
     const id = window.setInterval(() => {
       const now = performance.now();
@@ -158,11 +168,11 @@ export function UndoFuseButton({
       last = now;
     }, 50);
     return () => clearInterval(id);
-  }, [live, held, previewState]);
+  }, [live, held, previewState, disabled]);
 
   // Burnt out: commit. An async onCommit shows "committing" until it settles; a failure goes back to idle.
   useEffect(() => {
-    if (previewState || live !== "burning" || left > 0) return;
+    if (previewState || disabled || live !== "burning" || left > 0) return;
     const succeed = () => {
       setLive("done");
       if (!reducedMotion()) btn.current?.animate([{ filter: "brightness(1.6)" }, { filter: "none" }], { duration: 380 });
@@ -187,7 +197,7 @@ export function UndoFuseButton({
       result.then(succeed, fail);
     }, 0);
     return () => clearTimeout(t);
-  }, [left, live, previewState]);
+  }, [left, live, previewState, disabled]);
 
   // Move the spark to the burning end of the fuse.
   useEffect(() => {

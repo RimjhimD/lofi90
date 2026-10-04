@@ -61,7 +61,8 @@ When you finish, report: the tools you created and their exact descriptions, the
     produced: [
       "Two extraction tools with clear, testable descriptions, each mapped to its own contact field.",
       "Prompt save rules fixed, with nothing else changed (checked by diff).",
-      "Three alert workflows live, so the right person hears about each message. A real test call is the next check.", "Prompt stayed at 6,214 characters, under the 8,000 limit, with 4 lines changed."],
+      "Three alert workflows live, so the right person hears about each message.",
+      "Still to do: a real test call to confirm a caller's message lands on the contact record and fires the alert. Not tested end to end yet.", "Prompt stayed at 6,214 characters, under the 8,000 limit, with 4 lines changed."],
     saved: "Messages that were silently lost now have a path to the CRM and to the person who needs them, and the description pattern is reusable for every bot after this one.",
     lesson: "A bot follows its tool descriptions more than its prompt. One tool, one field, a worked example and explicit NOT-rules work better than a long rule in the prompt.",
   },

@@ -20,6 +20,12 @@ export interface TapeMeasureInputProps {
   disabled?: boolean;
   /** Freeze one look without interaction, for docs and tests: a value, and optionally the "being pulled" look. */
   preview?: { value: number; pulling?: boolean };
+  /** Let people type an exact number into the readout on the case. */
+  typeable?: boolean;
+  /** Accessible name of the typing box; the visible label and unit are added to it. */
+  typeLabel?: string;
+  /** When set, a hidden input with this name carries the value, so the tape works inside a plain <form>. */
+  name?: string;
   className?: string;
 }
 
@@ -114,6 +120,9 @@ export function TapeMeasureInput({
   size = "md",
   disabled = false,
   preview,
+  typeable = true,
+  typeLabel = "Type an exact value",
+  name,
   className = "",
 }: TapeMeasureInputProps) {
   const labelId = useId();
@@ -125,6 +134,7 @@ export function TapeMeasureInput({
   const fmt = (v: number) => v.toFixed(dec);
   const locked = disabled || !!preview;
 
+  const [draft, setDraft] = useState<string | null>(null);
   const [pos, setPos] = useState(value);
   const [wob, setWob] = useState(0);
   const [phase, setPhase] = useState<Mode>("idle");
@@ -384,6 +394,7 @@ export function TapeMeasureInput({
 
   return (
     <div className={`w-full select-none ${disabled ? "opacity-50" : ""} ${className}`}>
+      {name && <input type="hidden" name={name} value={fmt(value)} disabled={disabled} />}
       <div className="mb-2 flex items-baseline justify-between gap-3 text-xs">
         <span id={labelId} className="font-semibold text-[var(--k-text,#E9EDE8)]">
           {label}
@@ -397,7 +408,6 @@ export function TapeMeasureInput({
         {/* the case */}
         <div
           ref={caseEl}
-          aria-hidden="true"
           className="relative z-10 shrink-0 border border-[var(--k-line,#3A433F)] bg-[var(--k-panel-2,#181D1B)] shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))]"
           style={{ width: s.caseW, borderRadius: s.radius }}
         >
@@ -405,20 +415,52 @@ export function TapeMeasureInput({
             className="absolute inset-x-2 top-2 flex items-baseline justify-center gap-0.5 rounded-[10px] border border-[var(--k-line,#3A433F)] bg-[var(--k-bg,#0E1110)] px-1.5 shadow-[inset_0_1px_4px_var(--k-shadow,rgba(0,0,0,.9))]"
             style={{ height: Math.round(s.h * 0.5), alignItems: "center" }}
           >
-            <span
-              className={`font-mono font-bold leading-none tabular-nums transition-colors duration-200 ${s.num} ${active ? "text-[var(--k-acc-text,#C6FF3D)]" : "text-[var(--k-text,#E9EDE8)]"}`}
-            >
-              {fmt(readout)}
-            </span>
-            <span className={`font-semibold text-[var(--k-mute,#8A938D)] ${s.unit}`}>{unit}</span>
+            {typeable && !preview ? (
+              // the readout doubles as a text box: click it, type an exact number, Enter
+              <input
+                type="text"
+                inputMode="decimal"
+                aria-label={`${label}, ${unit}. ${typeLabel}`}
+                disabled={disabled}
+                value={draft ?? fmt(readout)}
+                onFocus={(e) => {
+                  setDraft(fmt(value));
+                  e.currentTarget.select();
+                }}
+                onChange={(e) => setDraft(e.currentTarget.value.replace(/[^\d.,-]/g, ""))}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") e.currentTarget.blur();
+                  if (e.key === "Escape") {
+                    setDraft(null);
+                    requestAnimationFrame(() => (e.target as HTMLInputElement).blur());
+                  }
+                }}
+                onBlur={() => {
+                  if (draft === null) return;
+                  const typed = Number(draft.replace(",", "."));
+                  setDraft(null);
+                  if (draft.trim() !== "" && Number.isFinite(typed)) settleOn(snap(typed), false);
+                }}
+                className={`w-full min-w-0 select-text bg-transparent text-center font-mono font-bold leading-none tabular-nums outline-none transition-colors duration-200 focus:text-[var(--k-acc-text,#C6FF3D)] disabled:cursor-not-allowed ${s.num} ${active ? "text-[var(--k-acc-text,#C6FF3D)]" : "text-[var(--k-text,#E9EDE8)]"}`}
+                style={{ width: `${Math.max(fmt(max).length, 2) + 0.5}ch` }}
+              />
+            ) : (
+              <span
+                className={`font-mono font-bold leading-none tabular-nums transition-colors duration-200 ${s.num} ${active ? "text-[var(--k-acc-text,#C6FF3D)]" : "text-[var(--k-text,#E9EDE8)]"}`}
+              >
+                {fmt(readout)}
+              </span>
+            )}
+            <span aria-hidden="true" className={`font-semibold text-[var(--k-mute,#8A938D)] ${s.unit}`}>{unit}</span>
           </div>
           {/* screw */}
-          <span className="absolute bottom-2 left-2.5 grid h-2.5 w-2.5 place-items-center rounded-full border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)]">
+          <span aria-hidden="true" className="absolute bottom-2 left-2.5 grid h-2.5 w-2.5 place-items-center rounded-full border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)]">
             <span className="h-px w-1.5 rotate-[35deg] bg-[var(--k-mute,#8A938D)]" />
           </span>
-          <span className="absolute bottom-2.5 left-1/2 h-1 w-4 -translate-x-1/2 rounded-full" style={{ background: accent, opacity: 0.85 }} />
+          <span aria-hidden="true" className="absolute bottom-2.5 left-1/2 h-1 w-4 -translate-x-1/2 rounded-full" style={{ background: accent, opacity: 0.85 }} />
           {/* the slot the tape comes out of */}
           <span
+            aria-hidden="true"
             className="absolute -right-px w-1.5 rounded-l-sm bg-[var(--k-bg,#0E1110)]"
             style={{ top: tapeTop - 3, height: s.tape + 6 }}
           />

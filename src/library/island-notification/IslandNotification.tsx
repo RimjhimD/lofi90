@@ -205,7 +205,7 @@ export function IslandNotification({
   const ease = "cubic-bezier(.32,1.45,.45,1)";
 
   return (
-    <div className={`${position === "fixed" ? "fixed" : "absolute"} inset-x-0 top-3 z-50 flex justify-center ${className}`}>
+    <div className={`pointer-events-none ${position === "fixed" ? "fixed" : "absolute"} inset-x-0 top-3 z-50 flex justify-center ${className}`}>
       <div
         ref={shell}
         role="region"
@@ -228,7 +228,15 @@ export function IslandNotification({
             close(current.id);
           }
         }}
-        onPointerDown={(e) => showCard && (drag.current = { y: e.clientY, dy: 0 })}
+        onPointerDown={(e) => {
+          if (!showCard) return;
+          drag.current = { y: e.clientY, dy: 0 };
+          try {
+            e.currentTarget.setPointerCapture(e.pointerId);
+          } catch {
+            // synthetic pointers in scripted demos have no capture to take
+          }
+        }}
         onPointerMove={(e) => {
           if (!drag.current || !shell.current) return;
           drag.current.dy = Math.min(0, e.clientY - drag.current.y);
@@ -240,7 +248,12 @@ export function IslandNotification({
           shell.current.style.translate = "";
           drag.current = null;
         }}
-        className="relative overflow-hidden bg-black text-[var(--k-text,#E9EDE8)] outline-none ring-1 ring-white/10 focus-visible:ring-2 focus-visible:ring-[#C6FF3D]"
+        // the browser took the gesture (a page scroll on a phone): put the card back, don't dismiss
+        onPointerCancel={() => {
+          if (shell.current) shell.current.style.translate = "";
+          drag.current = null;
+        }}
+        className={`pointer-events-auto relative overflow-hidden bg-black ${showCard ? "touch-none" : ""} text-[var(--k-text,#E9EDE8)] outline-none ring-1 ring-white/10 focus-visible:ring-2 focus-visible:ring-[#C6FF3D]`}
         style={{
           // the island is always black hardware, so its text keeps the dark-stage colours on any page
           ["--k-text" as string]: "#E9EDE8",

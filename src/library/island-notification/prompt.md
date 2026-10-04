@@ -11,3 +11,5 @@ Behaviour:
 - Announce each notification in a polite live region; the action is a real button; reduced motion turns the morph off.
 
 Look: control-room style — pure black island with a faint white ring, #E9EDE8 text, #8A938D secondary text, glow tinted by tone (lime #C6FF3D success, amber #FFB547 warning, coral #FF6B57 error, accent for info), rounded-full action buttons.
+
+The full-width wrapper is pointer-events: none so it never blocks the page under it; only the island takes clicks. Swipe-up uses pointer capture, and pointercancel (the browser taking the gesture for a scroll) puts the card back instead of leaving it stuck.

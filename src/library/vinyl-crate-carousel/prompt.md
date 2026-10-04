@@ -10,8 +10,8 @@ Look:
 - Everything is sized in "cover sizes" from one CSS variable, min(size px, 42% of the component's width), so it fits a 375px phone and still looks right at 1000px.
 
 Behaviour:
-- Flip with the buttons, the mouse wheel or trackpad over the crate, a vertical drag, or ← → (Home / End jump to the ends). Each flip tips the front sleeve toward you (rotateX) until it leans over the front lip, revealing the next one; going back lifts it upright again. Flips use a slightly springy cubic-bezier, and the sleeve's paint order switches part-way through so it falls over the lip instead of through it.
-- The wheel listener is native and non-passive so the page doesn't scroll while flipping, except at either end.
+- Flip with the buttons, a sideways trackpad swipe or Shift + wheel over the crate, a drag, or ← → (Home / End jump to the ends). Each flip tips the front sleeve toward you (rotateX) until it leans over the front lip, revealing the next one; going back lifts it upright again. Flips use a slightly springy cubic-bezier, and the sleeve's paint order switches part-way through so it falls over the lip instead of through it.
+- Only a sideways wheel (or Shift + wheel) flips, so a normal vertical scroll always moves the page; that sideways gesture is claimed with a native non-passive listener.
 - Pull out (click the front record, Enter, or Play): the sleeve rises out of the crate and toward you, then slides left while the black vinyl disc slides out of it to the right. The disc has grooves from a repeating-radial-gradient, a still light reflection on top, a centre label in the album's colours and a spindle hole. A tonearm swings onto it, a soft accent glow appears behind it, and it spins at the chosen rpm. The crate dims, and the tag becomes "Now playing · 33 rpm" with the title large.
 - Esc or Put back reverses it: slide back, drop into the crate.
 - Lift is done with the CSS `translate` property and the slide with `transform`, each with its own delay, so the move is "up, then sideways" rather than diagonal.

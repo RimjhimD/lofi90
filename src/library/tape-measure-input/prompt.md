@@ -19,3 +19,5 @@ Behaviour:
 - Disabled dims to 50% and locks pointer and keys. Reduced motion jumps straight to values with no spring, wobble or jolt.
 
 Colours come from stage variables with dark defaults (--k-panel-2 case, --k-bg readout window, --k-line borders, --k-text / --k-mute text, --k-acc-text for the readout while moving and the focus ring), so it reads on dark and light pages.
+
+Typing: the readout on the case is also a text box (inputMode decimal). Click it, type an exact number, press Enter: it clamps to min–max, snaps to the step and the tape slides there; Esc cancels. Props typeable (default true), typeLabel, and name (adds a hidden input so it posts with a plain form).

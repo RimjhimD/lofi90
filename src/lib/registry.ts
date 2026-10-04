@@ -87,7 +87,7 @@ export const ENTRIES: Entry[] = [
       { name: "pending", type: "boolean", default: "false", description: "Force the committing (loading) look and block presses." },
       { name: "delayMs", type: "number", default: "5000", description: "How long the fuse burns." },
       { name: "labels", type: "Partial<FuseLabels>", default: "English defaults", description: "Every piece of text: idle, burning ({s} = seconds), paused, committing, done, undone, the hints under the button, the countdown announcement and the error." },
-      { name: "disabled", type: "boolean", default: "false", description: "Turns the button off." },
+      { name: "disabled", type: "boolean", default: "false", description: "Turns the button off. Switching it on while the fuse burns puts the fuse out without committing." },
       { name: "previewState", type: '"idle" | "burning" | "committing" | "done" | "undone"', default: "—", description: "Render one state without running anything." },
       { name: "color", type: "string", default: '"#C6FF3D"', description: "Button colour before it is pressed; also tints the undone state. Hex colours get readable text automatically." },
       { name: "fuseColor", type: "string", default: '"#FFB547"', description: "Colour of the burning fuse, its spark and the burning tint." },
@@ -120,7 +120,7 @@ export const ENTRIES: Entry[] = [
   },
   {
     slug: "tape-measure-input",
-    tryIt: ["Grab the metal hook and pull the tape out.", "Let go between marks: it snaps to the nearest step.", "Press Home, or push it all the way in, and it zips back."],
+    tryIt: ["Grab the metal hook and pull the tape out.", "Let go between marks: it snaps to the nearest step.", "Need an exact number? Click the readout on the case and type it."],
     ext: "02",
     name: "Tape Measure Input",
     type: "input",
@@ -143,6 +143,9 @@ export const ENTRIES: Entry[] = [
       { name: "accent", type: "string", default: '"#C6FF3D"', description: "Colour of the tape. Ticks and numbers on it print dark or light, whichever reads on it." },
       { name: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "Case and tape size." },
       { name: "disabled", type: "boolean", default: "false", description: "Dims and locks it." },
+      { name: "typeable", type: "boolean", default: "true", description: "Click the readout on the case to type an exact number; Enter snaps it to the step." },
+      { name: "typeLabel", type: "string", default: '"Type an exact value"', description: "Accessible name of the typing box (label and unit are added)." },
+      { name: "name", type: "string", default: "—", description: "Adds a hidden input with this name, so the value is sent with a plain <form>." },
       { name: "preview", type: "{ value: number; pulling?: boolean }", default: "—", description: "Freeze one look without interaction, for docs and tests." },
       { name: "className", type: "string", default: '""', description: "Extra classes for the wrapper." },
     ],
@@ -219,7 +222,7 @@ export const ENTRIES: Entry[] = [
   },
   {
     slug: "vinyl-crate-carousel",
-    tryIt: ["Scroll or drag over the crate, or press ← →, to flip through the records.", "Click the front record (or Play) to pull it out.", "Watch it spin, then press Esc or Put back."],
+    tryIt: ["Swipe sideways or drag over the crate, or press ← →, to flip through the records.", "Click the front record (or Play) to pull it out.", "Watch it spin, then press Esc or Put back."],
     ext: "04",
     name: "Vinyl Crate Carousel",
     type: "section",
@@ -252,7 +255,7 @@ export const ENTRIES: Entry[] = [
       {
         icon: "↓",
         title: "Flip",
-        text: "Scroll, drag down or press →: the front sleeve tips toward you and the next one shows.",
+        text: "Swipe sideways, drag or press →: the front sleeve tips toward you and the next one shows. A normal scroll still moves the page.",
         branches: [
           { label: "Going back", text: "Drag up or ←: the last sleeve lifts upright again.", tone: "neutral" },
           { label: "At either end", text: "That button turns off and the page scrolls as normal.", tone: "neutral" },
@@ -375,7 +378,7 @@ export const ENTRIES: Entry[] = [
       "Check-in is announced in a polite live region: “Checked in. Seat 14A, gate B12.”",
       "Reduced motion: no peel, throw or gliding plane; the stamp just appears",
     ],
-    support: "Works in all modern browsers (uses container queries and @property). No extra packages.",
+    support: "Needs React 19+ (it loads its styles once with <style precedence>). Works in all modern browsers (container queries, @property). No extra packages.",
   },
 ];
 
