@@ -243,6 +243,13 @@ body {
 ::view-transition-new(root) {
   animation: theme-wipe 1.1s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
+/* intro exit: the screen powers off like an old CRT — squashed to a lime line, then to a dot */
+@keyframes crt-off {
+  0% { transform: none; filter: brightness(1); }
+  55% { transform: scale(1, 0.004); filter: brightness(3); background: #c6ff3d; }
+  100% { transform: scale(0, 0.004); filter: brightness(3); background: #c6ff3d; opacity: 0; }
+}
+
 @keyframes theme-wipe {
   from { clip-path: inset(0 0 100% 0); }
   to { clip-path: inset(0 0 0 0); }

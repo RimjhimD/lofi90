@@ -9,18 +9,16 @@ const TEXT = "233,237,232";
 
 type Phase = "off" | "run" | "leaving" | "gone";
 
-interface Particle {
+interface Led {
   x: number;
   y: number;
-  tx: number;
-  ty: number;
   lime: boolean;
-  delay: number;
-  spin: number;
+  on: number;
+  flick: number;
 }
 
 /** Points that spell "lofi90", sampled from the word drawn on a hidden canvas. */
-function wordTargets(w: number, h: number): { x: number; y: number; lime: boolean }[] {
+function wordTargets(w: number, h: number): { pts: { x: number; y: number; lime: boolean }[]; step: number } {
   const c = document.createElement("canvas");
   c.width = w;
   c.height = h;
@@ -33,18 +31,19 @@ function wordTargets(w: number, h: number): { x: number; y: number; lime: boolea
   g.fillText("lofi90", w / 2, h / 2);
   const split = w / 2 - g.measureText("lofi90").width / 2 + g.measureText("lofi").width;
   const data = g.getImageData(0, 0, w, h).data;
-  const step = Math.max(4, Math.round(size / 34));
+  const step = Math.max(6, Math.round(size / 24));
   const out: { x: number; y: number; lime: boolean }[] = [];
   for (let y = 0; y < h; y += step)
     for (let x = 0; x < w; x += step) if (data[(y * w + x) * 4 + 3] > 140) out.push({ x, y, lime: x > split });
-  return out;
+  return { pts: out, step };
 }
 
 /**
- * Opening sequence: a lime oscilloscope trace scans across the dark through static, locks into a clean
- * wave, collapses to a single point, then bursts into particles that fly together to spell "lofi90".
- * A radar ping ripples out and the page zooms in behind it. Plays once per visit; Skip and reduced
- * motion jump straight to the page.
+ * Opening sequence: the screen powers on like an old CRT (a bright line splits open), a dim LED board
+ * fills the dark, and the LEDs that spell "lofi90" light up in a slow diagonal sweep, each one
+ * flickering before it holds. A shimmer runs across the word, then the whole screen powers off into a
+ * lime line and the page is there behind it. Plays once per visit; Skip and reduced motion jump
+ * straight to the page.
  */
 export function Intro() {
   const [phase, setPhase] = useState<Phase>("off");
@@ -80,13 +79,32 @@ export function Intro() {
     cv.height = H * dpr;
     const g = cv.getContext("2d")!;
     g.scale(dpr, dpr);
-
     const cy = H / 2;
-    const seeds = Array.from({ length: 6 }, () => ({ f: 0.01 + Math.random() * 0.05, p: Math.random() * 6.28, a: 0.3 + Math.random() }));
-    let particles: Particle[] = [];
+
+    // the word, snapped to the LED grid; each LED gets the moment it switches on (a left-to-right,
+    // slightly diagonal sweep) and a little random flicker before it holds
+    const { pts, step } = wordTargets(W, H);
+    const xs = pts.map((p) => p.x);
+    const minX = Math.min(...xs);
+    const spanX = Math.max(1, Math.max(...xs) - minX);
+    const leds: Led[] = pts.map((p) => ({
+      ...p,
+      on: 1.0 + ((p.x - minX) / spanX) * 1.1 + ((p.y - cy) / H) * 0.35 + Math.random() * 0.12,
+      flick: Math.random() * 6.28,
+    }));
+    const r = step * 0.34;
+
+    // the dim board behind, drawn once
+    const board = document.createElement("canvas");
+    board.width = W * dpr;
+    board.height = H * dpr;
+    const bg = board.getContext("2d")!;
+    bg.scale(dpr, dpr);
+    bg.fillStyle = `rgba(${TEXT},.07)`;
+    for (let y = 0; y < H; y += step) for (let x = 0; x < W; x += step) bg.fillRect(x - r * 0.5, y - r * 0.5, r, r);
+
     let frame = 0;
     const t0 = performance.now();
-    let built = false;
     let shownLabel = "";
     const say = (text: string) => {
       if (text !== shownLabel) {
@@ -94,78 +112,56 @@ export function Intro() {
         setLabel(text);
       }
     };
-    const done = window.setTimeout(() => setPhase("leaving"), 4300);
-
-    const wave = (x: number, t: number, noise: number, clean: number) => {
-      let n = 0;
-      for (const s of seeds) n += Math.sin(x * s.f * 3 + s.p + t * 9) * s.a;
-      return cy + n * 22 * noise + Math.sin(x * 0.018 - t * 6) * 70 * clean;
-    };
+    const done = window.setTimeout(() => setPhase("leaving"), 4200);
 
     const draw = (now: number) => {
       const t = (now - t0) / 1000;
-      g.fillStyle = "rgba(11,13,12,0.32)";
+      g.fillStyle = "#0B0D0C";
       g.fillRect(0, 0, W, H);
 
-      if (t < 2.55) {
-        // 1 · scan through static, 2 · lock into a clean wave, 3 · collapse to a point
-        const reach = Math.min(1, t / 1.1);
-        const noise = t < 1.3 ? 1 : Math.max(0, 1 - (t - 1.3) / 0.6);
-        const clean = t < 1.3 ? 0 : t < 2.0 ? Math.min(1, (t - 1.3) / 0.5) : Math.max(0, 1 - (t - 2.0) / 0.3);
-        const squeeze = t < 2.25 ? 0 : Math.min(1, (t - 2.25) / 0.3);
-        const x0 = (W / 2) * squeeze;
-        const x1 = W * reach - (W / 2) * squeeze;
-        g.beginPath();
-        for (let x = x0; x <= x1; x += 3) {
-          const y = wave(x, t, noise, clean);
-          if (x === x0) g.moveTo(x, y);
-          else g.lineTo(x, y);
-        }
-        g.strokeStyle = `rgba(${LIME},.95)`;
-        g.lineWidth = 2;
-        g.shadowColor = `rgba(${LIME},.9)`;
-        g.shadowBlur = 16;
-        g.stroke();
+      if (t < 0.85) {
+        // 1 · CRT power-on: a line grows out from the centre, then splits open top and bottom
+        const grow = Math.min(1, t / 0.4);
+        const open = t < 0.4 ? 0 : Math.min(1, (t - 0.4) / 0.45);
+        const ease = 1 - Math.pow(1 - open, 3);
+        const halfH = 1 + ease * (H / 2);
+        const halfW = (W / 2) * (1 - Math.pow(1 - grow, 3));
+        g.globalAlpha = 1 - ease * 0.9;
+        g.fillStyle = `rgba(${LIME},1)`;
+        g.shadowColor = `rgba(${LIME},1)`;
+        g.shadowBlur = 30;
+        g.fillRect(W / 2 - halfW, cy - Math.max(1, 3 * (1 - ease)), halfW * 2, Math.max(2, 6 * (1 - ease)));
         g.shadowBlur = 0;
-        // the bright head of the trace
-        const hx = x1;
-        const hy = wave(hx, t, noise, clean);
-        g.fillStyle = "#fff";
-        g.beginPath();
-        g.arc(hx, hy, 3, 0, 6.28);
-        g.fill();
-        say(t < 1.3 ? "ACQUIRING SIGNAL" : t < 2.25 ? "SIGNAL LOCKED" : "");
+        g.globalAlpha = 0.18 * (1 - ease) + 0.02;
+        g.fillRect(W / 2 - halfW, cy - halfH, halfW * 2, halfH * 2);
+        g.globalAlpha = 1;
+        if (open > 0) {
+          g.globalAlpha = ease;
+          g.drawImage(board, 0, (cy - halfH) * dpr, W * dpr, halfH * 2 * dpr, 0, cy - halfH, W, halfH * 2);
+          g.globalAlpha = 1;
+        }
+        say("POWERING ON");
       } else {
-        // 4 · burst into particles that assemble the word, 5 · radar ping
-        if (!built) {
-          built = true;
-          particles = wordTargets(W, H).map((p) => ({ x: W / 2, y: cy, tx: p.x, ty: p.y, lime: p.lime, delay: Math.random() * 0.25, spin: (Math.random() - 0.5) * 6 }));
-        }
-        const k = t - 2.55;
-        for (const p of particles) {
-          const q = Math.min(1, Math.max(0, (k - p.delay) / 0.75));
-          const e = 1 - Math.pow(1 - q, 3);
-          // fly out on a curve before settling, so it reads as a burst rather than a slide
-          const curl = Math.sin(q * Math.PI) * p.spin * 22;
-          const x = p.x + (p.tx - p.x) * e + curl;
-          const y = p.y + (p.ty - p.y) * e - curl * 0.6;
-          g.fillStyle = p.lime ? `rgba(${LIME},${0.4 + e * 0.6})` : `rgba(${TEXT},${0.35 + e * 0.65})`;
-          g.fillRect(x, y, 2.4, 2.4);
-        }
-        if (k > 0.85) {
-          const r = (k - 0.85) * 900;
-          g.strokeStyle = `rgba(${LIME},${Math.max(0, 0.5 - (k - 0.85) * 0.6)})`;
-          g.lineWidth = 1.5;
+        // 2 · the LED board, word lighting up in a sweep · 3 · a shimmer runs across it
+        g.drawImage(board, 0, 0, W, H);
+        const sweep = minX + ((t - 2.5) / 0.9) * spanX;
+        for (const l of leds) {
+          const k = t - l.on;
+          if (k < 0) continue;
+          let b = k < 0.22 ? (Math.sin(k * 70 + l.flick) > 0 ? 0.9 : 0.15) : Math.min(1, 0.75 + k);
+          if (t > 2.5) b += Math.max(0, 0.6 - Math.abs(l.x - sweep) / (step * 6));
+          const c = l.lime ? LIME : TEXT;
+          g.fillStyle = `rgba(${c},${Math.min(0.22, b * 0.16)})`;
+          g.fillRect(l.x - r * 2, l.y - r * 2, r * 4, r * 4);
+          g.fillStyle = `rgba(${c},${Math.min(1, b)})`;
           g.beginPath();
-          g.arc(W / 2, cy, r, 0, 6.28);
-          g.stroke();
+          g.arc(l.x, l.y, r, 0, 6.28);
+          g.fill();
         }
-        say(k > 0.9 ? "CONTROL ROOM ONLINE" : "");
+        say(t < 2.4 ? "LIGHTING THE BOARD" : "ALL CHANNELS LIVE");
       }
       frame = requestAnimationFrame(draw);
     };
-    g.fillStyle = "#0B0D0C";
-    g.fillRect(0, 0, W, H);
     frame = requestAnimationFrame(draw);
     return () => {
       cancelAnimationFrame(frame);
@@ -188,9 +184,7 @@ export function Intro() {
   return createPortal(
     <div
       aria-hidden="true"
-      className={`fixed inset-0 z-[100] bg-bg transition-[opacity,transform,filter] duration-700 [transition-timing-function:cubic-bezier(.7,0,.2,1)] ${
-        phase === "leaving" ? "pointer-events-none scale-[1.35] opacity-0 blur-sm" : ""
-      }`}
+      className={`screen fixed inset-0 z-[100] bg-[#0B0D0C] ${phase === "leaving" ? "pointer-events-none animate-[crt-off_.75s_cubic-bezier(.7,0,.2,1)_forwards]" : ""}`}
     >
       <canvas ref={canvas} className="absolute inset-0 h-full w-full" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(233,237,232,.05)_1px,transparent_1.2px)] bg-[length:22px_22px]" />
