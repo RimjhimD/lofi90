@@ -47,7 +47,7 @@ export default function BoardingPassCardDemo({ controls = {} }: { controls?: Con
             setTorn(false);
             say("A fresh pass, stub still on.");
           }}
-          className="rounded-lg border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-2 py-0.5 font-bold text-[var(--k-text,#E9EDE8)] shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] focus-visible:outline-3 focus-visible:outline-[#C6FF3D]"
+          className="rounded-lg border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-2 py-0.5 font-bold text-[var(--k-text,#E9EDE8)] shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] focus-visible:outline-3 focus-visible:outline-[var(--k-acc-text,#C6FF3D)]"
         >
           Reset
         </button>

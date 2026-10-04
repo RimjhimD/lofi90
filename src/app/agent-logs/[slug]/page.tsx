@@ -101,6 +101,19 @@ export default async function AgentLogPage({ params }: { params: Promise<{ slug:
         </p>
       </Block>
 
+      <Block label="Lesson for prompting">
+        <p className="font-display text-lg leading-snug tracking-tight text-text">{log.lesson}</p>
+        {log.links && (
+          <div className="mt-5 flex flex-wrap gap-2">
+            {log.links.map((l) => (
+              <a key={l.href} href={l.href} className="cr-btn text-sm">
+                {l.label} ↗
+              </a>
+            ))}
+          </div>
+        )}
+      </Block>
+
       <nav aria-label="More logs" className="mt-10 flex flex-wrap justify-between gap-3 border-t border-line pt-6">
         <Link href={`/agent-logs/${prev.slug}`} className="cr-btn">← Log {prev.no}</Link>
         <Link href={`/agent-logs/${next.slug}`} className="cr-btn cr-btn-acc">Log {next.no} →</Link>

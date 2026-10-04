@@ -24,6 +24,53 @@ export interface BoardingPass {
   gateChanged?: boolean;
 }
 
+/** Every bit of visible and announced copy. Templates get the pass so they can quote seat and gate. */
+export interface BoardingPassLabels {
+  passenger: string;
+  date: string;
+  boards: string;
+  gate: string;
+  seat: string;
+  /** Short label for the boarding group on the stub. */
+  group: string;
+  /** Tag after the gate label when the gate moved. */
+  gateNew: string;
+  /** Accessible name of the whole pass. */
+  pass: (pass: BoardingPass) => string;
+  /** Read out by screen readers when the stub is torn off. */
+  announce: (pass: BoardingPass) => string;
+  /** Big stamp line. */
+  stamp: string;
+  /** Small line under the stamp. */
+  stampDetail: (pass: BoardingPass) => string;
+  /** Hint under the barcode on the stub. */
+  hint: string;
+  /** Button text before check-in. */
+  button: string;
+  /** Button text once checked in. */
+  buttonDone: string;
+  /** Button text while `loading`. */
+  checkingIn: string;
+}
+
+export const DEFAULT_BOARDING_PASS_LABELS: BoardingPassLabels = {
+  passenger: "Passenger",
+  date: "Date",
+  boards: "Boards",
+  gate: "Gate",
+  seat: "Seat",
+  group: "Grp",
+  gateNew: "· new",
+  pass: (p) => `Boarding pass, ${p.from.city} to ${p.to.city}`,
+  announce: (p) => `Checked in. Seat ${p.seat}, gate ${p.gate}.`,
+  stamp: "Checked in",
+  stampDetail: (p) => `Seat ${p.seat} · Gate ${p.gate}`,
+  hint: "Tear to check in",
+  button: "Tear stub to check in",
+  buttonDone: "Checked in ✓",
+  checkingIn: "Checking in…",
+};
+
 export interface BoardingPassCardProps {
   pass: BoardingPass;
   /** Airline name, shown top left. */
@@ -40,11 +87,22 @@ export interface BoardingPassCardProps {
   defaultTorn?: boolean;
   /** Colour of the stamp, the plane and the hint arrow. */
   accent?: string;
+  /**
+   * Text colour for the stamp, plane and arrow. Defaults to `--k-acc-ink` from the page, else `accent`.
+   * Set it when `accent` is too pale to read on your background.
+   */
+  inkColor?: string;
   /** How far the stub must be pulled before it rips, in px. */
   tearDistance?: number;
   size?: "sm" | "md" | "lg";
   /** Freeze one look without any dragging, for docs and tests. */
   preview?: "ready" | "tearing" | "torn";
+  /** Override any of the copy; the rest stays English. */
+  labels?: Partial<BoardingPassLabels>;
+  /** Locked: the stub won't move and the button is disabled. */
+  disabled?: boolean;
+  /** Check-in in flight: busy, the button says so, and nothing tears. */
+  loading?: boolean;
   className?: string;
 }
 
@@ -112,10 +170,15 @@ const CSS = `
   .bpc-ticket:not([data-phase="ready"]) .bpc-stub { clip-path: ${jag("left", 12, true)}; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .bpc-ticket[data-phase="ready"]:has(.bpc-stub:hover) { --bpc-p: .07; }
+  .bpc-ticket[data-phase="ready"]:not([data-locked="true"]):has(.bpc-stub:hover) { --bpc-p: .07; }
+  .bpc-ticket[data-phase="ready"]:not([data-locked="true"]):has(.bpc-stub:active) { --bpc-p: .14; }
 }
-.bpc-ink { color: var(--bpc-acc); }
-.stage-light .bpc-ink { color: color-mix(in oklab, var(--bpc-acc) 48%, #0B0D0C); }
+/* hover and press show on the stub's paper too, so they read with reduced motion */
+.bpc-ticket[data-phase="ready"]:not([data-locked="true"]) .bpc-stub:hover { background-color: color-mix(in oklab, var(--k-panel-2, #181D1B) 90%, var(--k-text, #E9EDE8)); }
+.bpc-ticket[data-phase="ready"]:not([data-locked="true"]) .bpc-stub:active { background-color: color-mix(in oklab, var(--k-panel-2, #181D1B) 82%, var(--k-text, #E9EDE8)); }
+.bpc-ticket[data-locked="true"] { opacity: .6; }
+/* the page can set --k-acc-ink for a readable accent on its background; the inkColor prop wins over both */
+.bpc-ink { color: var(--bpc-ink, var(--k-acc-ink, var(--bpc-acc))); }
 .bpc-stamp { transform: rotate(-8deg); }
 .bpc-stamp[data-animate="true"] { animation: bpc-stamp 420ms 160ms cubic-bezier(.5,0,.7,1.2) both; }
 .bpc-main[data-thump="true"] { animation: bpc-thump 260ms 390ms ease-out; }
@@ -149,12 +212,12 @@ function bars(seed: string) {
   return { out, width: x };
 }
 
-function Field({ label, value, warn, className = "" }: { label: string; value: string; warn?: boolean; className?: string }) {
+function Field({ label, value, warn, warnLabel, className = "" }: { label: string; value: string; warn?: boolean; warnLabel?: string; className?: string }) {
   return (
     <div className={`min-w-0 ${className}`}>
       <dt className="text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-[var(--k-mute,#8A938D)]">
         {label}
-        {warn && <span className="ml-1 text-[var(--k-warn-text,#FFD08A)]">· new</span>}
+        {warn && <span className="ml-1 text-[var(--k-warn-text,#FFD08A)]">{warnLabel}</span>}
       </dt>
       <dd className={`truncate font-mono text-sm font-semibold tabular-nums ${warn ? "text-[var(--k-warn-text,#FFD08A)]" : ""}`}>{value}</dd>
     </div>
@@ -178,8 +241,13 @@ export function BoardingPassCard({
   tearDistance = 110,
   size = "md",
   preview,
+  inkColor,
+  labels,
+  disabled = false,
+  loading = false,
   className = "",
 }: BoardingPassCardProps) {
+  const l = { ...DEFAULT_BOARDING_PASS_LABELS, ...labels };
   const pathId = `bpc${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const reduced = useSyncExternalStore(onMotionChange, () => window.matchMedia(MOTION).matches, () => false);
   const [ownTorn, setOwnTorn] = useState(defaultTorn);
@@ -211,11 +279,11 @@ export function BoardingPassCard({
   const isWide = () => (stub.current?.offsetLeft ?? 0) > 0;
 
   function tear(wide: boolean) {
-    if (isTorn || preview || flying) return;
+    if (isTorn || preview || flying || disabled || loading) return;
     drag.current = null;
     setPulling(false);
     setOwnTorn(true);
-    setSaid(`Checked in. Seat ${pass.seat}, gate ${pass.gate}.`);
+    setSaid(l.announce(pass));
     latest.current.onTear?.();
     const el = stub.current;
     const t = ticket.current;
@@ -254,12 +322,16 @@ export function BoardingPassCard({
 
   const s = SIZES[size];
   const code = bars(`${pass.flight}${pass.seat}${pass.passenger}`);
-  const style = { "--bpc-acc": accent, ...(preview === "tearing" ? { "--bpc-p": 0.62 } : {}) } as CSSProperties;
+  const locked = disabled || loading;
+  const style = { "--bpc-acc": accent, ...(inkColor ? { "--bpc-ink": inkColor } : {}), ...(preview === "tearing" ? { "--bpc-p": 0.62 } : {}) } as CSSProperties;
 
   return (
-    <div role="group" aria-label={`Boarding pass, ${pass.from.city} to ${pass.to.city}`} className={`@container w-full ${s.box} text-[var(--k-text,#E9EDE8)] ${className}`} style={style}>
-      <style>{CSS}</style>
-      <div ref={ticket} data-phase={phase} data-gone={isTorn && !flying} className="bpc-ticket flex flex-col @min-[420px]:flex-row">
+    <div role="group" aria-label={l.pass(pass)} aria-busy={loading || undefined} aria-disabled={disabled || undefined} className={`@container w-full ${s.box} text-[var(--k-text,#E9EDE8)] ${className}`} style={style}>
+      {/* React 19 hoists this to <head> once, however many passes are on the page */}
+      <style href="bpc-card" precedence="default">
+        {CSS}
+      </style>
+      <div ref={ticket} data-phase={phase} data-gone={isTorn && !flying} data-locked={locked} className="bpc-ticket flex flex-col @min-[420px]:flex-row">
         {/* main panel */}
         <section
           className="bpc-main relative min-w-0 flex-1 rounded-t-2xl @min-[420px]:rounded-tr-none @min-[420px]:rounded-bl-2xl bg-[var(--k-panel,#121614)] p-4 pb-5 @min-[420px]:pb-4 @min-[420px]:pr-5"
@@ -308,11 +380,11 @@ export function BoardingPassCard({
           </div>
 
           <dl className="mt-4 grid grid-cols-3 gap-x-3 gap-y-2.5">
-            <Field label="Passenger" value={pass.passenger} className="col-span-2" />
-            <Field label="Date" value={pass.date} />
-            <Field label="Boards" value={pass.boards} />
-            <Field label="Gate" value={pass.gate} warn={pass.gateChanged} />
-            <Field label="Seat" value={pass.seat} />
+            <Field label={l.passenger} value={pass.passenger} className="col-span-2" />
+            <Field label={l.date} value={pass.date} />
+            <Field label={l.boards} value={pass.boards} />
+            <Field label={l.gate} value={pass.gate} warn={pass.gateChanged} warnLabel={l.gateNew} />
+            <Field label={l.seat} value={pass.seat} />
           </dl>
 
           {isTorn && (
@@ -320,12 +392,11 @@ export function BoardingPassCard({
               <div
                 className="bpc-stamp bpc-ink rounded-lg border-[3px] border-double border-current px-4 py-1.5 text-center"
                 data-animate={!preview}
-                style={{ background: `color-mix(in oklab, ${accent} 12%, transparent)` }}
+                // opaque, so the fields underneath can't drag the small line's contrast down
+                style={{ background: `color-mix(in oklab, ${accent} 12%, var(--k-panel, #121614))` }}
               >
-                <p className="font-mono text-xl font-black uppercase tracking-[0.18em]">Checked in</p>
-                <p className="font-mono text-[0.62rem] font-bold uppercase tracking-[0.2em]">
-                  Seat {pass.seat} · Gate {pass.gate}
-                </p>
+                <p className="font-mono text-xl font-black uppercase tracking-[0.18em]">{l.stamp}</p>
+                <p className="font-mono text-[0.7rem] font-extrabold uppercase tracking-[0.18em]">{l.stampDetail(pass)}</p>
               </div>
             </div>
           )}
@@ -334,9 +405,9 @@ export function BoardingPassCard({
         {/* the stub: drag it away from the perforation to tear it off */}
         <div
           ref={stub}
-          className={`bpc-stub relative shrink-0 cursor-grab select-none rounded-b-2xl @min-[420px]:rounded-bl-none @min-[420px]:rounded-tr-2xl bg-[var(--k-panel-2,#181D1B)] p-4 pt-5 active:cursor-grabbing @min-[420px]:w-[33%] @min-[420px]:min-w-[128px] @min-[420px]:pl-5 @min-[420px]:pt-4`}
+          className={`bpc-stub relative shrink-0 ${locked ? (loading ? "cursor-progress" : "cursor-not-allowed") : "cursor-grab active:cursor-grabbing"} select-none rounded-b-2xl @min-[420px]:rounded-bl-none @min-[420px]:rounded-tr-2xl bg-[var(--k-panel-2,#181D1B)] p-4 pt-5 transition-colors @min-[420px]:w-[33%] @min-[420px]:min-w-[128px] @min-[420px]:pl-5 @min-[420px]:pt-4`}
           onPointerDown={(e) => {
-            if (isTorn || preview || flying || e.button !== 0) return;
+            if (isTorn || preview || flying || locked || e.button !== 0) return;
             e.currentTarget.setPointerCapture(e.pointerId);
             drag.current = { x: e.clientX, y: e.clientY, wide: isWide(), peeled: false };
             ticket.current?.style.setProperty("transition", "none");
@@ -362,13 +433,14 @@ export function BoardingPassCard({
         >
           <div className="grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-2 @min-[420px]:h-full @min-[420px]:grid-cols-1 @min-[420px]:content-between">
             <div>
-              <p className="text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-[var(--k-mute,#8A938D)]">Seat</p>
+              <p className="text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-[var(--k-mute,#8A938D)]">{l.seat}</p>
               <p className={`font-mono ${s.seat} font-black leading-none tabular-nums`}>{pass.seat}</p>
               <p className="mt-1.5 font-mono text-[0.68rem] tabular-nums text-[var(--k-mute,#8A938D)]">
-                Gate <span className={`font-bold ${pass.gateChanged ? "text-[var(--k-warn-text,#FFD08A)]" : "text-[var(--k-text,#E9EDE8)]"}`}>{pass.gate}</span>
+                {l.gate} <span className={`font-bold ${pass.gateChanged ? "text-[var(--k-warn-text,#FFD08A)]" : "text-[var(--k-text,#E9EDE8)]"}`}>{pass.gate}</span>
                 {pass.group && (
                   <>
-                    {" · "}Grp <span className="font-bold text-[var(--k-text,#E9EDE8)]">{pass.group}</span>
+                    {" · "}
+                    {l.group} <span className="font-bold text-[var(--k-text,#E9EDE8)]">{pass.group}</span>
                   </>
                 )}
               </p>
@@ -380,7 +452,7 @@ export function BoardingPassCard({
                 ))}
               </svg>
               <p className="mt-1.5 flex items-center justify-between gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-[var(--k-mute,#8A938D)]">
-                <span className="truncate">Tear to check in</span>
+                <span className="truncate">{l.hint}</span>
                 <span aria-hidden="true" className="bpc-ink text-sm leading-none">
                   <span className="@min-[420px]:hidden">↓</span>
                   <span className="hidden @min-[420px]:inline">→</span>
@@ -395,11 +467,12 @@ export function BoardingPassCard({
         <button
           type="button"
           data-tear
-          aria-disabled={isTorn || !!preview}
+          disabled={disabled}
+          aria-disabled={isTorn || !!preview || loading}
           onClick={() => tear(isWide())}
-          className="rounded-full px-3 py-1 text-xs font-semibold text-[var(--k-mute,#8A938D)] transition-colors hover:text-[var(--k-text,#E9EDE8)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--bpc-acc)] aria-disabled:cursor-default aria-disabled:hover:text-[var(--k-mute,#8A938D)]"
+          className="rounded-full px-3 py-1 text-xs font-semibold text-[var(--k-mute,#8A938D)] transition-[color,background-color,scale] hover:bg-[color-mix(in_oklab,var(--k-text,#E9EDE8)_8%,transparent)] hover:text-[var(--k-text,#E9EDE8)] active:scale-95 active:bg-[color-mix(in_oklab,var(--k-text,#E9EDE8)_14%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--k-acc-text,#C6FF3D)] aria-disabled:cursor-default aria-disabled:bg-transparent aria-disabled:scale-100 aria-disabled:hover:text-[var(--k-mute,#8A938D)] disabled:cursor-not-allowed disabled:bg-transparent disabled:scale-100 disabled:opacity-60 disabled:hover:text-[var(--k-mute,#8A938D)]"
         >
-          {isTorn ? "Checked in ✓" : "Tear stub to check in"}
+          {loading ? l.checkingIn : isTorn ? l.buttonDone : l.button}
         </button>
       </div>
       <p role="status" aria-live="polite" className="sr-only">

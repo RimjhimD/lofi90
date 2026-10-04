@@ -14,7 +14,7 @@ export interface TapeMeasureInputProps {
   /** Printed after the number, e.g. "cm", "in", "mm". */
   unit?: string;
   label?: string;
-  /** Colour of the tape. Ticks and numbers on it are printed dark. */
+  /** Colour of the tape. Ticks and numbers on it are printed dark or light, whichever reads on it. */
   accent?: string;
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
@@ -63,6 +63,19 @@ const RELEASE_KICK = 110; // px/s, so every release lands with the same small bo
 
 const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const decimals = (n: number) => (String(n).split(".")[1] ?? "").length;
+
+/** Ink that reads on a hex colour: near-black on light tapes, white on dark ones. Accepts #rgb and #rrggbb. */
+function textOn(hex: string): string {
+  let h = hex.replace("#", "").trim();
+  if (h.length === 3 || h.length === 4) h = [...h.slice(0, 3)].map((c) => c + c).join("");
+  const n = parseInt(h.slice(0, 6), 16);
+  if (h.length < 6 || Number.isNaN(n)) return "#0B0D0C";
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.25 ? "#0B0D0C" : "#FFFFFF";
+}
 
 /** The smallest of 1, 2, 5 × 10ⁿ that is at least x. */
 function nice(x: number) {
@@ -344,6 +357,8 @@ export function TapeMeasureInput({
   const active = preview ? !!preview.pulling : phase !== "idle";
   const readout = preview ? clamp(preview.value) : phase === "idle" || phase === "settle" ? value : snap(pos);
   const now = preview ? clamp(preview.value) : value;
+  const ink = textOn(accent);
+  const numSize = Math.max(8, Math.round(s.tape * 0.36));
 
   // The printed scale. A mark's number is min + its distance from the hook, so the number at the slot
   // is always the reading (like adding the case length on a real tape).
@@ -351,7 +366,10 @@ export function TapeMeasureInput({
     if (usable < 20) return null;
     const ppu = usable / span;
     const minor = nice(5.5 / ppu);
-    const major = [5, 10, 20, 50, 100].map((m) => nice(minor * m)).find((m) => m * ppu >= 30) ?? minor * 100;
+    // Numbered marks need room for their widest number (mono digits ≈ 0.62 em), so a narrow track numbers fewer marks.
+    const chars = Math.max(String(Math.round(min)).length, String(Math.round(max)).length) + (decimals(minor) ? decimals(minor) + 1 : 0);
+    const room = Math.max(30, chars * numSize * 0.62 + 10);
+    const major = [5, 10, 20, 50, 100, 200, 500].map((m) => nice(minor * m)).find((m) => m * ppu >= room) ?? minor * 1000;
     const w = usable + 24;
     const ticks: { x: number; big: boolean; label?: string }[] = [];
     const first = Math.ceil(min / minor - 1e-9);
@@ -362,7 +380,7 @@ export function TapeMeasureInput({
       ticks.push({ x, big, label: big && w - x > 12 ? String(Number(at.toFixed(6))) : undefined });
     }
     return { w, ticks };
-  }, [usable, span, min, max]);
+  }, [usable, span, min, max, numSize]);
 
   return (
     <div className={`w-full select-none ${disabled ? "opacity-50" : ""} ${className}`}>
@@ -442,11 +460,11 @@ export function TapeMeasureInput({
               {scale && (
                 <svg className="absolute right-0 top-0" width={scale.w} height={s.tape}>
                   {scale.ticks.map((t, i) => (
-                    <line key={i} x1={t.x} x2={t.x} y1={0} y2={s.tape * (t.big ? 0.5 : 0.26)} stroke="#0B0D0C" strokeOpacity={t.big ? 0.85 : 0.55} strokeWidth={t.big ? 1.4 : 1} />
+                    <line key={i} x1={t.x} x2={t.x} y1={0} y2={s.tape * (t.big ? 0.5 : 0.26)} stroke={ink} strokeOpacity={t.big ? 0.85 : 0.55} strokeWidth={t.big ? 1.4 : 1} />
                   ))}
                   {scale.ticks.map((t, i) =>
                     t.label ? (
-                      <text key={`l${i}`} x={t.x} y={s.tape - 3} textAnchor="middle" fontSize={Math.max(8, Math.round(s.tape * 0.36))} fontWeight={700} fill="#0B0D0C" className="font-mono">
+                      <text key={`l${i}`} x={t.x} y={s.tape - 3} textAnchor="middle" fontSize={numSize} fontWeight={700} fill={ink} className="font-mono">
                         {t.label}
                       </text>
                     ) : null,
@@ -476,16 +494,22 @@ export function TapeMeasureInput({
               onLostPointerCapture={release}
               onKeyDown={key}
               className={`group absolute top-0 h-full touch-none rounded-md outline-none ${locked ? (disabled ? "cursor-not-allowed" : "") : pulling ? "cursor-grabbing" : "cursor-grab"}`}
-              style={{ left: tapeLen + TAPE_HOOK_W / 2 - HIT / 2, width: HIT }}
+              style={{ left: tapeLen + TAPE_HOOK_W / 2 - HIT / 2, width: HIT, ["--tape-acc" as string]: accent }}
             >
+              {/* hover: grows and rings in the tape colour · held: bigger, brighter ring · keyboard focus: the stage focus ring */}
               <span
-                className={`absolute rounded-[3px] bg-[linear-gradient(180deg,#EEF1EF,#A3ABA6_55%,#6F7773)] shadow-[0_2px_5px_rgba(0,0,0,.4)] ring-offset-2 ring-offset-[var(--k-bg,#0E1110)] transition-transform duration-150 group-focus-visible:ring-2 group-focus-visible:ring-[var(--k-acc-text,#C6FF3D)] ${pulling ? "scale-y-110" : ""}`}
+                className={`absolute rounded-[3px] bg-[linear-gradient(180deg,#EEF1EF,#A3ABA6_55%,#6F7773)] shadow-[0_2px_5px_rgba(0,0,0,.4)] ring-offset-2 ring-offset-[var(--k-bg,#0E1110)] transition-[transform,box-shadow] duration-150 motion-reduce:transition-none group-focus-visible:ring-2 group-focus-visible:ring-[var(--k-acc-text,#C6FF3D)] ${
+                  pulling
+                    ? "scale-x-125 scale-y-110 ring-[3px] ring-offset-0 ring-[color:var(--tape-acc)]/45"
+                    : locked
+                      ? ""
+                      : "group-hover:scale-x-125 group-hover:scale-y-105 group-hover:ring-2 group-hover:ring-offset-0 group-hover:ring-[color:var(--tape-acc)]/60"
+                }`}
                 style={{
                   left: HIT / 2 - TAPE_HOOK_W / 2,
                   top: tapeTop - 7,
                   width: TAPE_HOOK_W,
                   height: s.tape + 14,
-                  boxShadow: pulling ? `0 0 0 3px ${accent}55, 0 2px 5px rgba(0,0,0,.4)` : undefined,
                 }}
               />
             </div>

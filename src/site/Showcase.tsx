@@ -96,21 +96,24 @@ export function Showcase({ slug, tryIt }: { slug: string; tryIt: string[] }) {
               Slow-mo{slow ? " ×¼" : ""}
             </button>
             {/* lights switch: a knob slides between the dark and the light stage */}
-            <button
-              type="button"
-              role="switch"
-              aria-checked={light}
-              aria-label="Light stage"
-              onClick={() => setLight((v) => !v)}
-              className="relative flex items-center whitespace-nowrap rounded-lg border border-line bg-bg/40 p-0.5 text-xs font-medium focus-visible:outline-2 focus-visible:outline-acc"
-            >
+            <div role="group" aria-label="Stage" className="relative flex items-center whitespace-nowrap rounded-lg border border-line bg-bg/40 p-0.5 text-xs font-medium">
               <span
                 aria-hidden="true"
                 className={`absolute inset-y-0.5 left-0.5 w-[calc(50%-2px)] rounded-md bg-panel-2 shadow-[0_0_0_1px_var(--color-line-2)] transition-transform duration-500 ${ease} ${light ? "translate-x-full" : ""}`}
               />
-              <span className={`relative z-10 w-[4.4rem] py-1 text-center transition-colors sm:w-[6.6rem] ${light ? "text-mute" : "text-text"}`}>☾ Dark<span className="hidden sm:inline"> stage</span></span>
-              <span className={`relative z-10 w-[4.4rem] py-1 text-center transition-colors sm:w-[6.6rem] ${light ? "text-text" : "text-mute"}`}>☀ Light<span className="hidden sm:inline"> stage</span></span>
-            </button>
+              {[false, true].map((on) => (
+                <button
+                  key={String(on)}
+                  type="button"
+                  aria-pressed={light === on}
+                  onClick={() => setLight(on)}
+                  className={`relative z-10 w-[4.4rem] rounded-md py-1 text-center transition-colors hover:text-text focus-visible:outline-2 focus-visible:outline-acc sm:w-[6.6rem] ${light === on ? "text-text" : "text-mute"}`}
+                >
+                  {on ? "☀ Light" : "☾ Dark"}
+                  <span className="hidden sm:inline"> stage</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 

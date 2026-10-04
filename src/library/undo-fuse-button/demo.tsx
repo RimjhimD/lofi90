@@ -26,7 +26,7 @@ export default function UndoFuseButtonDemo({ controls = {} }: { controls?: Contr
                 type="button"
                 aria-pressed={selected === it}
                 onClick={() => setSelected(it)}
-                className="flex w-full items-center gap-2 border border-transparent px-2 py-1 text-left text-sm hover:border-[var(--k-line,#3A433F)] aria-pressed:border-[var(--k-line,#3A433F)] aria-pressed:bg-[var(--k-panel-2,#181D1B)] focus-visible:outline-2 focus-visible:outline-[#C6FF3D]"
+                className="flex w-full items-center gap-2 border border-transparent px-2 py-1 text-left text-sm hover:border-[var(--k-line,#3A433F)] aria-pressed:border-[var(--k-line,#3A433F)] aria-pressed:bg-[var(--k-panel-2,#181D1B)] focus-visible:outline-2 focus-visible:outline-[var(--k-acc-text,#C6FF3D)]"
               >
                 📁 {it}
               </button>
@@ -55,7 +55,7 @@ export default function UndoFuseButtonDemo({ controls = {} }: { controls?: Contr
       </div>
       <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-[var(--k-mute,#8A938D)]">
         <span aria-live="polite">{log || "Press Delete, then move your mouse away and watch the fuse."}</span>
-        <button type="button" onClick={() => { setItems(START); setSelected(START[0]); setLog(""); say("Folders restored."); }} className="rounded-lg border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-2 py-0.5 font-bold text-[var(--k-text,#E9EDE8)] shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] focus-visible:outline-3 focus-visible:outline-[#C6FF3D]">
+        <button type="button" onClick={() => { setItems(START); setSelected(START[0]); setLog(""); say("Folders restored."); }} className="rounded-lg border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-2 py-0.5 font-bold text-[var(--k-text,#E9EDE8)] shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] focus-visible:outline-3 focus-visible:outline-[var(--k-acc-text,#C6FF3D)]">
           Reset
         </button>
       </div>

@@ -2,20 +2,38 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 
-export type FuseState = "idle" | "burning" | "done" | "undone";
+export type FuseState = "idle" | "burning" | "committing" | "done" | "undone";
 
 export interface FuseLabels {
   idle: string;
   /** Shown while the fuse burns. {s} is replaced with the seconds left. */
   burning: string;
   paused: string;
+  /** Shown while an async onCommit is still running. */
+  committing: string;
   done: string;
   undone: string;
+  /** Mark after the done label. Empty string hides it. */
+  doneMark: string;
+  /** Mark after the undone label. Empty string hides it. */
+  undoneMark: string;
+  /** Status line while the fuse burns. */
+  hint: string;
+  /** Status line while the fuse waits under the pointer. */
+  pausedHint: string;
+  /** Announced at the start and when 3 and 1 seconds are left. {s} is replaced with the seconds left. */
+  countdown: string;
+  doneHint: string;
+  undoneHint: string;
+  /** Status line for a few seconds after onCommit fails. */
+  error: string;
 }
 
 export interface UndoFuseButtonProps {
-  /** Runs when the fuse burns out, i.e. the user did not undo. */
+  /** Runs when the fuse burns out, i.e. the user did not undo. Return a promise to show the committing state until it settles. */
   onCommit: () => void | Promise<void>;
+  /** Runs when onCommit throws or its promise rejects. The button goes back to idle. */
+  onError?: (error: unknown) => void;
   /** Runs when the user cancels before the fuse burns out. */
   onUndo?: () => void;
   /** Runs when the button is pressed and the fuse is lit. */
@@ -25,11 +43,13 @@ export interface UndoFuseButtonProps {
   /** Override any text. */
   labels?: Partial<FuseLabels>;
   disabled?: boolean;
+  /** Force the committing (loading) look, e.g. while the parent is still saving. */
+  pending?: boolean;
   /** Show one state without running anything. "burning" is drawn about 60% burnt. */
   previewState?: FuseState;
-  /** Button colour before it is pressed. */
+  /** Button colour before it is pressed (also tints the undone state). Hex colours get automatic text contrast. */
   color?: string;
-  /** Colour of the burning fuse. */
+  /** Colour of the burning fuse, its spark and the burning tint. */
   fuseColor?: string;
   /** How the spark moves: a pulsing glow, a steady glow, or no spark at all. */
   spark?: "pulse" | "steady" | "none";
@@ -43,13 +63,30 @@ const DEFAULT_LABELS: FuseLabels = {
   idle: "Delete",
   burning: "Deleting in {s}s · undo",
   paused: "Paused · move away to resume",
+  committing: "Deleting…",
   done: "Deleted",
   undone: "Kept",
+  doneMark: "✓",
+  undoneMark: "↺",
+  hint: "Click again or press Esc to undo.",
+  pausedHint: "Paused while you're here. Click or press Esc to undo.",
+  countdown: "Seconds left to undo: {s}.",
+  doneHint: "Done. The undo window has closed.",
+  undoneHint: "Cancelled. Nothing was changed.",
+  error: "That didn't work. Nothing was changed.",
 };
 
-/** Dark text on light colours, white on dark ones, so any button colour stays readable. */
+const ERROR_MS = 4000;
+
+/** A faint wash of any CSS colour, so tints follow the colour props. */
+const tint = (c: string, pct: number) => `color-mix(in srgb, ${c} ${pct}%, transparent)`;
+
+/** Dark text on light colours, white on dark ones, so any hex button colour stays readable. Other colours get dark text. */
 function textOn(hex: string): string {
-  const n = parseInt(hex.replace("#", ""), 16);
+  let h = hex.trim().replace(/^#/, "");
+  if (/^[0-9a-f]{3,4}$/i.test(h)) h = [...h.slice(0, 3)].map((c) => c + c).join("");
+  if (!/^[0-9a-f]{6}([0-9a-f]{2})?$/i.test(h)) return "#0B0D0C";
+  const n = parseInt(h.slice(0, 6), 16);
   const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
     const c = v / 255;
     return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
@@ -68,9 +105,11 @@ export function UndoFuseButton({
   onCommit,
   onUndo,
   onStart,
+  onError,
   delayMs = 5000,
   labels,
   disabled = false,
+  pending = false,
   previewState,
   color = "#C6FF3D",
   fuseColor = "#FFB547",
@@ -87,12 +126,17 @@ export function UndoFuseButton({
   const [held, setHeld] = useState(false);
   const [left, setLeft] = useState(delayMs);
   const [box, setBox] = useState({ w: 0, h: 0 });
-  const latest = useRef({ onCommit, onUndo, onStart });
+  const [failed, setFailed] = useState(false);
+  const failTimer = useRef(0);
+  const latest = useRef({ onCommit, onUndo, onStart, onError });
   useEffect(() => {
-    latest.current = { onCommit, onUndo, onStart };
+    latest.current = { onCommit, onUndo, onStart, onError };
   });
+  useEffect(() => () => clearTimeout(failTimer.current), []);
 
-  const state = previewState ?? live;
+  const state = previewState ?? (pending ? "committing" : live);
+  // Pressing does nothing once it has run, while it runs, or when switched off.
+  const locked = disabled || pending || !!previewState || live === "done" || live === "committing";
   const progress = previewState === "burning" ? 0.6 : state === "burning" ? 1 - left / delayMs : 0;
 
   // Keep the fuse rectangle the same size as the button.
@@ -116,13 +160,31 @@ export function UndoFuseButton({
     return () => clearInterval(id);
   }, [live, held, previewState]);
 
-  // Burnt out: commit.
+  // Burnt out: commit. An async onCommit shows "committing" until it settles; a failure goes back to idle.
   useEffect(() => {
     if (previewState || live !== "burning" || left > 0) return;
-    const t = window.setTimeout(() => {
+    const succeed = () => {
       setLive("done");
-      void latest.current.onCommit();
       if (!reducedMotion()) btn.current?.animate([{ filter: "brightness(1.6)" }, { filter: "none" }], { duration: 380 });
+    };
+    const fail = (err: unknown) => {
+      setLive("idle");
+      setFailed(true);
+      clearTimeout(failTimer.current);
+      failTimer.current = window.setTimeout(() => setFailed(false), ERROR_MS);
+      latest.current.onError?.(err);
+    };
+    const t = window.setTimeout(() => {
+      let result: void | Promise<void>;
+      try {
+        result = latest.current.onCommit();
+      } catch (err) {
+        fail(err);
+        return;
+      }
+      if (!(result instanceof Promise)) return succeed();
+      setLive("committing");
+      result.then(succeed, fail);
     }, 0);
     return () => clearTimeout(t);
   }, [left, live, previewState]);
@@ -139,7 +201,9 @@ export function UndoFuseButton({
   }, [progress, box]);
 
   function press() {
-    if (disabled || previewState) return;
+    if (locked) return;
+    clearTimeout(failTimer.current);
+    setFailed(false);
     if (live === "burning") {
       setLive("undone");
       latest.current.onUndo?.();
@@ -151,26 +215,44 @@ export function UndoFuseButton({
     latest.current.onStart?.();
   }
 
-  const seconds = Math.ceil(left / 1000);
+  const seconds = previewState ? Math.ceil((delayMs * 0.4) / 1000) : Math.ceil(left / 1000);
+  // Coarse countdown for screen readers: the text only changes at the start, at 3s and at 1s, so it isn't read every tick.
+  const startSeconds = Math.ceil(delayMs / 1000);
+  const mark = seconds <= 1 ? 1 : seconds <= 3 ? Math.min(3, startSeconds) : startSeconds;
   const label =
     state === "burning"
       ? held && !previewState
         ? text.paused
-        : text.burning.replace("{s}", String(previewState ? Math.ceil(delayMs * 0.4 / 1000) : seconds))
-      : state === "done"
-        ? `${text.done} ✓`
-        : state === "undone"
-          ? `${text.undone} ↺`
-          : text.idle;
+        : text.burning.replace("{s}", String(seconds))
+      : state === "committing"
+        ? text.committing
+        : state === "done"
+          ? text.done
+          : state === "undone"
+            ? text.undone
+            : text.idle;
+  const labelMark = state === "done" ? text.doneMark : state === "undone" ? text.undoneMark : "";
 
   const tone =
     state === "burning"
-      ? "bg-[#FFB547]/10 text-[var(--k-text,#E9EDE8)]"
-      : state === "done"
+      ? "text-[var(--k-text,#E9EDE8)]"
+      : state === "done" || state === "committing"
         ? "bg-[var(--k-panel-2,#181D1B)] text-[var(--k-text,#E9EDE8)]"
         : state === "undone"
-          ? "bg-[#C6FF3D]/15 text-[var(--k-acc-text,#C6FF3D)]"
+          ? "text-[var(--k-acc-text,#C6FF3D)]"
           : "";
+  const fill =
+    state === "idle" && !disabled
+      ? { background: color, color: textOn(color) }
+      : state === "burning"
+        ? { background: tint(fuseColor, 10) }
+        : state === "undone"
+          ? { background: tint(color, 15) }
+          : undefined;
+  // Hover lifts and brightens, press sinks; only while pressing still does something.
+  const motion = locked
+    ? "cursor-not-allowed"
+    : "hover:-translate-x-px hover:-translate-y-px hover:brightness-110 hover:shadow-[0_14px_32px_-12px_var(--k-shadow,rgba(0,0,0,.9))] active:translate-x-px active:translate-y-px active:brightness-95 active:shadow-[0_4px_12px_-8px_var(--k-shadow,rgba(0,0,0,.9))]";
 
   return (
     <div className={`inline-flex flex-col items-center gap-2 ${className}`}>
@@ -182,11 +264,17 @@ export function UndoFuseButton({
         onPointerLeave={() => setHeld(false)}
         onKeyDown={(e) => e.key === "Escape" && live === "burning" && press()}
         disabled={disabled}
+        aria-disabled={!disabled && (pending || live === "done" || live === "committing") ? true : undefined}
+        aria-busy={state === "committing" || undefined}
         aria-describedby={statusId}
-        style={state === "idle" && !disabled ? { background: color, color: textOn(color) } : undefined}
-        className={`relative ${SIZES[size]} rounded-lg border border-[var(--k-line,#3A433F)] font-bold shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] transition-[background-color,color,box-shadow,transform] duration-150 hover:-translate-x-px hover:-translate-y-px hover:shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] active:translate-x-px active:translate-y-px active:shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[#C6FF3D] disabled:cursor-not-allowed disabled:bg-[var(--k-panel-2,#181D1B)] disabled:text-[var(--k-mute,#8A938D)] disabled:shadow-none ${tone}`}
+        style={fill}
+        className={`relative ${SIZES[size]} rounded-lg border border-[var(--k-line,#3A433F)] font-bold shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] transition-[background-color,color,box-shadow,transform,filter] duration-150 ${motion} focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[var(--k-acc-text,#C6FF3D)] disabled:bg-[var(--k-panel-2,#181D1B)] disabled:text-[var(--k-mute,#8A938D)] disabled:shadow-none ${tone}`}
       >
+        {state === "committing" && (
+          <span aria-hidden="true" className="mr-2 inline-block size-3 rounded-full border-2 border-current border-t-transparent align-[-1px] motion-safe:animate-spin" />
+        )}
         {label}
+        {labelMark && <span aria-hidden="true"> {labelMark}</span>}
         {state === "burning" && box.w > 0 && (
           <svg aria-hidden="true" className="pointer-events-none absolute -left-[4px] -top-[4px] overflow-visible" width={box.w} height={box.h}>
             {/* the fuse that is left, from the spark to the end */}
@@ -205,7 +293,12 @@ export function UndoFuseButton({
               strokeDashoffset={-progress}
             />
             {sparkStyle !== "none" && (
-              <circle ref={spark} r="5" fill="#FFF3C4" className={`drop-shadow-[0_0_8px_#FFB547] ${sparkStyle === "pulse" ? "motion-safe:animate-pulse" : ""}`} />
+              <circle
+                ref={spark}
+                r="5"
+                style={{ fill: `color-mix(in srgb, ${fuseColor} 30%, #fff)`, filter: `drop-shadow(0 0 8px ${fuseColor})` }}
+                className={sparkStyle === "pulse" ? "motion-safe:animate-pulse" : ""}
+              />
             )}
           </svg>
         )}
@@ -213,13 +306,15 @@ export function UndoFuseButton({
       <p id={statusId} role="status" aria-live="polite" className="min-h-5 text-center text-xs font-semibold text-[var(--k-mute,#8A938D)]">
         {state === "burning"
           ? held && !previewState
-            ? "Paused while you're here. Click or press Esc to undo."
-            : "Click again or press Esc to undo."
+            ? text.pausedHint
+            : `${text.hint} ${text.countdown.replace("{s}", String(mark))}`
           : state === "done"
-            ? "Done. The undo window has closed."
+            ? text.doneHint
             : state === "undone"
-              ? "Cancelled. Nothing was changed."
-              : ""}
+              ? text.undoneHint
+              : state === "idle" && failed
+                ? text.error
+                : ""}
       </p>
     </div>
   );

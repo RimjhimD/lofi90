@@ -15,10 +15,36 @@ export interface VinylRecord {
   pattern?: CoverPattern;
 }
 
+/** Every piece of text the carousel shows or announces. Templates are functions so word order can change. */
+export interface VinylLabels {
+  prev: string;
+  next: string;
+  play: string;
+  putBack: string;
+  /** The tag under the crate while a record plays. */
+  nowPlaying: (rpm: number) => string;
+  /** Printed on the disc label. */
+  discRpm: (rpm: number) => string;
+  help: string;
+  helpPlaying: string;
+  /** Accessible name of the clickable crate. */
+  crate: (record: VinylRecord) => string;
+  cratePlaying: (record: VinylRecord) => string;
+  /** Accessible name of each sleeve; position is 1-based. */
+  slide: (record: VinylRecord, position: number, total: number) => string;
+  /** Live announcement after a flip; position is 1-based. */
+  status: (record: VinylRecord, position: number, total: number) => string;
+  statusPlaying: (record: VinylRecord, rpm: number) => string;
+}
+
 export interface VinylCrateCarouselProps {
   records: VinylRecord[];
   /** Accessible name for the whole carousel, e.g. "Staff picks". */
   label?: string;
+  /** Override any text; the rest stays English. */
+  labels?: Partial<VinylLabels>;
+  /** Shown in place of the crate when records is empty. */
+  emptyLabel?: string;
   /** Controlled: which record is at the front. Pair it with onChange. */
   index?: number;
   /** Uncontrolled: which record is at the front first. */
@@ -46,6 +72,22 @@ const COVER = { sm: 150, md: 184, lg: 220 };
 /** How many sleeves stand visibly in the crate, front one included. */
 const SHOWN = 6;
 const PATTERNS: CoverPattern[] = ["sun", "bands", "rings", "split", "grid", "wave"];
+
+const DEFAULT_LABELS: VinylLabels = {
+  prev: "Previous record",
+  next: "Next record",
+  play: "Play",
+  putBack: "Put back",
+  nowPlaying: (rpm) => `Now playing · ${rpm} rpm`,
+  discRpm: (rpm) => `${rpm} rpm`,
+  help: "Scroll, drag or ← → to flip · click the record to play",
+  helpPlaying: "Esc or Put back returns it to the crate",
+  crate: (r) => `Record crate. ${r.title} by ${r.artist} is at the front.`,
+  cratePlaying: (r) => `Playing ${r.title}. Press Escape to put it back.`,
+  slide: (r, i, total) => `${i} of ${total}: ${r.title} — ${r.artist}`,
+  status: (r, i, total) => `${i} of ${total}: ${r.title} — ${r.artist}`,
+  statusPlaying: (r, rpm) => `Now playing “${r.title}” by ${r.artist}, ${rpm} rpm.`,
+};
 
 /** A length in "cover sizes": everything in the scene scales with --s. */
 const u = (k: number) => `calc(var(--s) * ${k})`;
@@ -79,13 +121,27 @@ function coverArt(r: VinylRecord): string {
 
 /** Dark text on light colours, white on dark ones, so any accent stays readable. */
 function textOn(hex: string): string {
-  const n = parseInt(hex.replace("#", "").slice(0, 6), 16);
+  let h = hex.trim().replace(/^#/, "");
+  // #abc and #abcd are short for #aabbcc
+  if (h.length === 3 || h.length === 4) h = [...h.slice(0, 3)].map((c) => c + c).join("");
+  const n = h.length >= 6 ? parseInt(h.slice(0, 6), 16) : NaN;
   if (Number.isNaN(n)) return "#0B0D0C";
   const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
     const c = v / 255;
     return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   });
   return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.25 ? "#0B0D0C" : "#FFFFFF";
+}
+
+/** Text style for a sleeve corner: picks ink for the cover colour under it, with a halo for busy patterns. */
+function inkOn(r: VinylRecord, spot: "top" | "bottom"): CSSProperties {
+  const [a, b] = r.colors;
+  const p = patternOf(r);
+  // the colour each pattern paints in the top-left and bottom-left corners
+  const bg = (p === "grid" && spot === "top") || (p === "wave" && spot === "bottom") ? b : a;
+  const color = textOn(bg);
+  const halo = color === "#FFFFFF" ? "0 1px 2px rgba(0,0,0,.6)" : "0 0 3px rgba(255,255,255,.55)";
+  return { color, textShadow: halo };
 }
 
 const MOTION = "(prefers-reduced-motion: reduce)";
@@ -122,6 +178,8 @@ const LIFT = `0 ${u(-0.12)} ${u(0.42)}`;
 export function VinylCrateCarousel({
   records,
   label = "Records",
+  labels,
+  emptyLabel = "No records in the crate yet.",
   index,
   initialIndex = 0,
   onChange,
@@ -143,7 +201,8 @@ export function VinylCrateCarousel({
   const [hover, setHover] = useState(false);
   const reduced = useReducedMotion();
   const area = useRef<HTMLDivElement>(null);
-  const drag = useRef<{ y: number } | null>(null);
+  const drag = useRef<{ x: number; y: number } | null>(null);
+  const text = { ...DEFAULT_LABELS, ...labels };
   const wasDragged = useRef(false);
 
   const cur = clamp(preview?.index ?? index ?? own);
@@ -177,6 +236,7 @@ export function VinylCrateCarousel({
   useEffect(() => {
     latest.current = { cur, n, pulled, flipMs, go };
   });
+  const empty = n === 0;
   useEffect(() => {
     const el = area.current;
     if (!el) return;
@@ -199,9 +259,15 @@ export function VinylCrateCarousel({
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, []);
+    // re-attach when the crate appears after being empty
+  }, [empty]);
 
-  if (!record) return null;
+  if (!record)
+    return (
+      <section aria-label={label} className={`mx-auto w-full max-w-[40rem] ${className}`}>
+        <p className="rounded-2xl border border-dashed border-[var(--k-line,#3A433F)] px-4 py-8 text-center text-sm text-[var(--k-mute,#8A938D)]">{emptyLabel}</p>
+      </section>
+    );
 
   const ease = "cubic-bezier(.3,1.25,.5,1)";
   const soft = "cubic-bezier(.22,.8,.25,1)";
@@ -279,9 +345,9 @@ export function VinylCrateCarousel({
         ].join(", "),
   };
   const spinDelay = pullMs + 260;
-  const status = pulled ? `Now playing “${record.title}” by ${record.artist}, ${rpm} rpm.` : `${cur + 1} of ${n}: ${record.title} — ${record.artist}`;
+  const status = pulled ? text.statusPlaying(record, rpm) : text.status(record, cur + 1, n);
   const btn =
-    "grid h-10 w-10 place-items-center rounded-full border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] text-lg font-bold text-[var(--k-text,#E9EDE8)] shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] transition-colors hover:border-[var(--accent)] disabled:opacity-35 disabled:hover:border-[var(--k-line,#3A433F)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+    "grid h-10 w-10 place-items-center rounded-full border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] text-lg font-bold text-[var(--k-text,#E9EDE8)] shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] transition-colors hover:border-[var(--accent)] disabled:opacity-35 disabled:hover:border-[var(--k-line,#3A433F)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--k-acc-text,#C6FF3D)]";
 
   return (
     <section
@@ -302,9 +368,11 @@ export function VinylCrateCarousel({
     >
       <div
         ref={area}
+        role="button"
         tabIndex={0}
+        aria-pressed={pulled}
         aria-describedby={`${id}-help`}
-        aria-label={pulled ? `Playing ${record.title}. Press Escape to put it back.` : `Record crate. ${record.title} by ${record.artist} is at the front.`}
+        aria-label={pulled ? text.cratePlaying(record) : text.crate(record)}
         onKeyDown={(e) => {
           if (e.target !== e.currentTarget || preview || (e.key !== "Enter" && e.key !== " ")) return;
           e.preventDefault();
@@ -320,24 +388,28 @@ export function VinylCrateCarousel({
         onPointerLeave={() => setHover(false)}
         onPointerDown={(e) => {
           if (preview || pulled || e.button !== 0) return;
-          drag.current = { y: e.clientY };
+          drag.current = { x: e.clientX, y: e.clientY };
           wasDragged.current = false;
           e.currentTarget.setPointerCapture(e.pointerId);
         }}
         onPointerMove={(e) => {
           const g = drag.current;
           if (!g) return;
+          const dx = e.clientX - g.x;
           const dy = e.clientY - g.y;
-          // drag down tips the front record toward you (next); drag up lifts the last one back (previous)
-          if (Math.abs(dy) > 36) {
-            go(cur + (dy > 0 ? 1 : -1));
+          // drag down tips the front record toward you (next); drag up lifts the last one back (previous).
+          // A sideways swipe flips too (left is next): on touch, vertical swipes scroll the page instead.
+          const step = Math.abs(dx) > Math.abs(dy) ? -dx : dy;
+          if (Math.abs(step) > 36) {
+            go(cur + (step > 0 ? 1 : -1));
+            g.x = e.clientX;
             g.y = e.clientY;
             wasDragged.current = true;
           }
         }}
         onPointerUp={() => (drag.current = null)}
         onPointerCancel={() => (drag.current = null)}
-        className="relative mx-auto w-full cursor-pointer touch-none overflow-visible outline-none focus-visible:rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent)]"
+        className="relative mx-auto w-full cursor-pointer touch-pan-y overflow-visible outline-none focus-visible:rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--k-acc-text,#C6FF3D)]"
         style={{ height: u(1.62), perspective: u(4.2), perspectiveOrigin: "50% -60%" }}
       >
         {/* the crate: floor, back wall, side walls; the front lip is painted over the standing sleeves */}
@@ -370,18 +442,24 @@ export function VinylCrateCarousel({
               key={r.id}
               role="group"
               aria-roledescription="slide"
-              aria-label={`${i + 1} of ${n}: ${r.title} — ${r.artist}`}
+              aria-label={text.slide(r, i + 1, n)}
               aria-hidden={d !== 0}
               className="absolute left-1/2 [transform-origin:50%_100%] [transform-style:preserve-3d]"
               style={{ ...sleeveStyle(i), bottom: "var(--floor)" }}
             >
               {/* the back of the sleeve, seen when it tips forward toward you */}
-              <div className="absolute inset-0 rounded-[3px] [backface-visibility:hidden] [transform:rotateX(180deg)]" style={{ background: `repeating-linear-gradient(to bottom, transparent 0 9%, rgba(255,255,255,.07) 9% 10%) 0 0 / 70% 100% no-repeat content-box, ${mix(r.colors[0], "#111", 30)}`, padding: "14% 15%" }}>
+              <div className="absolute inset-0 rounded-[3px] shadow-[0_10px_22px_-8px_rgba(0,0,0,.85)] [backface-visibility:hidden] [transform:rotateX(180deg)]" style={{ background: `repeating-linear-gradient(to bottom, transparent 0 9%, rgba(255,255,255,.07) 9% 10%) 0 0 / 70% 100% no-repeat content-box, ${mix(r.colors[0], "#111", 30)}`, padding: "14% 15%" }}>
                 <span className="absolute inset-0 rounded-[3px] bg-black transition-opacity" style={{ opacity: "var(--shade)", transitionDuration: `${flipMs}ms` }} />
+                {/* light on the near edge, dark toward the hinge, so the leaning sleeve reads as tilted rather than flat */}
+                <span className="absolute inset-0 rounded-[3px] border-b border-white/20 bg-[linear-gradient(to_top,rgba(255,255,255,.1),transparent_35%,rgba(0,0,0,.4))]" />
               </div>
               <div className="relative h-full w-full overflow-hidden rounded-[3px] border-t border-white/25 shadow-[0_6px_14px_-6px_rgba(0,0,0,.8)] [backface-visibility:hidden]" style={{ background: coverArt(r) }}>
-                <span className="absolute left-[7%] top-[6%] max-w-[86%] truncate text-[length:calc(var(--s)*0.062)] font-black uppercase leading-none tracking-wider text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,.45)]">{r.artist}</span>
-                <span className="absolute bottom-[6%] left-[7%] max-w-[86%] truncate text-[length:calc(var(--s)*0.05)] font-semibold leading-none text-white/80 [text-shadow:0_1px_2px_rgba(0,0,0,.45)]">{r.title}</span>
+                <span className="absolute left-[7%] top-[6%] max-w-[86%] truncate text-[length:calc(var(--s)*0.062)] font-black uppercase leading-none tracking-wider" style={inkOn(r, "top")}>
+                  {r.artist}
+                </span>
+                <span className="absolute bottom-[6%] left-[7%] max-w-[86%] truncate text-[length:calc(var(--s)*0.05)] font-semibold leading-none" style={inkOn(r, "bottom")}>
+                  {r.title}
+                </span>
                 {/* light catching the sleeve edge, and the shadow that pushes back sleeves away */}
                 <span className="absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,.14),transparent_38%)]" />
                 <span className="absolute inset-0 bg-black transition-opacity" style={{ opacity: "var(--shade)", transitionDuration: `${flipMs}ms` }} />
@@ -408,8 +486,12 @@ export function VinylCrateCarousel({
           >
             <div className="absolute inset-[3%] rounded-full border border-white/5" />
             <div className="absolute inset-[31%] overflow-hidden rounded-full" style={{ background: `linear-gradient(to bottom, ${record.colors[0]} 0 50%, ${record.colors[1]} 50%)` }}>
-              <span className="absolute inset-x-[12%] top-[20%] truncate text-center text-[length:calc(var(--s)*0.042)] font-black uppercase leading-none text-white [text-shadow:0_1px_1px_rgba(0,0,0,.5)]">{record.title}</span>
-              <span className="absolute inset-x-[12%] bottom-[20%] truncate text-center text-[length:calc(var(--s)*0.034)] font-semibold leading-none text-white/85 [text-shadow:0_1px_1px_rgba(0,0,0,.5)]">{rpm} rpm</span>
+              <span className="absolute inset-x-[12%] top-[20%] truncate text-center text-[length:calc(var(--s)*0.042)] font-black uppercase leading-none" style={{ color: textOn(record.colors[0]) }}>
+                {record.title}
+              </span>
+              <span className="absolute inset-x-[12%] bottom-[20%] truncate text-center text-[length:calc(var(--s)*0.034)] font-semibold leading-none" style={{ color: textOn(record.colors[1]) }}>
+                {text.discRpm(rpm)}
+              </span>
             </div>
             <div className="absolute left-1/2 top-1/2 h-[4%] w-[4%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--k-bg,#0E1110)] ring-1 ring-black/60" />
           </div>
@@ -430,7 +512,7 @@ export function VinylCrateCarousel({
       <div className="mt-2 text-center" aria-hidden="true">
         {pulled ? (
           <>
-            <p className="font-mono text-[0.68rem] font-bold uppercase tracking-widest text-[var(--k-acc-text,#C6FF3D)]">Now playing · {rpm} rpm</p>
+            <p className="font-mono text-[0.68rem] font-bold uppercase tracking-widest text-[var(--k-acc-text,#C6FF3D)]">{text.nowPlaying(rpm)}</p>
             <p className="mt-1 text-2xl font-black leading-tight">{record.title}</p>
             <p className="text-sm text-[var(--k-mute,#8A938D)]">
               {record.artist}
@@ -449,33 +531,33 @@ export function VinylCrateCarousel({
       </div>
 
       <div className="mt-3 flex items-center justify-center gap-3">
-        <button type="button" aria-label="Previous record" onClick={() => go(cur - 1)} disabled={cur === 0 || pulled} className={btn}>
+        <button type="button" aria-label={text.prev} data-prev onClick={() => go(cur - 1)} disabled={cur === 0 || pulled} className={btn}>
           ‹
         </button>
         <button
           type="button"
           data-play
           onClick={() => (pulled ? putBack() : pull())}
-          className="h-10 min-w-28 rounded-full px-5 text-sm font-bold shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+          className="h-10 min-w-28 rounded-full px-5 text-sm font-bold transition hover:brightness-110 active:scale-[.97] motion-reduce:transition-none shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--k-acc-text,#C6FF3D)]"
           style={pulled ? { background: "var(--k-panel-2,#181D1B)", color: "var(--k-text,#E9EDE8)", border: "1px solid var(--k-line,#3A433F)" } : { background: accent, color: textOn(accent) }}
         >
           {pulled ? (
-            "Put back"
+            text.putBack
           ) : (
             <span className="inline-flex items-center gap-1.5">
               <svg aria-hidden="true" viewBox="0 0 10 12" className="h-3 w-2.5 fill-current">
                 <path d="M0 0l10 6-10 6z" />
               </svg>
-              Play
+              {text.play}
             </span>
           )}
         </button>
-        <button type="button" aria-label="Next record" onClick={() => go(cur + 1)} disabled={cur === n - 1 || pulled} className={btn}>
+        <button type="button" aria-label={text.next} data-next onClick={() => go(cur + 1)} disabled={cur === n - 1 || pulled} className={btn}>
           ›
         </button>
       </div>
       <p id={`${id}-help`} className="mt-2 text-center text-[0.7rem] text-[var(--k-mute,#8A938D)]">
-        {pulled ? "Esc or Put back returns it to the crate" : "Scroll, drag or ← → to flip · click the record to play"}
+        {pulled ? text.helpPlaying : text.help}
       </p>
       <p role="status" aria-live="polite" className="sr-only">
         {status}

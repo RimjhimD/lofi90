@@ -36,5 +36,6 @@ export const UNDO_FUSE_BUTTON_STATES = [
     note: "The fuse reached the end and the action ran.",
     node: <Scene period={4400} delayMs={1800} steps={[[600, click("button")]]} />,
   },
+  { id: "committing", label: "Committing", note: "onCommit returned a promise: it waits here, busy, until the server answers.", node: <UndoFuseButton onCommit={noop} previewState="committing" /> },
   { id: "disabled", label: "Disabled", note: "Nothing selected, so nothing to delete.", node: <UndoFuseButton onCommit={noop} disabled /> },
 ];

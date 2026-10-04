@@ -14,6 +14,10 @@ export interface AgentLog {
   workflow: string[];
   produced: string[];
   saved: string;
+  /** What this taught me about prompting. */
+  lesson: string;
+  /** Where to see the result, when it is public. */
+  links?: { label: string; href: string }[];
 }
 
 const AGENT = "Claude Code (Claude Opus)";
@@ -57,9 +61,9 @@ When you finish, report: the tools you created and their exact descriptions, the
     produced: [
       "Two extraction tools with clear, testable descriptions, each mapped to its own contact field.",
       "Prompt save rules fixed, with nothing else changed (checked by diff).",
-      "Three alert workflows live, so the right person hears about each message. A real test call is the next check.",
-    ],
+      "Three alert workflows live, so the right person hears about each message. A real test call is the next check.", "Prompt stayed at 6,214 characters, under the 8,000 limit, with 4 lines changed."],
     saved: "Messages that were silently lost now have a path to the CRM and to the person who needs them, and the description pattern is reusable for every bot after this one.",
+    lesson: "A bot follows its tool descriptions more than its prompt. One tool, one field, a worked example and explicit NOT-rules work better than a long rule in the prompt.",
   },
   {
     slug: "funnel-calendar-embed",
@@ -95,9 +99,9 @@ When you finish, report: what changed on the page, the checks you ran on the liv
     produced: [
       "An inline booking calendar on the funnel page.",
       "Zero booking links left pointing off-site.",
-      "Account timezone corrected and confirmed by the API.",
-    ],
+      "Account timezone corrected and confirmed by the API.", "Page code went from 7,932 to 8,362 characters; 2 buttons repointed, 0 off-site booking links left; the timezone update returned 200."],
     saved: "Visitors book without leaving the page, and changing the calendar later is one custom value instead of a page edit.",
+    lesson: "Point embeds at a custom value instead of a hard-coded URL. The page never has to be edited again when the calendar changes.",
   },
   {
     slug: "parallel-component-build",
@@ -133,6 +137,8 @@ When you finish, report: what each component does, what you tested, anything tha
       "A final lineup of six, each with a live demo, looping live states and its build prompt.",
     ],
     saved: "Four components built side by side instead of one after another: about 40 minutes from picking ideas to all four working on the site.",
+    lesson: "Parallel agents need one tight brief each and a rule not to touch shared files. Wiring everything together and testing stays with one agent.",
+    links: [{ label: "See the six components", href: "https://lofi90.vercel.app/components" }, { label: "Repo", href: "https://github.com/RimjhimD/lofi90" }],
   },
   {
     slug: "home-page-jump-bug",
@@ -164,8 +170,10 @@ When you finish, explain in plain words why it happened, what you changed, and t
       "Stopped scripted clicks at the edge of every preview.",
       "Verified both ways: an automated slow scroll stayed on the home page, and a real click on a card still opened it.",
     ],
-    produced: ["A fix in one helper plus the five live-state files.", "A regression check for both the bug and normal card clicks."],
+    produced: ["A fix in one helper plus the five live-state files.", "A regression check for both the bug and normal card clicks.", "Checked with a 14-step automated scroll through the whole page: it stayed on the home page every time."],
     saved: "The bug only happened as a card came into view, so it was hard to catch by eye. The agent found the cause from the code and proved the fix instead of guessing.",
+    lesson: "Ask the agent to find the cause before fixing anything, and to prove the fix both ways: the bug is gone and normal clicks still work.",
+    links: [{ label: "Home page", href: "https://lofi90.vercel.app/" }],
   },
   {
     slug: "preview-stage-qa",
@@ -198,9 +206,10 @@ When you finish, report what changed, show before and after screenshots, and lis
     produced: [
       "A working 375 / 768 / Full switch with a live pixel ruler.",
       "A dark and a light stage for every component.",
-      "Controls moved into a Customize drawer so the preview shows only the component.",
-    ],
+      "Controls moved into a Customize drawer so the preview shows only the component.", "36 checks: 6 components × 3 widths × 2 stages, each with a screenshot."],
     saved: "Dozens of resize-and-look checks done and repeated after each change, instead of by hand.",
+    lesson: "Say what “done” looks like — it really resizes, it is readable on both stages — and make the agent check it with screenshots, not by reading code.",
+    links: [{ label: "Try a preview", href: "https://lofi90.vercel.app/components/boarding-pass-card" }],
   },
   {
     slug: "release-and-deploy",
@@ -233,8 +242,10 @@ When you finish, report: why it was a 404, the results of each check, the live U
       "Pushed to main; Vercel deployed automatically.",
       "Polled the live site until every page returned 200, opened it, and confirmed a GitHub file link works.",
     ],
-    produced: ["lofi90.vercel.app live with all six components.", "Working GitHub links on every component page.", "A deploy verified page by page."],
+    produced: ["lofi90.vercel.app live with all six components.", "Working GitHub links on every component page.", "A deploy verified page by page.", "21 commits pushed, 0 behind, 0 key-shaped strings found; all 8 pages returned 200 on the live site."],
     saved: "A careful release checklist done in a few minutes, so nothing unsafe went public and nothing was left broken.",
+    lesson: "Give the agent a stop condition. “If any check fails, stop and tell me” makes a push safe to hand over.",
+    links: [{ label: "Live site", href: "https://lofi90.vercel.app" }, { label: "Repo", href: "https://github.com/RimjhimD/lofi90" }],
   },
 ];
 

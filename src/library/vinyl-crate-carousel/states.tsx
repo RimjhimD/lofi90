@@ -12,8 +12,8 @@ const RECORDS: VinylRecord[] = [
   { id: "f", title: "Slow Static", artist: "Hollow Hearts", colors: ["#6A4C93", "#C9E4CA"], pattern: "wave" },
   { id: "g", title: "Riverlight", artist: "Otis Wren", colors: ["#0B6E4F", "#F2E8CF"], pattern: "sun" },
 ];
-const next = click('button[aria-label="Next record"]');
-const prev = click('button[aria-label="Previous record"]');
+const next = click("button[data-next]");
+const prev = click("button[data-prev]");
 const play = click("button[data-play]");
 
 const frame = (node: React.ReactNode) => <div className="w-[400px] max-w-full">{node}</div>;

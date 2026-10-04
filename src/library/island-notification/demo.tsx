@@ -45,7 +45,7 @@ export default function IslandNotificationDemo({ controls = {} }: { controls?: C
   }
   useEffect(() => () => clearInterval(upload.current), []);
 
-  const fire = "rounded-lg border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-3 py-1.5 text-xs font-semibold text-[var(--k-text,#E9EDE8)] transition-colors hover:border-[#C6FF3D] focus-visible:outline-2 focus-visible:outline-[#C6FF3D]";
+  const fire = "rounded-lg border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-3 py-1.5 text-xs font-semibold text-[var(--k-text,#E9EDE8)] transition-colors hover:border-[var(--k-acc-text,#C6FF3D)] focus-visible:outline-2 focus-visible:outline-[var(--k-acc-text,#C6FF3D)]";
 
   return (
     <div className="w-full max-w-md">
@@ -69,7 +69,7 @@ export default function IslandNotificationDemo({ controls = {} }: { controls?: C
           <input
             onFocus={() => say("You're typing. New notifications wait so they never cover what you're writing.", "wait")}
             onBlur={() => say("Stopped typing. Anything waiting can show now.")}
-            placeholder="Type here — notifications wait until you pause" className="w-full rounded-full border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-4 py-2.5 text-sm text-[var(--k-text,#E9EDE8)] placeholder:text-[var(--k-mute,#8A938D)] focus:border-[#C6FF3D] focus:outline-none" />
+            placeholder="Type here — notifications wait until you pause" className="w-full rounded-full border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-4 py-2.5 text-sm text-[var(--k-text,#E9EDE8)] placeholder:text-[var(--k-mute,#8A938D)] focus:border-[var(--k-acc-text,#C6FF3D)] focus:outline-none" />
         </label>
       </div>
       <div role="group" aria-label="Send a notification" className="mt-4 flex flex-wrap justify-center gap-2">
