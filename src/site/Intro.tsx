@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { Ms_Madi } from "next/font/google";
+
+// the handwritten line under the LED word
+const script = Ms_Madi({ weight: "400", subsets: ["latin"], display: "swap" });
 
 const KEY = "lofi90-intro-seen";
 const LIME = "198,255,61";
@@ -112,7 +116,7 @@ export function Intro() {
         setLabel(text);
       }
     };
-    const done = window.setTimeout(() => setPhase("leaving"), 4200);
+    const done = window.setTimeout(() => setPhase("leaving"), 4700);
 
     const draw = (now: number) => {
       const t = (now - t0) / 1000;
@@ -192,6 +196,13 @@ export function Intro() {
         <i className="led" data-on="true" data-pulse="true" style={{ width: 6, height: 6 }} />
         {label}
       </span>
+      {/* signed by hand under the board once the letters are lit */}
+      <p
+        className={`${script.className} pointer-events-none absolute inset-x-0 text-center text-acc [text-shadow:0_0_18px_rgba(198,255,61,.55)] animate-[sign_1.6s_cubic-bezier(.45,0,.2,1)_2.2s_both]`}
+        style={{ top: `calc(50% + ${Math.round(Math.min(window.innerWidth * 0.14, 200) * 0.5)}px)`, fontSize: `${Math.round(Math.max(30, Math.min(window.innerWidth * 0.045, 64)))}px` }}
+      >
+        Rimjhim’s component control room
+      </p>
       <span className="mono absolute bottom-6 left-6 text-[0.6rem] text-mute">lofi90 · component control room</span>
       <button
         type="button"
