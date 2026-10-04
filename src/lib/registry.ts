@@ -256,6 +256,52 @@ export const ENTRIES: Entry[] = [
     ],
     support: "Works in all modern browsers. Drag and drop needs a mouse; tap works on touch screens.",
   },
+  {
+    slug: "island-notification",
+    ext: "05",
+    name: "Island Notification",
+    type: "modal",
+    week: 3,
+    icon: "💊",
+    summary: "A black pill that morphs into each notification, queues the rest, and waits while you're typing.",
+    why: "Toasts pile up in a corner, cover what you're reading and pop up in the middle of a sentence you're typing. This island stays a small pill until something arrives, then morphs into a card sized to the message and shrinks back. Several take turns, uploads live inside the pill as a progress ring, and if you're typing it holds everything until you pause.",
+    files: [{ label: "IslandNotification.tsx", path: "src/library/island-notification/IslandNotification.tsx" }],
+    usagePath: "src/library/island-notification/usage.tsx",
+    promptPath: "src/library/island-notification/prompt.md",
+    props: [
+      { name: "items", type: "IslandItem[]", default: "required", description: "The queue, oldest first: id, title, body, icon, tone, action, progress." },
+      { name: "onDismiss", type: "(id: string) => void", default: "required", description: "Called when a notification is done (timed out, swiped, Esc or action)." },
+      { name: "duration", type: "number", default: "4000", description: "How long a card stays open. Hovering pauses it." },
+      { name: "morphMs", type: "number", default: "520", description: "How long the pill-to-card morph takes." },
+      { name: "holdWhileTyping", type: "boolean", default: "true", description: "Wait while someone is typing; deliver when they pause." },
+      { name: "accent", type: "string", default: '"#3DD9FF"', description: "Idle glow and info colour." },
+      { name: "position", type: '"fixed" | "absolute"', default: '"fixed"', description: "Pin to the window, or stay inside the parent." },
+      { name: "preview", type: '"open" | "held"', default: "—", description: "Freeze one look without timers, for docs and tests." },
+      { name: "className", type: "string", default: '""', description: "Extra classes for the wrapper." },
+    ],
+    flow: [
+      { icon: "●", title: "Quiet pill", text: "A small black pill with a glowing dot sits at the top." },
+      {
+        icon: "💬",
+        title: "Something arrives",
+        text: "The pill stretches into a card sized to the message, then shrinks back.",
+        branches: [
+          { label: "You're typing", text: "It waits, dot turns amber: \"1 waiting\".", tone: "neutral" },
+          { label: "Several at once", text: "They take turns; the pill shows +2.", tone: "neutral" },
+        ],
+      },
+      { icon: "⬆", title: "Read or dismiss", text: "Hover to pause, swipe up or Esc to dismiss, Enter for the action." },
+      { icon: "◔", title: "Live activity", text: "Uploads and timers live in the pill as a progress ring until they finish." },
+    ],
+    useWhen: ["Chat, booking and payment alerts", "Background tasks: uploads, exports, syncs", "Apps where people type a lot and hate being interrupted"],
+    avoidWhen: ["Errors that block the page — show them in place", "More than a few notifications a minute — group them first"],
+    accessibility: [
+      "Each notification is announced in a polite live region",
+      "The action is a real button; Esc dismisses and Enter runs the action when the card has focus",
+      "Hover pauses the timer; the morph is turned off for reduced motion",
+    ],
+    support: "Works in all modern browsers. No extra packages.",
+  },
 ];
 
 export const findEntry = (slug: string) => ENTRIES.find((e) => e.slug === slug);

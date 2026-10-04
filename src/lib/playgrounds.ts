@@ -80,4 +80,13 @@ export const PLAYGROUNDS: Record<string, Playground> = {
       { key: "tipRate", label: "Tip", type: "slider", min: 0, max: 0.3, step: 0.01, unit: "%", scale: 100 },
     ],
   },
+  "island-notification": {
+    initial: { accent: "#3DD9FF", morphMs: 520, duration: 4000, hold: "on" },
+    controls: [
+      { key: "accent", label: "Glow", type: "color", options: ACCENTS },
+      { key: "morphMs", label: "Morph speed", type: "slider", min: 200, max: 1200, step: 50, unit: "ms" },
+      { key: "duration", label: "Stays open", type: "slider", min: 2000, max: 8000, step: 500, unit: "s", scale: 0.001 },
+      { key: "hold", label: "Wait while typing", type: "segment", options: [{ value: "on", label: "On" }, { value: "off", label: "Off" }] },
+    ],
+  },
 };

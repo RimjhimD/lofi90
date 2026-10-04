@@ -12,6 +12,7 @@ Live site: https://lofi90.vercel.app (coming soon)
 | 02 | Secret Key Field | input | `/components/secret-key-field` |
 | 03 | Rolodex Carousel | section | `/components/rolodex-carousel` |
 | 04 | Split-the-Bill Card | card | `/components/split-bill-card` |
+| 05 | Island Notification | modal | `/components/island-notification` |
 
 Every component page has a live demo (375 / 768 / full width), the usage example, the full source, a props table and the final prompt that built it.
 
