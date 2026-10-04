@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ENTRIES } from "@/lib/registry";
 import { Ticker } from "@/site/Ticker";
 import { ThemeToggle } from "@/site/ThemeToggle";
+import { playIntro } from "@/site/Intro";
 
 const LINKS = [
   { href: "/", label: "Home", match: (p: string) => p === "/" },
@@ -19,7 +20,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur-md">
       <div className="flex h-[58px] items-center gap-2 px-4 sm:px-5">
-        <Link href="/" aria-label="lofi90 home" className="flex items-center gap-2.5 font-display text-[1.25rem] font-bold tracking-tight">
+        <Link href="/" onClick={playIntro} title="Home, with the opening animation" aria-label="lofi90 home" className="flex items-center gap-2.5 font-display text-[1.25rem] font-bold tracking-tight">
           <i className="led" data-on="true" data-pulse="true" />
           lofi90
         </Link>

@@ -301,6 +301,13 @@ body {
   to { clip-path: inset(-60% -5% -60% -5%); opacity: 1; transform: none; }
 }
 
+/* intro: the signed line buzzes on like a neon tube once it is written */
+@keyframes neon {
+  0%, 9%, 16%, 30%, 100% { opacity: 1; }
+  5%, 13% { opacity: 0.25; }
+  24% { opacity: 0.55; }
+}
+
 @keyframes crt-off {
   0% { transform: none; filter: brightness(1); }
   55% { transform: scale(1, 0.004); filter: brightness(3); background: #c6ff3d; }

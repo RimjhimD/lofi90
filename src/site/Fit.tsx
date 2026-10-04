@@ -14,9 +14,14 @@ export function Fit({ children, height, max = 1.3, className = "" }: { children:
     const b = box.current;
     const i = inner.current;
     if (!b || !i) return;
+    // live scenes change size as they play; remember the biggest size seen so the zoom never pulses
+    let maxW = 0;
+    let maxH = 0;
     const measure = () => {
-      const w = i.offsetWidth;
-      const h = i.offsetHeight;
+      maxW = Math.max(maxW, i.offsetWidth);
+      maxH = Math.max(maxH, i.offsetHeight);
+      const w = maxW;
+      const h = maxH;
       if (!w || !h) return;
       const byWidth = (b.clientWidth * 0.84) / w;
       const scale = height ? Math.min(byWidth, (height * 0.8) / h, max) : Math.min(byWidth, max);

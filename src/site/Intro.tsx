@@ -2,13 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Ms_Madi } from "next/font/google";
+import { Yellowtail } from "next/font/google";
 
 // the handwritten line under the LED word
-const script = Ms_Madi({ weight: "400", subsets: ["latin"], display: "swap" });
+const script = Yellowtail({ weight: "400", subsets: ["latin"], display: "swap" });
 
 // once per page load: a reload plays it again, moving around inside the site does not
 let played = false;
+let pending = false;
+const EVENT = "lofi90:intro";
+
+/** Play the opening again: the lofi90 logo calls this before it takes you home. */
+export function playIntro() {
+  pending = true;
+  window.dispatchEvent(new Event(EVENT));
+}
 const LIME = "198,255,61";
 const TEXT = "233,237,232";
 
@@ -57,7 +65,15 @@ export function Intro() {
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const seen = played;
+    const seen = played && !pending;
+    pending = false;
+    // already on the home page: the logo asks for a replay with an event
+    const replay = () => {
+      pending = false;
+      window.scrollTo({ top: 0 });
+      setPhase("run");
+    };
+    window.addEventListener(EVENT, replay);
     const t = window.setTimeout(() => {
       if (seen || reduce) {
         setPhase("gone");
@@ -66,6 +82,7 @@ export function Intro() {
     }, 0);
     return () => {
       clearTimeout(t);
+      window.removeEventListener(EVENT, replay);
     };
   }, []);
 
@@ -196,7 +213,7 @@ export function Intro() {
       </span>
       {/* signed by hand under the board once the letters are lit */}
       <p
-        className={`${script.className} pointer-events-none absolute inset-x-0 text-center text-acc [text-shadow:0_0_18px_rgba(198,255,61,.55)] animate-[sign_1.6s_cubic-bezier(.45,0,.2,1)_2.2s_both]`}
+        className={`${script.className} pointer-events-none absolute inset-x-0 text-center text-acc [text-shadow:0_0_6px_rgba(198,255,61,.9),0_0_22px_rgba(198,255,61,.55),0_0_48px_rgba(198,255,61,.3)] animate-[sign_1.5s_cubic-bezier(.45,0,.2,1)_2.2s_both,neon_1s_linear_3.75s_both]`}
         style={{ top: `calc(50% + ${Math.round(Math.min(window.innerWidth * 0.14, 200) * 0.5)}px)`, fontSize: `${Math.round(Math.max(30, Math.min(window.innerWidth * 0.045, 64)))}px` }}
       >
         Rimjhim’s component control room
