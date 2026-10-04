@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { ENTRIES } from "@/lib/registry";
 import { Ticker } from "@/site/Ticker";
 import { ThemeToggle } from "@/site/ThemeToggle";
-import { ReplayIntro } from "@/site/ReplayIntro";
 
 const LINKS = [
   { href: "/", label: "Home", match: (p: string) => p === "/" },
@@ -45,9 +44,6 @@ export function Header() {
             <i className="led" data-on="true" style={{ width: 6, height: 6 }} /> {ENTRIES.length} live
           </span>
           <span className="ml-2">
-            <ReplayIntro />
-          </span>
-          <span className="ml-1.5">
             <ThemeToggle />
           </span>
         </nav>

@@ -165,11 +165,11 @@ export function UndoFuseButton({
 
   const tone =
     state === "burning"
-      ? "bg-[#FFB547]/10 text-[#E9EDE8]"
+      ? "bg-[#FFB547]/10 text-[var(--k-text,#E9EDE8)]"
       : state === "done"
-        ? "bg-[#181D1B] text-[#E9EDE8]"
+        ? "bg-[var(--k-panel-2,#181D1B)] text-[var(--k-text,#E9EDE8)]"
         : state === "undone"
-          ? "bg-[#C6FF3D]/15 text-[#C6FF3D]"
+          ? "bg-[#C6FF3D]/15 text-[var(--k-acc-text,#C6FF3D)]"
           : "";
 
   return (
@@ -184,7 +184,7 @@ export function UndoFuseButton({
         disabled={disabled}
         aria-describedby={statusId}
         style={state === "idle" && !disabled ? { background: color, color: textOn(color) } : undefined}
-        className={`relative ${SIZES[size]} rounded-lg border border-[#3A433F] font-bold shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] transition-[background-color,color,box-shadow,transform] duration-150 hover:-translate-x-px hover:-translate-y-px hover:shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] active:translate-x-px active:translate-y-px active:shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[#C6FF3D] disabled:cursor-not-allowed disabled:bg-[#181D1B] disabled:text-[#8A938D] disabled:shadow-none ${tone}`}
+        className={`relative ${SIZES[size]} rounded-lg border border-[var(--k-line,#3A433F)] font-bold shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] transition-[background-color,color,box-shadow,transform] duration-150 hover:-translate-x-px hover:-translate-y-px hover:shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] active:translate-x-px active:translate-y-px active:shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[#C6FF3D] disabled:cursor-not-allowed disabled:bg-[var(--k-panel-2,#181D1B)] disabled:text-[var(--k-mute,#8A938D)] disabled:shadow-none ${tone}`}
       >
         {label}
         {state === "burning" && box.w > 0 && (
@@ -210,7 +210,7 @@ export function UndoFuseButton({
           </svg>
         )}
       </button>
-      <p id={statusId} role="status" aria-live="polite" className="min-h-5 text-center text-xs font-semibold text-[#8A938D]">
+      <p id={statusId} role="status" aria-live="polite" className="min-h-5 text-center text-xs font-semibold text-[var(--k-mute,#8A938D)]">
         {state === "burning"
           ? held && !previewState
             ? "Paused while you're here. Click or press Esc to undo."

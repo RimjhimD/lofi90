@@ -45,11 +45,11 @@ export default function IslandNotificationDemo({ controls = {} }: { controls?: C
   }
   useEffect(() => () => clearInterval(upload.current), []);
 
-  const fire = "rounded-lg border border-[#3A433F] bg-[#121614] px-3 py-1.5 text-xs font-semibold text-[#E9EDE8] transition-colors hover:border-[#C6FF3D] focus-visible:outline-2 focus-visible:outline-[#C6FF3D]";
+  const fire = "rounded-lg border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-3 py-1.5 text-xs font-semibold text-[var(--k-text,#E9EDE8)] transition-colors hover:border-[#C6FF3D] focus-visible:outline-2 focus-visible:outline-[#C6FF3D]";
 
   return (
     <div className="w-full max-w-md">
-      <div className="relative h-[360px] overflow-hidden rounded-[28px] border border-[#3A433F] bg-[#0E1110] px-5 pb-5 pt-16">
+      <div className="relative h-[360px] overflow-hidden rounded-[28px] border border-[var(--k-line,#3A433F)] bg-[var(--k-bg,#0E1110)] px-5 pb-5 pt-16">
         <IslandNotification
           position="absolute"
           items={items}
@@ -59,9 +59,9 @@ export default function IslandNotificationDemo({ controls = {} }: { controls?: C
           duration={(controls.duration as number) ?? 4000}
           holdWhileTyping={(controls.hold ?? "on") === "on"}
         />
-        <p className="text-xs font-semibold uppercase tracking-wider text-[#8A938D]">Messages · Maya</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--k-mute,#8A938D)]">Messages · Maya</p>
         <div className="mt-3 space-y-2 text-sm">
-          <p className="w-fit rounded-2xl rounded-bl-sm bg-[#181D1B] px-3 py-2 text-[#E9EDE8]">Are we still on for Friday?</p>
+          <p className="w-fit rounded-2xl rounded-bl-sm bg-[var(--k-panel-2,#181D1B)] px-3 py-2 text-[var(--k-text,#E9EDE8)]">Are we still on for Friday?</p>
           <p className="ml-auto w-fit rounded-2xl rounded-br-sm bg-[#C6FF3D] px-3 py-2 text-[#0B0D0C]">Yes! 7pm 🙌</p>
         </div>
         <label className="absolute inset-x-5 bottom-5 block">
@@ -69,7 +69,7 @@ export default function IslandNotificationDemo({ controls = {} }: { controls?: C
           <input
             onFocus={() => say("You're typing. New notifications wait so they never cover what you're writing.", "wait")}
             onBlur={() => say("Stopped typing. Anything waiting can show now.")}
-            placeholder="Type here — notifications wait until you pause" className="w-full rounded-full border border-[#3A433F] bg-[#121614] px-4 py-2.5 text-sm text-[#E9EDE8] placeholder:text-[#8A938D] focus:border-[#C6FF3D] focus:outline-none" />
+            placeholder="Type here — notifications wait until you pause" className="w-full rounded-full border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-4 py-2.5 text-sm text-[var(--k-text,#E9EDE8)] placeholder:text-[var(--k-mute,#8A938D)] focus:border-[#C6FF3D] focus:outline-none" />
         </label>
       </div>
       <div role="group" aria-label="Send a notification" className="mt-4 flex flex-wrap justify-center gap-2">
@@ -96,7 +96,7 @@ export default function IslandNotificationDemo({ controls = {} }: { controls?: C
           Burst of 3
         </button>
       </div>
-      <p className="mt-2 min-h-4 text-center text-xs text-[#8A938D]" aria-live="polite">{log}</p>
+      <p className="mt-2 min-h-4 text-center text-xs text-[var(--k-mute,#8A938D)]" aria-live="polite">{log}</p>
     </div>
   );
 }

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* sidebar folded into a rail (set on <html> by the sidebar arrow) */
+@custom-variant side-closed (&:where(html[data-side="closed"] *));
+
 /* Control Room: near-black console, thin panel lines, one lime signal colour. */
 @theme {
   --tracking-tight: -0.012em;
@@ -241,6 +244,56 @@ body {
   animation: theme-wipe 1.1s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 /* intro exit: the screen powers off like an old CRT — squashed to a lime line, then to a dot */
+/* ---- the preview stage: dark or light, components read their colours from these --k-* variables ---- */
+.stage-dark {
+  background-color: #0b0d0c;
+  border-color: #232a26;
+  color: #e9ede8;
+  --stage-grid: rgba(233, 237, 232, 0.045);
+}
+.stage-light {
+  --k-bg: #f7f8f4;
+  --k-panel: #ffffff;
+  --k-panel-2: #eef0ea;
+  --k-line: #d3d8cc;
+  --k-text: #141714;
+  --k-mute: #5d645d;
+  --k-acc-text: #3f6212;
+  --k-err-text: #b42318;
+  --k-warn-text: #92400e;
+  --k-shadow: rgba(20, 30, 20, 0.16);
+  --k-rule: #e8ebe3;
+  --stage-grid: rgba(20, 23, 20, 0.06);
+  background-color: #f4f5f0;
+  border-color: #d3d8cc;
+  color: #141714;
+}
+.stage-grid {
+  background-image: linear-gradient(var(--stage-grid) 1px, transparent 1px), linear-gradient(90deg, var(--stage-grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: center;
+  mask-image: radial-gradient(ellipse at center, #000 45%, transparent 85%);
+}
+/* a still stage tile (states, gallery cards): the same grid, unmasked */
+.stage-tile {
+  background-image: linear-gradient(var(--stage-grid) 1px, transparent 1px), linear-gradient(90deg, var(--stage-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: center;
+}
+
+/* lights coming on: a soft glow blooms from the top edge and settles */
+.stage-lights {
+  background: radial-gradient(120% 70% at 50% 0%, rgba(198, 255, 61, 0.22), transparent 60%);
+  animation: lights-on 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.stage-light .stage-lights {
+  background: radial-gradient(120% 70% at 50% 0%, rgba(255, 255, 255, 0.95), transparent 65%);
+}
+@keyframes lights-on {
+  from { opacity: 1; transform: scaleY(0.2); transform-origin: top; }
+  to { opacity: 0; transform: scaleY(1); transform-origin: top; }
+}
+
 /* intro: a handwritten line writes itself in, left to right */
 @keyframes sign {
   from { clip-path: inset(-60% 100% -60% -5%); opacity: 0.4; transform: translateY(6px); }
@@ -273,4 +326,16 @@ html[data-ready] .ready-rise { animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 
   .ready-rise { opacity: 1; }
   [data-reveal] { opacity: 1; transform: none; filter: none; }
   .page-scan { display: none; }
+}
+
+/* the page shell: sidebar + content; the sidebar column folds to a rail */
+@media (min-width: 1024px) {
+  .shell {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    transition: grid-template-columns 0.55s cubic-bezier(0.6, 0, 0.2, 1);
+  }
+  html[data-side="closed"] .shell {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
 }

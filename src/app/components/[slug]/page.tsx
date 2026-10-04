@@ -73,10 +73,14 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
         </a>
       </header>
 
-      <Showcase slug={entry.slug} files={sourceFiles} tryIt={entry.tryIt} />
+      <Showcase slug={entry.slug} tryIt={entry.tryIt} />
 
       <Section id="usage" title="Usage" lead="Copy the component file into your project (React + Tailwind, no other packages), then use it like this.">
         <CodePanel files={[usageFile]} />
+      </Section>
+
+      <Section id="code" title="The code" lead="The full component. One file, React + Tailwind.">
+        <CodePanel files={sourceFiles} maxHeight="560px" />
       </Section>
 
       <Section id="states" title="States">

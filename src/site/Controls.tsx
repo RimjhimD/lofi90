@@ -9,18 +9,17 @@ export type Control =
 
 export type ControlValues = Record<string, string | number>;
 
-/** The playground panel under a live preview: swatches, segments and sliders that drive the component's props. */
+/** The "Customize" drawer under a live preview: swatches, segments and sliders that drive the component's props. */
 export function Controls({ controls, values, onChange, onReset }: { controls: Control[]; values: ControlValues; onChange: (key: string, value: string | number) => void; onReset: () => void }) {
   const id = useId();
   return (
-    <div className="border-t border-line bg-bg/40 px-5 py-5 lg:border-l lg:border-t-0">
-      <div className="mb-4 flex items-center justify-between">
-        <span className="mono flex items-center gap-1.5 text-[0.64rem] text-acc"><i className="led" data-on="true" style={{ width: 6, height: 6 }} /> Controls</span>
+    <div className="px-5 pb-5 pt-1">
+      <div className="mb-4 flex justify-end">
         <button type="button" onClick={onReset} className="mono text-[0.62rem] text-mute hover:text-acc focus-visible:outline-2 focus-visible:outline-acc">
-          Reset
+          Reset all
         </button>
       </div>
-      <div className="grid gap-4">
+      <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
         {controls.map((c) => {
           const v = values[c.key];
           const labelId = `${id}-${c.key}`;

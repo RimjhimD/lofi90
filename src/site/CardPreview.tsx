@@ -1,14 +1,15 @@
 "use client";
 
 import { CARD_STATE, STATES } from "@/lib/demos";
+import { Fit } from "@/site/Fit";
 
-/** The mini live preview on a home-page line card: one state of the real component, shrunk and inert. */
+/** The preview on a gallery card: one state of the real component, frozen and zoomed to fill the card. */
 export function CardPreview({ slug }: { slug: string }) {
   const preview = STATES[slug]?.find((s) => s.id === CARD_STATE[slug]);
   if (!preview) return null;
   return (
-    <div inert className="pointer-events-none absolute left-1/2 top-1/2 w-[380px] [transform:translate(-50%,-50%)_scale(.6)] transition-transform duration-300 group-hover:[transform:translate(-50%,-50%)_scale(.64)]">
-      <div className="flex justify-center">{preview.node}</div>
-    </div>
+    <Fit height={210} max={1.15} className="screen stage-dark stage-tile transition-transform duration-500 group-hover:scale-[1.03]">
+      {preview.node}
+    </Fit>
   );
 }

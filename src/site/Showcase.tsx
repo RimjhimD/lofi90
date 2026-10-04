@@ -4,47 +4,48 @@ import { useEffect, useRef, useState } from "react";
 import { DEMOS } from "@/lib/demos";
 import { PLAYGROUNDS } from "@/lib/playgrounds";
 import { Controls, type ControlValues } from "@/site/Controls";
-import { CodePanel, type CodeFile } from "@/site/CodePanel";
-import { listen, type LogLine } from "@/site/log";
-
-const TONE = { info: "text-text/85", good: "text-acc", bad: "text-err", wait: "text-warn" } as const;
-const MARK = { info: "›", good: "✓", bad: "✕", wait: "◷" } as const;
+import { listen, type LogTone } from "@/site/log";
 
 const WIDTHS = [
-  { id: "375", label: "375", max: "375px" },
-  { id: "768", label: "768", max: "768px" },
-  { id: "full", label: "Full", max: "100%" },
-];
+  { id: "375", label: "375", px: 375 },
+  { id: "768", label: "768", px: 768 },
+  { id: "full", label: "Full", px: 0 },
+] as const;
 
-/** One panel with Preview / Code tabs. Preview: the live component on a glowing stage, controls in a column beside it. */
-export function Showcase({ slug, files, tryIt }: { slug: string; files: CodeFile[]; tryIt: string[] }) {
-  const [tab, setTab] = useState<"preview" | "code">("preview");
-  const [width, setWidth] = useState("full");
+const TONE: Record<LogTone, string> = { info: "text-text/80", good: "text-acc", bad: "text-err", wait: "text-warn" };
+
+/**
+ * The preview, and nothing but the preview: one framed stage on a monitor. The toolbar is built into the
+ * monitor's top edge; the stage really resizes to 375 / 768 / full with a ruler that reads its width, and
+ * the stage lights up dark or light. Under it, one quiet caption line says what the component just did.
+ */
+export function Showcase({ slug, tryIt }: { slug: string; tryIt: string[] }) {
   const Demo = DEMOS[slug];
   const play = PLAYGROUNDS[slug];
   const [values, setValues] = useState<ControlValues>(play?.initial ?? {});
+  const [width, setWidth] = useState<(typeof WIDTHS)[number]["id"]>("full");
+  const [light, setLight] = useState(false);
   const [slow, setSlow] = useState(false);
-  const stage = useRef<HTMLDivElement>(null);
-  const [lines, setLines] = useState<LogLine[]>([]);
-  const t0 = useRef(0);
+  const [measured, setMeasured] = useState(0);
+  const [last, setLast] = useState<{ text: string; tone: LogTone; n: number } | null>(null);
+  const frame = useRef<HTMLDivElement>(null);
 
-  // "What just happened": the live preview reports each thing it does, newest on top.
+  // the ruler reads the stage's real width
   useEffect(() => {
-    t0.current = performance.now();
-    let id = 0;
-    return listen((text, tone) =>
-      setLines((xs) => [{ id: ++id, at: performance.now() - t0.current, text, tone }, ...xs].slice(0, 5)),
-    );
+    const el = frame.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setMeasured(Math.round(el.offsetWidth)));
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
-  const stamp = (ms: number) => {
-    const s = Math.floor(ms / 1000);
-    return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
-  };
 
-  // Slow-mo: every animation and transition inside the stage plays at a quarter speed. New ones are
-  // caught as they start, so a morph or a flip triggered while slow-mo is on is slowed too.
+  // the latest thing the component did, for the caption
+  useEffect(() => listen((text, tone) => setLast((l) => ({ text, tone, n: (l?.n ?? 0) + 1 }))), []);
+
+  // Slow-mo: every animation and transition on the stage plays at a quarter speed, including ones that
+  // start while it is on.
   useEffect(() => {
-    const el = stage.current;
+    const el = frame.current;
     if (!el || !el.getAnimations) return;
     const rate = slow ? 0.25 : 1;
     const apply = () =>
@@ -58,94 +59,122 @@ export function Showcase({ slug, files, tryIt }: { slug: string; files: CodeFile
       clearInterval(id);
       el.getAnimations({ subtree: true }).forEach((a) => (a.playbackRate = 1));
     };
-  }, [slow, tab]);
-  const tabBtn =
-    "rounded-md px-3 py-1.5 text-sm font-medium text-mute transition-colors aria-selected:bg-panel-2 aria-selected:text-text focus-visible:outline-2 focus-visible:outline-acc";
+  }, [slow]);
+
+  const target = WIDTHS.find((w) => w.id === width)!;
+  const seg =
+    "mono rounded-md px-2.5 py-1 text-[0.64rem] text-mute transition-colors hover:text-text aria-pressed:bg-panel-2 aria-pressed:text-text focus-visible:outline-2 focus-visible:outline-acc";
+  const ease = "[transition-timing-function:cubic-bezier(.6,0,.2,1)]";
 
   return (
-    <section aria-label="Component showcase" className="mt-8">
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <div role="tablist" aria-label="View" className="flex rounded-lg border border-line bg-panel p-1">
-          <button role="tab" type="button" aria-selected={tab === "preview"} onClick={() => setTab("preview")} className={tabBtn}>
-            Preview
-          </button>
-          <button role="tab" type="button" aria-selected={tab === "code"} onClick={() => setTab("code")} className={tabBtn}>
-            Code
-          </button>
-        </div>
-        {tab === "preview" && (
-          <button
-            type="button"
-            aria-pressed={slow}
-            onClick={() => setSlow((v) => !v)}
-            title="Play the component's animations at a quarter speed"
-            className="ml-auto flex items-center gap-2 rounded-lg border border-line bg-panel px-3 py-1.5 text-sm font-medium text-mute transition-colors hover:text-text aria-pressed:border-acc/60 aria-pressed:text-acc focus-visible:outline-2 focus-visible:outline-acc"
-          >
-            <span aria-hidden="true" className={slow ? "animate-spin [animation-duration:4s]" : ""}>◐</span>
-            Slow-mo {slow ? "×¼" : ""}
-          </button>
-        )}
-        {tab === "preview" && (
-          <div role="group" aria-label="Preview width" className="flex rounded-lg border border-line bg-panel p-1">
+    <section aria-label="Live preview" className="mt-10">
+      <div className="overflow-hidden rounded-2xl border border-line bg-panel shadow-[0_30px_80px_-40px_rgba(0,0,0,.7)]">
+        {/* the monitor's top edge */}
+        <div className="flex flex-wrap items-center gap-3 border-b border-line px-4 py-2.5">
+          <span className="hidden gap-1.5 sm:flex" aria-hidden="true">
+            <i className="h-2.5 w-2.5 rounded-full bg-line-2" />
+            <i className="h-2.5 w-2.5 rounded-full bg-line-2" />
+            <i className="led" data-on="true" data-pulse="true" style={{ width: 10, height: 10 }} />
+          </span>
+          <div role="group" aria-label="Preview width" className="flex rounded-lg border border-line bg-bg/40 p-0.5 sm:ml-1">
             {WIDTHS.map((w) => (
-              <button key={w.id} type="button" aria-pressed={width === w.id} onClick={() => setWidth(w.id)} className="mono rounded-md px-2.5 py-1 text-[0.62rem] text-mute aria-pressed:bg-panel-2 aria-pressed:text-text focus-visible:outline-2 focus-visible:outline-acc">
+              <button key={w.id} type="button" aria-pressed={width === w.id} onClick={() => setWidth(w.id)} className={seg}>
                 {w.label}
               </button>
             ))}
           </div>
-        )}
-      </div>
 
-      {tab === "preview" && (
-        <ol aria-label="Try it" className="mb-3 grid gap-2 md:grid-cols-3">
-          {tryIt.map((step, i) => (
-            <li key={step} className="panel flex items-start gap-3 px-4 py-3 text-sm leading-snug text-text/90">
-              <span className="mono grid h-6 w-6 shrink-0 place-items-center rounded-full border border-acc/50 bg-acc/10 text-[0.64rem] text-acc">{i + 1}</span>
-              {step}
-            </li>
-          ))}
-        </ol>
-      )}
+          <div className="flex items-center gap-2 sm:ml-auto">
+            <button
+              type="button"
+              aria-pressed={slow}
+              onClick={() => setSlow((v) => !v)}
+              title="Play the component's animations at a quarter speed"
+              className="mono flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-line px-2.5 py-1 text-[0.64rem] text-mute transition-colors hover:text-text aria-pressed:border-acc/60 aria-pressed:text-acc focus-visible:outline-2 focus-visible:outline-acc"
+            >
+              <span aria-hidden="true" className={slow ? "animate-spin [animation-duration:4s]" : ""}>◐</span>
+              Slow-mo{slow ? " ×¼" : ""}
+            </button>
+            {/* lights switch: a knob slides between the dark and the light stage */}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={light}
+              aria-label="Light stage"
+              onClick={() => setLight((v) => !v)}
+              className="relative flex items-center whitespace-nowrap rounded-lg border border-line bg-bg/40 p-0.5 text-xs font-medium focus-visible:outline-2 focus-visible:outline-acc"
+            >
+              <span
+                aria-hidden="true"
+                className={`absolute inset-y-0.5 left-0.5 w-[calc(50%-2px)] rounded-md bg-panel-2 shadow-[0_0_0_1px_var(--color-line-2)] transition-transform duration-500 ${ease} ${light ? "translate-x-full" : ""}`}
+              />
+              <span className={`relative z-10 w-[4.4rem] py-1 text-center transition-colors sm:w-[6.6rem] ${light ? "text-mute" : "text-text"}`}>☾ Dark<span className="hidden sm:inline"> stage</span></span>
+              <span className={`relative z-10 w-[4.4rem] py-1 text-center transition-colors sm:w-[6.6rem] ${light ? "text-text" : "text-mute"}`}>☀ Light<span className="hidden sm:inline"> stage</span></span>
+            </button>
+          </div>
+        </div>
 
-      {tab === "preview" ? (
-        <div className="panel grid overflow-hidden lg:grid-cols-[minmax(0,1fr)_280px]">
-          <div ref={stage} className="screen relative grid min-h-[480px] place-items-center overflow-hidden p-6">
-            <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-acc shadow-[0_0_18px_4px_rgba(198,255,61,.4)] animate-[scan-down_1.4s_cubic-bezier(.65,0,.35,1)_.2s_both]" />
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(233,237,232,.06)_1px,transparent_1.2px)] bg-[length:18px_18px]" />
-            <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(198,255,61,.12),transparent_65%)] blur-2xl" />
-            <span className="mono absolute left-4 top-4 flex items-center gap-1.5 text-[0.6rem] text-acc">
-              <i className="led" data-on="true" data-pulse="true" style={{ width: 6, height: 6 }} /> Live
-            </span>
-            <div className="stage-on relative grid w-full place-items-center transition-[max-width] duration-500" style={{ maxWidth: width === "full" ? "100%" : WIDTHS.find((w) => w.id === width)!.max }}>
+        {/* the bay the stage sits in */}
+        <div className="grid justify-items-center bg-bg/50 px-3 pb-8 pt-9 sm:px-8">
+          {/* ruler: ticks across the stage's width, reading its size */}
+          <div aria-hidden="true" className={`relative mb-3 h-3 w-full transition-[max-width] duration-700 ${ease}`} style={{ maxWidth: target.px ? `${target.px}px` : "100%" }}>
+            <div className="absolute inset-x-0 top-1.5 h-px bg-line-2" />
+            <div className="absolute inset-y-0 left-0 w-px bg-acc" />
+            <div className="absolute inset-y-0 right-0 w-px bg-acc" />
+            <div className="absolute inset-x-0 bottom-0 h-1.5 bg-[repeating-linear-gradient(90deg,var(--color-line-2)_0_1px,transparent_1px_24px)]" />
+            <span className="mono absolute -top-3.5 left-1/2 -translate-x-1/2 rounded bg-panel px-1.5 text-[0.58rem] text-acc">{measured || "—"} px</span>
+          </div>
+
+          <div
+            ref={frame}
+            className={`${light ? "stage-light" : "stage-dark screen"} relative grid min-h-[480px] w-full place-items-center overflow-hidden rounded-xl border px-5 py-12 transition-[max-width,background-color,border-color] duration-700 ${ease} sm:px-8`}
+            style={{ maxWidth: target.px ? `${target.px}px` : "100%" }}
+          >
+            {/* lights coming on: a soft sweep each time the stage switches */}
+            <span key={String(light)} aria-hidden="true" className="stage-lights pointer-events-none absolute inset-0" />
+            <span aria-hidden="true" className="stage-grid pointer-events-none absolute inset-0" />
+            {["left-3 top-3 border-l border-t", "right-3 top-3 border-r border-t", "bottom-3 left-3 border-b border-l", "bottom-3 right-3 border-b border-r"].map((c) => (
+              <span key={c} aria-hidden="true" className={`pointer-events-none absolute h-3.5 w-3.5 border-acc/70 ${c}`} />
+            ))}
+            <div className="stage-on relative grid w-full place-items-center">
               <Demo controls={values} />
             </div>
           </div>
-          {play && (
-            <Controls
-              controls={play.controls}
-              values={values}
-              onChange={(key, value) => setValues((v) => ({ ...v, [key]: value }))}
-              onReset={() => setValues(play.initial)}
-            />
-          )}
-          <div className="border-t border-line px-4 py-3 lg:col-span-2">
-            <p className="mono mb-2 flex items-center gap-2 text-[0.6rem] text-mute">
-              <i className="led" data-on={lines.length > 0} data-pulse={lines.length > 0} style={{ width: 6, height: 6 }} /> What just happened
-            </p>
-            <ul aria-live="polite" className="min-h-[1.6rem] space-y-1 text-sm">
-              {lines.length === 0 && <li className="text-mute">Nothing yet. Follow step 1 above and this log explains each thing the component does.</li>}
-              {lines.map((l, i) => (
-                <li key={l.id} className={`flex gap-3 ${i === 0 ? "anim-rise" : "opacity-60"}`}>
-                  <span className="mono shrink-0 pt-0.5 text-[0.62rem] text-mute">{stamp(l.at)}</span>
-                  <span className={`shrink-0 ${TONE[l.tone]}`} aria-hidden="true">{MARK[l.tone]}</span>
-                  <span className={i === 0 ? TONE[l.tone] : "text-text/70"}>{l.text}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
-      ) : (
-        <CodePanel files={files} maxHeight="640px" />
+
+        {/* one quiet caption line */}
+        <div className="flex flex-col gap-x-5 gap-y-1 border-t border-line px-5 py-3 text-sm sm:flex-row sm:items-start">
+          <span className="mono shrink-0 pt-1 text-[0.6rem] text-mute">
+            {target.px ? `${target.px} px viewport` : "Full width"} · {light ? "Light" : "Dark"} stage{slow ? " · Slow-mo ×¼" : ""}
+          </span>
+          {last ? (
+            <span key={last.n} className={`anim-rise min-w-0 flex-1 ${TONE[last.tone]}`} aria-live="polite">
+              {last.text}
+            </span>
+          ) : (
+            <span className="min-w-0 flex-1 text-mute">
+              <span className="text-text/80">Try it:</span> {tryIt.join(" → ")}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {play && (
+        <details className="group mt-3 overflow-hidden rounded-2xl border border-line bg-panel">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-3.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-acc">
+            <span className="flex min-w-0 items-center gap-2.5">
+              <span aria-hidden="true" className="text-acc">⚙</span> Customize
+              <span className="truncate font-normal text-mute">{play.controls.map((c) => c.label.toLowerCase()).join(", ")}</span>
+            </span>
+            <span aria-hidden="true" className="text-mute transition-transform group-open:rotate-180">⌄</span>
+          </summary>
+          <Controls
+            controls={play.controls}
+            values={values}
+            onChange={(key, value) => setValues((v) => ({ ...v, [key]: value }))}
+            onReset={() => setValues(play.initial)}
+          />
+        </details>
       )}
     </section>
   );

@@ -69,7 +69,7 @@ export default function Home() {
           </dl>
         </section>
 
-        <Exchanges id="lines" />
+        <Exchanges id="lines" flat />
       </main>
     </>
   );

@@ -38,7 +38,7 @@ export default function SplitBillCardDemo({ controls = {} }: { controls?: Contro
           say(`Re-split: ${parts} = ${money(sum)} (every cent accounted for).`, "good");
         }}
       />
-      <button type="button" onClick={() => { first.current = true; setRun((r) => r + 1); say("Bill reset to the starting split."); }} className="rounded-lg border border-[#3A433F] bg-[#121614] px-3 py-0.5 text-sm font-bold shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] focus-visible:outline-3 focus-visible:outline-[#C6FF3D]">
+      <button type="button" onClick={() => { first.current = true; setRun((r) => r + 1); say("Bill reset to the starting split."); }} className="rounded-lg border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-3 py-0.5 text-sm font-bold shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] focus-visible:outline-3 focus-visible:outline-[#C6FF3D]">
         Reset the bill
       </button>
     </div>

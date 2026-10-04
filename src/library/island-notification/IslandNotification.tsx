@@ -168,8 +168,17 @@ export function IslandNotification({
           shell.current.style.translate = "";
           drag.current = null;
         }}
-        className="relative overflow-hidden bg-black text-[#E9EDE8] outline-none ring-1 ring-white/10 focus-visible:ring-2 focus-visible:ring-[#C6FF3D]"
+        className="relative overflow-hidden bg-black text-[var(--k-text,#E9EDE8)] outline-none ring-1 ring-white/10 focus-visible:ring-2 focus-visible:ring-[#C6FF3D]"
         style={{
+          // the island is always black hardware, so its text keeps the dark-stage colours on any page
+          ["--k-text" as string]: "#E9EDE8",
+          ["--k-mute" as string]: "#8A938D",
+          ["--k-line" as string]: "#3A433F",
+          ["--k-panel" as string]: "#121614",
+          ["--k-panel-2" as string]: "#181D1B",
+          ["--k-acc-text" as string]: "#C6FF3D",
+          ["--k-err-text" as string]: "#FF8F7E",
+          ["--k-warn-text" as string]: "#FFD08A",
           width: size.w,
           height: size.h,
           borderRadius: showCard ? 26 : 18,
@@ -193,7 +202,7 @@ export function IslandNotification({
               </svg>
             </span>
           ) : (
-            <span className="font-mono text-[0.62rem] text-[#8A938D]">{held && current ? `${waiting + 1} waiting` : waiting > 0 ? `+${waiting}` : "quiet"}</span>
+            <span className="font-mono text-[0.62rem] text-[var(--k-mute,#8A938D)]">{held && current ? `${waiting + 1} waiting` : waiting > 0 ? `+${waiting}` : "quiet"}</span>
           )}
         </div>
 
@@ -211,7 +220,7 @@ export function IslandNotification({
               </span>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold">{current.title}</p>
-                {current.body && <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-[#8A938D]">{current.body}</p>}
+                {current.body && <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-[var(--k-mute,#8A938D)]">{current.body}</p>}
                 {current.action && (
                   <button
                     type="button"
@@ -227,7 +236,7 @@ export function IslandNotification({
                   </button>
                 )}
               </div>
-              {waiting > 0 && <span className="font-mono text-[0.6rem] text-[#8A938D]">+{waiting}</span>}
+              {waiting > 0 && <span className="font-mono text-[0.6rem] text-[var(--k-mute,#8A938D)]">+{waiting}</span>}
             </>
           )}
         </div>

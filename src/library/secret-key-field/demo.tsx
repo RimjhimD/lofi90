@@ -27,8 +27,8 @@ export default function SecretKeyFieldDemo({ controls = {} }: { controls?: Contr
 
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <div className="w-full max-w-md space-y-5 rounded-lg border border-[#3A433F] bg-[#121614] p-5 shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)]">
-        <p className="text-xs font-bold uppercase tracking-wider text-[#8A938D]">Settings · Payments</p>
+      <div className="w-full max-w-md space-y-5 rounded-lg border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] p-5 shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))]">
+        <p className="text-xs font-bold uppercase tracking-wider text-[var(--k-mute,#8A938D)]">Settings · Payments</p>
         <SecretKeyField {...look} label="Publishable key (sent to the browser)" expects="publishable" value={pub} onChange={setPub} />
         <SecretKeyField {...look} label="Secret key (server only)" expects="secret" value={sec} onChange={setSec} />
       </div>
@@ -43,13 +43,13 @@ export default function SecretKeyFieldDemo({ controls = {} }: { controls?: Contr
             key={label as string}
             type="button"
             onClick={run as () => void}
-            className="rounded-lg border border-[#3A433F] bg-[#121614] px-3 py-0.5 text-sm font-bold shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] active:translate-x-px active:translate-y-px active:shadow-[0_10px_30px_-14px_rgba(0,0,0,.9)] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#C6FF3D]"
+            className="rounded-lg border border-[var(--k-line,#3A433F)] bg-[var(--k-panel,#121614)] px-3 py-0.5 text-sm font-bold shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] active:translate-x-px active:translate-y-px active:shadow-[0_10px_30px_-14px_var(--k-shadow,rgba(0,0,0,.9))] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#C6FF3D]"
           >
             {label as string}
           </button>
         ))}
       </div>
-      <p className="max-w-sm text-center text-xs text-[#8A938D]">“Copy a key with stray spaces” puts a messy key on your clipboard — paste it into either field and watch it get cleaned.</p>
+      <p className="max-w-sm text-center text-xs text-[var(--k-mute,#8A938D)]">“Copy a key with stray spaces” puts a messy key on your clipboard — paste it into either field and watch it get cleaned.</p>
     </div>
   );
 }

@@ -21,13 +21,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning className={`${unbounded.variable} ${manrope.variable} ${jetbrains.variable}`}>
       <head>
         {/* apply the saved theme before first paint, so light mode never flashes dark */}
-        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem("lofi90-theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem("lofi90-theme")==="light")document.documentElement.dataset.theme="light";if(localStorage.getItem("lofi90-side")==="closed")document.documentElement.dataset.side="closed"}catch(e){}` }} />
       </head>
       <body className="min-h-screen antialiased">
         <Spotlight />
         <AutoReveal />
         <Header />
-        <div className="lg:grid lg:grid-cols-[240px_minmax(0,1fr)]">
+        <div className="shell">
           <Sidebar />
           <div className="min-w-0">{children}</div>
         </div>

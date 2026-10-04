@@ -7,7 +7,8 @@ import { Ms_Madi } from "next/font/google";
 // the handwritten line under the LED word
 const script = Ms_Madi({ weight: "400", subsets: ["latin"], display: "swap" });
 
-const KEY = "lofi90-intro-seen";
+// once per page load: a reload plays it again, moving around inside the site does not
+let played = false;
 const LIME = "198,255,61";
 const TEXT = "233,237,232";
 
@@ -46,8 +47,8 @@ function wordTargets(w: number, h: number): { pts: { x: number; y: number; lime:
  * Opening sequence: the screen powers on like an old CRT (a bright line splits open), a dim LED board
  * fills the dark, and the LEDs that spell "lofi90" light up in a slow diagonal sweep, each one
  * flickering before it holds. A shimmer runs across the word, then the whole screen powers off into a
- * lime line and the page is there behind it. Plays once per visit; Skip and reduced motion jump
- * straight to the page.
+ * lime line and the page is there behind it. Plays once per visit, on the home page; Skip and
+ * reduced motion jump straight to the page.
  */
 export function Intro() {
   const [phase, setPhase] = useState<Phase>("off");
@@ -56,9 +57,7 @@ export function Intro() {
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const seen = sessionStorage.getItem(KEY);
-    const replay = () => setPhase("run");
-    window.addEventListener("lofi90:replay-intro", replay);
+    const seen = played;
     const t = window.setTimeout(() => {
       if (seen || reduce) {
         setPhase("gone");
@@ -67,7 +66,6 @@ export function Intro() {
     }, 0);
     return () => {
       clearTimeout(t);
-      window.removeEventListener("lofi90:replay-intro", replay);
     };
   }, []);
 
@@ -177,7 +175,7 @@ export function Intro() {
     if (phase !== "leaving") return;
     const t = window.setTimeout(() => {
       setPhase("gone");
-      sessionStorage.setItem(KEY, "1");
+      played = true;
       document.documentElement.dataset.ready = "true";
     }, 750);
     return () => clearTimeout(t);
