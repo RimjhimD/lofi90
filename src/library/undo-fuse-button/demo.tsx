@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { UndoFuseButton } from "./UndoFuseButton";
+import type { ControlValues } from "@/site/Controls";
+import { UndoFuseButton, type UndoFuseButtonProps } from "./UndoFuseButton";
 
 const START = ["Holiday photos 2025", "Old invoices", "Draft — birthday speech"];
 
 /** Live preview: deleting folders, with an undo window you can see burning. */
-export default function UndoFuseButtonDemo() {
+export default function UndoFuseButtonDemo({ controls = {} }: { controls?: ControlValues }) {
+  const look = controls as Pick<UndoFuseButtonProps, "color" | "fuseColor" | "spark" | "size" | "delayMs">;
   const [items, setItems] = useState(START);
   const [selected, setSelected] = useState(START[0]);
   const [log, setLog] = useState("");
@@ -32,8 +34,9 @@ export default function UndoFuseButtonDemo() {
         </ul>
         <div className="flex justify-center">
           <UndoFuseButton
-            key={selected}
-            delayMs={5000}
+            key={`${selected}-${look.delayMs}`}
+            {...look}
+            delayMs={look.delayMs ?? 5000}
             disabled={!items.includes(selected)}
             labels={{ idle: `Delete “${selected.length > 16 ? selected.slice(0, 16) + "…" : selected}”` }}
             onCommit={() => {

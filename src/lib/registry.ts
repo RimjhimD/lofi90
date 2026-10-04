@@ -83,6 +83,10 @@ export const ENTRIES: Entry[] = [
       { name: "labels", type: "Partial<FuseLabels>", default: "English defaults", description: "idle, burning (with {s} for seconds), paused, done, undone." },
       { name: "disabled", type: "boolean", default: "false", description: "Turns the button off." },
       { name: "previewState", type: '"idle" | "burning" | "done" | "undone"', default: "—", description: "Render one state without running anything." },
+      { name: "color", type: "string", default: '"#D7263D"', description: "Button colour before it is pressed." },
+      { name: "fuseColor", type: "string", default: '"#A86A00"', description: "Colour of the burning fuse." },
+      { name: "spark", type: '"pulse" | "steady" | "none"', default: '"pulse"', description: "How the spark at the burning end moves." },
+      { name: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "Button size." },
       { name: "className", type: "string", default: '""', description: "Extra classes for the wrapper." },
     ],
     flow: [
@@ -131,6 +135,9 @@ export const ENTRIES: Entry[] = [
       { name: "placeholder", type: "string", default: '"Paste your key"', description: "Placeholder text." },
       { name: "disabled", type: "boolean", default: "false", description: "Locks the field." },
       { name: "previewRevealed", type: "boolean", default: "—", description: "Render with the key shown, for docs and tests." },
+      { name: "accent", type: "string", default: '"#D7263D"', description: "Focus ring and peek countdown colour." },
+      { name: "drain", type: '"ring" | "bar" | "none"', default: '"ring"', description: "How the peek countdown is drawn." },
+      { name: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "Field size." },
       { name: "className", type: "string", default: '""', description: "Extra classes for the wrapper." },
     ],
     flow: [
@@ -173,6 +180,10 @@ export const ENTRIES: Entry[] = [
       { name: "label", type: "string", default: "required", description: "Accessible name, e.g. \"Contacts\"." },
       { name: "initialIndex", type: "number", default: "0", description: "Which card is showing first." },
       { name: "onChange", type: "(index: number) => void", default: "—", description: "Called whenever the showing card changes." },
+      { name: "accent", type: "string", default: '"#D7263D"', description: "Side wheel and focus colour." },
+      { name: "flipMs", type: "number", default: "450", description: "How long one flip takes." },
+      { name: "behind", type: "number", default: "4", description: "How many cards peek out behind." },
+      { name: "tilt", type: "number", default: "7", description: "Degrees each card behind leans back." },
       { name: "className", type: "string", default: '""', description: "Extra classes for the wrapper." },
     ],
     flow: [
@@ -212,6 +223,9 @@ export const ENTRIES: Entry[] = [
       { name: "initialAssignments", type: "Record<itemId, personId[]>", default: "{}", description: "Who had what to start with." },
       { name: "onChange", type: "(assignments, totals) => void", default: "—", description: "Called after every change, totals in cents." },
       { name: "title", type: "string", default: '"Dinner"', description: "Shown at the top of the receipt." },
+      { name: "accent", type: "string", default: '"#D7263D"', description: "Focus ring and selected-person colour." },
+      { name: "coin", type: "string", default: '"#FFC94A"', description: "Coin colour." },
+      { name: "coinMotion", type: '"drop" | "pop" | "none"', default: '"drop"', description: "How coins arrive on the stacks." },
       { name: "className", type: "string", default: '""', description: "Extra classes for the wrapper." },
     ],
     flow: [

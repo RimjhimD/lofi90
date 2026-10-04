@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { DEMOS } from "@/lib/demos";
+import { PLAYGROUNDS } from "@/lib/playgrounds";
+import { Controls, type ControlValues } from "@/site/Controls";
 
 const WIDTHS = [
   { id: "375", label: "375", max: "375px" },
@@ -9,10 +11,12 @@ const WIDTHS = [
   { id: "full", label: "Full", max: "100%" },
 ];
 
-/** Live preview on the bone panel, with phone / tablet / desktop widths. */
+/** Live preview on the bone panel, with phone / tablet / desktop widths and a controls panel that drives the component's colour and motion props. */
 export function Stage({ slug }: { slug: string }) {
   const [width, setWidth] = useState("full");
   const Demo = DEMOS[slug];
+  const play = PLAYGROUNDS[slug];
+  const [values, setValues] = useState<ControlValues>(play?.initial ?? {});
   const max = WIDTHS.find((w) => w.id === width)!.max;
   return (
     <section aria-label="Live preview" className="flex h-full flex-col border-2 border-ink bg-white">
@@ -40,9 +44,17 @@ export function Stage({ slug }: { slug: string }) {
           className="grid min-h-[420px] w-full place-items-center border-2 border-ink bg-bone px-4 py-8 transition-[max-width] duration-500 [transition-timing-function:cubic-bezier(.3,1.2,.5,1)]"
           style={{ maxWidth: max }}
         >
-          <Demo />
+          <Demo controls={values} />
         </div>
       </div>
+      {play && (
+        <Controls
+          controls={play.controls}
+          values={values}
+          onChange={(key, value) => setValues((v) => ({ ...v, [key]: value }))}
+          onReset={() => setValues(play.initial)}
+        />
+      )}
     </section>
   );
 }

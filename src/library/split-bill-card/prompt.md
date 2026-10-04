@@ -10,3 +10,5 @@ Behaviour:
 - Unclaimed items: show how much is left over with a "Share between everyone" button.
 - Under the receipt, each person's total as a stack of coins that drop in, scaled to the biggest total, with the amount and name below.
 Look: switchboard style — paper receipt with a zig-zag torn bottom edge (clip-path), mono figures with tabular numbers, 2px #1A1A17 ink, signal red #D7263D, bottle green #0E3B2E, gold coins. Every action is a real button with aria-pressed; changes are announced in a role="status" region; drag and drop is optional (tap works everywhere); reduced motion turns off the pops and coin drops.
+
+Look props: accent (focus ring and the chosen person's border/shadow), coin (coin colour) and coinMotion ("drop" onto the stack | "pop" in | "none").

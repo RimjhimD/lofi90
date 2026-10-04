@@ -31,6 +31,12 @@ export interface SplitBillCardProps {
   initialAssignments?: Assignments;
   onChange?: (assignments: Assignments, totals: Record<string, number>) => void;
   title?: string;
+  /** Focus ring and selected-person colour. */
+  accent?: string;
+  /** Coin colour in the "each person pays" stacks. */
+  coin?: string;
+  /** How coins arrive: dropping onto the stack, popping in, or no motion. */
+  coinMotion?: "drop" | "pop" | "none";
   className?: string;
 }
 
@@ -65,6 +71,9 @@ export function SplitBillCard({
   initialAssignments = {},
   onChange,
   title = "Dinner",
+  accent = "#D7263D",
+  coin = "#FFC94A",
+  coinMotion = "drop",
   className = "",
 }: SplitBillCardProps) {
   const id = useId();
@@ -128,7 +137,7 @@ export function SplitBillCard({
   const maxTotal = Math.max(1, ...Object.values(totals));
 
   return (
-    <div className={`w-full max-w-md text-[#1A1A17] ${className}`}>
+    <div className={`w-full max-w-md text-[#1A1A17] ${className}`} style={{ ["--accent" as string]: accent }}>
       {/* who is picking: click a person, then tap items. Or drag a person onto an item. */}
       <div role="group" aria-label="Who is choosing" className="mb-3 flex flex-wrap gap-2">
         {people.map((p) => (
@@ -142,7 +151,7 @@ export function SplitBillCard({
               e.dataTransfer.setData("text/plain", p.id);
               setActive(p.id);
             }}
-            className="flex items-center gap-1.5 border-2 border-[#1A1A17] bg-white py-1 pl-1 pr-2.5 text-sm font-bold shadow-[2px_2px_0_#1A1A17] aria-pressed:-translate-y-0.5 aria-pressed:shadow-[3px_4px_0_#1A1A17] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#D7263D] cursor-grab active:cursor-grabbing"
+            className="flex items-center gap-1.5 border-2 border-[#1A1A17] bg-white py-1 pl-1 pr-2.5 text-sm font-bold shadow-[2px_2px_0_#1A1A17] aria-pressed:-translate-y-0.5 aria-pressed:border-[var(--accent)] aria-pressed:shadow-[3px_4px_0_var(--accent)] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] cursor-grab active:cursor-grabbing"
           >
             <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-full border-2 border-[#1A1A17] text-[0.7rem] text-white" style={{ background: p.color }}>
               {initials(p.name)}
@@ -178,7 +187,7 @@ export function SplitBillCard({
                     const pid = e.dataTransfer.getData("text/plain");
                     if (pid) toggle(it.id, pid, true);
                   }}
-                  className={`flex w-full items-center gap-2 px-1.5 py-2 text-left transition-colors focus-visible:outline-2 focus-visible:outline-[#D7263D] ${dragOver === it.id ? "bg-[#FFF4E5]" : mine ? "bg-[#F2EEE3]" : "hover:bg-[#FAF8F2]"}`}
+                  className={`flex w-full items-center gap-2 px-1.5 py-2 text-left transition-colors focus-visible:outline-2 focus-visible:outline-[var(--accent)] ${dragOver === it.id ? "bg-[#FFF4E5]" : mine ? "bg-[#F2EEE3]" : "hover:bg-[#FAF8F2]"}`}
                 >
                   <span className="min-w-0 flex-1 truncate">{it.name}</span>
                   <span aria-hidden="true" className="flex -space-x-1.5">
@@ -216,7 +225,7 @@ export function SplitBillCard({
               <li key={p.id} className="flex flex-col items-center gap-1">
                 <span aria-hidden="true" className="flex h-[84px] flex-col-reverse items-center">
                   {Array.from({ length: coins }, (_, i) => (
-                    <i key={i} className="-mt-1.5 block h-3 w-9 rounded-[50%] border-2 border-[#7A4D00] bg-[#FFC94A] motion-safe:animate-[coin_.35s_cubic-bezier(.3,1.5,.5,1)_both]" style={{ animationDelay: `${i * 30}ms` }} />
+                    <i key={i} className={`-mt-1.5 block h-3 w-9 rounded-[50%] border-2 border-[#1A1A17]/60 ${coinMotion === "drop" ? "motion-safe:animate-[coin_.35s_cubic-bezier(.3,1.5,.5,1)_both]" : coinMotion === "pop" ? "motion-safe:animate-[pop_.3s_cubic-bezier(.3,1.6,.5,1)_both]" : ""}`} style={{ background: coin, animationDelay: `${i * 30}ms` }} />
                   ))}
                 </span>
                 <b className="font-mono text-sm tabular-nums">{fmt(totals[p.id])}</b>
@@ -231,7 +240,7 @@ export function SplitBillCard({
         {unclaimed.length > 0 ? (
           <p className="flex flex-wrap items-center gap-2 border-l-4 border-[#B42318] bg-[#FBE4E6] px-2.5 py-1.5">
             {unclaimed.length} item{unclaimed.length > 1 ? "s" : ""} nobody claimed ({fmt(food + tax + tip - claimed)} left over).
-            <button type="button" onClick={splitUnclaimed} className="border border-[#1A1A17] bg-white px-2 text-xs font-bold focus-visible:outline-2 focus-visible:outline-[#D7263D]">
+            <button type="button" onClick={splitUnclaimed} className="border border-[#1A1A17] bg-white px-2 text-xs font-bold focus-visible:outline-2 focus-visible:outline-[var(--accent)]">
               Share between everyone
             </button>
           </p>

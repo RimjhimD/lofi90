@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { SecretKeyField } from "./SecretKeyField";
+import type { ControlValues } from "@/site/Controls";
+import { SecretKeyField, type SecretKeyFieldProps } from "./SecretKeyField";
 
 // Fake keys, assembled at runtime so no key-shaped string sits in the source.
 const fake = (prefix: string, body: string) => prefix + body;
@@ -10,7 +11,8 @@ const SEC_LIVE = fake("sk_" + "live_", "51DEMOx9ExampleOnlyNotARealKey7Qe1");
 const SEC_TEST = fake("sk_" + "test_", "51DEMOx9ExampleOnlyNotARealKey3Bd8");
 
 /** Live preview: a payments settings panel with a publishable and a secret key. */
-export default function SecretKeyFieldDemo() {
+export default function SecretKeyFieldDemo({ controls = {} }: { controls?: ControlValues }) {
+  const look = controls as Pick<SecretKeyFieldProps, "accent" | "drain" | "size" | "peekMs" | "visibleChars">;
   const [pub, setPub] = useState(PUB_TEST);
   const [sec, setSec] = useState(SEC_TEST);
 
@@ -26,8 +28,8 @@ export default function SecretKeyFieldDemo() {
     <div className="flex w-full flex-col items-center gap-4">
       <div className="w-full max-w-md space-y-5 border-2 border-[#1A1A17] bg-white p-5 shadow-[5px_5px_0_#1A1A17]">
         <p className="text-xs font-bold uppercase tracking-wider text-[#5E5A50]">Settings · Payments</p>
-        <SecretKeyField label="Publishable key (sent to the browser)" expects="publishable" value={pub} onChange={setPub} />
-        <SecretKeyField label="Secret key (server only)" expects="secret" value={sec} onChange={setSec} />
+        <SecretKeyField {...look} label="Publishable key (sent to the browser)" expects="publishable" value={pub} onChange={setPub} />
+        <SecretKeyField {...look} label="Secret key (server only)" expects="secret" value={sec} onChange={setSec} />
       </div>
       <div role="group" aria-label="Try a mistake" className="flex flex-wrap justify-center gap-2">
         {[

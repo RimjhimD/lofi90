@@ -25,8 +25,17 @@ export interface UndoFuseButtonProps {
   disabled?: boolean;
   /** Show one state without running anything. "burning" is drawn about 60% burnt. */
   previewState?: FuseState;
+  /** Button colour before it is pressed. */
+  color?: string;
+  /** Colour of the burning fuse. */
+  fuseColor?: string;
+  /** How the spark moves: a pulsing glow, a steady glow, or no spark at all. */
+  spark?: "pulse" | "steady" | "none";
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
+
+const SIZES = { sm: "min-w-[180px] px-3.5 py-2 text-sm", md: "min-w-[230px] px-5 py-3 text-[0.95rem]", lg: "min-w-[280px] px-6 py-4 text-lg" };
 
 const DEFAULT_LABELS: FuseLabels = {
   idle: "Delete",
@@ -43,7 +52,19 @@ const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("
  * press again (or Esc) before the fuse reaches the end and nothing happens. The fuse waits while the pointer
  * is on the button and while the tab is hidden, so it never finishes while you're not looking.
  */
-export function UndoFuseButton({ onCommit, onUndo, delayMs = 5000, labels, disabled = false, previewState, className = "" }: UndoFuseButtonProps) {
+export function UndoFuseButton({
+  onCommit,
+  onUndo,
+  delayMs = 5000,
+  labels,
+  disabled = false,
+  previewState,
+  color = "#D7263D",
+  fuseColor = "#A86A00",
+  spark: sparkStyle = "pulse",
+  size = "md",
+  className = "",
+}: UndoFuseButtonProps) {
   const text = { ...DEFAULT_LABELS, ...labels };
   const statusId = useId();
   const btn = useRef<HTMLButtonElement>(null);
@@ -135,7 +156,7 @@ export function UndoFuseButton({ onCommit, onUndo, delayMs = 5000, labels, disab
         ? "bg-[#1A1A17] text-[#F2EEE3]"
         : state === "undone"
           ? "bg-[#0E3B2E] text-[#F2EEE3]"
-          : "bg-[#D7263D] text-white";
+          : "text-white";
 
   return (
     <div className={`inline-flex flex-col items-center gap-2 ${className}`}>
@@ -148,7 +169,8 @@ export function UndoFuseButton({ onCommit, onUndo, delayMs = 5000, labels, disab
         onKeyDown={(e) => e.key === "Escape" && live === "burning" && press()}
         disabled={disabled}
         aria-describedby={statusId}
-        className={`relative min-w-[230px] border-2 border-[#1A1A17] px-5 py-3 text-[0.95rem] font-bold shadow-[3px_3px_0_#1A1A17] transition-[background-color,color,box-shadow,transform] duration-150 hover:-translate-x-px hover:-translate-y-px hover:shadow-[4px_4px_0_#1A1A17] active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_#1A1A17] focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[#D7263D] disabled:cursor-not-allowed disabled:bg-[#E8E2D2] disabled:text-[#5E5A50] disabled:shadow-none ${tone}`}
+        style={state === "idle" && !disabled ? { background: color } : undefined}
+        className={`relative ${SIZES[size]} border-2 border-[#1A1A17] font-bold shadow-[3px_3px_0_#1A1A17] transition-[background-color,color,box-shadow,transform] duration-150 hover:-translate-x-px hover:-translate-y-px hover:shadow-[4px_4px_0_#1A1A17] active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_#1A1A17] focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[#D7263D] disabled:cursor-not-allowed disabled:bg-[#E8E2D2] disabled:text-[#5E5A50] disabled:shadow-none ${tone}`}
       >
         {label}
         {state === "burning" && box.w > 0 && (
@@ -161,13 +183,15 @@ export function UndoFuseButton({ onCommit, onUndo, delayMs = 5000, labels, disab
               width={box.w - 3}
               height={box.h - 3}
               fill="none"
-              stroke="#A86A00"
+              stroke={fuseColor}
               strokeWidth="3"
               pathLength={1}
               strokeDasharray={`${1 - progress} 1`}
               strokeDashoffset={-progress}
             />
-            <circle ref={spark} r="5" fill="#FFB547" className="drop-shadow-[0_0_6px_#FF7A1A] motion-safe:animate-pulse" />
+            {sparkStyle !== "none" && (
+              <circle ref={spark} r="5" fill="#FFB547" className={`drop-shadow-[0_0_6px_#FF7A1A] ${sparkStyle === "pulse" ? "motion-safe:animate-pulse" : ""}`} />
+            )}
           </svg>
         )}
       </button>

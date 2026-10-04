@@ -14,3 +14,16 @@ export const SECRET_KEY_FIELD_STATES = [
   { id: "live", label: "Live key", note: "Amber reminder that it touches real money.", node: <SecretKeyField label="Secret key" expects="secret" value={LIVE} onChange={noop} /> },
   { id: "disabled", label: "Disabled", note: "Locked while saving.", node: <SecretKeyField label="Secret key" value={PUB} onChange={noop} disabled /> },
 ];
+
+/** The same field in other accents, countdown styles and sizes. */
+export const SECRET_KEY_FIELD_VARIANTS = [
+  { group: "Colour", label: "Signal red", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed accent="#D7263D" /> },
+  { group: "Colour", label: "Blue", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed accent="#1D4ED8" /> },
+  { group: "Colour", label: "Teal", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed accent="#0F766E" /> },
+  { group: "Motion", label: "Ring countdown", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed drain="ring" /> },
+  { group: "Motion", label: "Bar countdown", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed drain="bar" /> },
+  { group: "Motion", label: "No countdown", node: <SecretKeyField label="Key" value={PUB} onChange={noop} previewRevealed drain="none" /> },
+  { group: "Size", label: "Small", node: <SecretKeyField label="Key" value={PUB} onChange={noop} size="sm" /> },
+  { group: "Size", label: "Medium", node: <SecretKeyField label="Key" value={PUB} onChange={noop} size="md" /> },
+  { group: "Size", label: "Large", node: <SecretKeyField label="Key" value={PUB} onChange={noop} size="lg" /> },
+];

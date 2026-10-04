@@ -20,8 +20,16 @@ export interface SecretKeyFieldProps {
   disabled?: boolean;
   /** Render with the key shown, for docs and tests. */
   previewRevealed?: boolean;
+  /** Focus ring and peek countdown colour. */
+  accent?: string;
+  /** How the peek countdown is drawn: a ring around the eye, a bar under the field, or not at all. */
+  drain?: "ring" | "bar" | "none";
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
+
+const FIELD = { sm: "py-1.5 text-xs", md: "py-2 text-sm", lg: "py-3 text-base" };
+const ICON = { sm: "h-8 w-8 text-sm", md: "h-10 w-10 text-base", lg: "h-12 w-12 text-lg" };
 
 interface KeyKind {
   test: RegExp;
@@ -73,6 +81,9 @@ export function SecretKeyField({
   placeholder = "Paste your key",
   disabled = false,
   previewRevealed,
+  accent = "#D7263D",
+  drain = "ring",
+  size = "md",
   className = "",
 }: SecretKeyFieldProps) {
   const id = useId();
@@ -81,6 +92,7 @@ export function SecretKeyField({
   const [clearing, setClearing] = useState(0);
   const peekTimer = useRef(0);
   const ring = useRef<SVGCircleElement>(null);
+  const bar = useRef<HTMLSpanElement>(null);
 
   const revealed = previewRevealed ?? peeking;
   const kind = value ? identify(value) : undefined;
@@ -125,16 +137,21 @@ export function SecretKeyField({
 
   // The ring around the eye drains while you peek, showing how long until it hides again.
   useEffect(() => {
-    if (!peeking || !ring.current) return;
-    const a = ring.current.animate([{ strokeDashoffset: "0px" }, { strokeDashoffset: "1px" }], { duration: peekMs, easing: "linear", fill: "forwards" });
-    return () => a.cancel();
-  }, [peeking, peekMs]);
+    if (!peeking) return;
+    const a =
+      drain === "ring"
+        ? ring.current?.animate([{ strokeDashoffset: "0px" }, { strokeDashoffset: "1px" }], { duration: peekMs, easing: "linear", fill: "forwards" })
+        : drain === "bar"
+          ? bar.current?.animate([{ transform: "scaleX(1)" }, { transform: "scaleX(0)" }], { duration: peekMs, easing: "linear", fill: "forwards" })
+          : undefined;
+    return () => a?.cancel();
+  }, [peeking, peekMs, drain]);
 
   const iconBtn =
-    "relative grid h-10 w-10 shrink-0 place-items-center border-l-2 border-[#1A1A17] bg-white text-base hover:bg-[#E8E2D2] focus-visible:z-10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#D7263D] disabled:cursor-not-allowed disabled:opacity-50";
+    `relative grid ${ICON[size]} shrink-0 place-items-center border-l-2 border-[#1A1A17] bg-white text-base hover:bg-[#E8E2D2] focus-visible:z-10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50`;
 
   return (
-    <div className={`w-full max-w-md text-[#1A1A17] ${className}`}>
+    <div className={`w-full max-w-md text-[#1A1A17] ${className}`} style={{ ["--accent" as string]: accent }}>
       <div className="mb-1.5 flex flex-wrap items-center gap-2">
         <label htmlFor={id} className="text-sm font-bold">{label}</label>
         {kind && (
@@ -145,7 +162,7 @@ export function SecretKeyField({
         )}
       </div>
 
-      <div className={`flex border-2 bg-white focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-[#D7263D] ${error ? "border-[#B42318]" : "border-[#1A1A17]"}`}>
+      <div className={`relative flex border-2 bg-white focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-[var(--accent)] ${error ? "border-[#B42318]" : "border-[#1A1A17]"}`}>
         <input
           id={id}
           type={revealed ? "text" : "password"}
@@ -165,7 +182,7 @@ export function SecretKeyField({
             onChange(v);
             setNote(`Removed ${removed.join(" and ")} from the paste.`);
           }}
-          className="min-w-0 flex-1 bg-transparent px-3 py-2 font-mono text-sm tracking-wide outline-none disabled:cursor-not-allowed"
+          className={`min-w-0 flex-1 bg-transparent px-3 ${FIELD[size]} font-mono tracking-wide outline-none disabled:cursor-not-allowed`}
         />
         {value && !revealed && (
           <span aria-hidden="true" className="hidden items-center pr-2 font-mono text-xs text-[#5E5A50] sm:flex">
@@ -185,9 +202,9 @@ export function SecretKeyField({
           className={iconBtn}
         >
           {revealed ? "◉" : "◎"}
-          {peeking && (
+          {(peeking || previewRevealed) && drain === "ring" && (
             <svg aria-hidden="true" viewBox="0 0 40 40" className="absolute inset-0.5 -rotate-90">
-              <circle ref={ring} cx="20" cy="20" r="17" fill="none" stroke="#D7263D" strokeWidth="2.5" pathLength={1} strokeDasharray="1" />
+              <circle ref={ring} cx="20" cy="20" r="17" fill="none" stroke={accent} strokeWidth="2.5" pathLength={1} strokeDasharray="1" strokeDashoffset={previewRevealed && !peeking ? 0.4 : 0} />
             </svg>
           )}
         </button>
@@ -204,6 +221,9 @@ export function SecretKeyField({
         >
           ⧉
         </button>
+        {(peeking || previewRevealed) && drain === "bar" && (
+          <span ref={bar} aria-hidden="true" className="absolute inset-x-0 -bottom-0.5 h-1 origin-left" style={{ background: accent, transform: previewRevealed && !peeking ? "scaleX(.6)" : undefined }} />
+        )}
       </div>
 
       <div id={`${id}-status`} role="status" aria-live="polite" className="mt-2 space-y-1 text-sm">
@@ -213,7 +233,7 @@ export function SecretKeyField({
         {clearing > 0 && (
           <p className="flex flex-wrap items-center gap-2 text-[#5E5A50]">
             Clipboard clears in {Math.ceil(clearing / 1000)}s.
-            <button type="button" onClick={() => { setClearing(0); setNote("Kept on the clipboard."); }} className="border border-[#1A1A17] bg-white px-1.5 text-xs font-bold text-[#1A1A17] focus-visible:outline-2 focus-visible:outline-[#D7263D]">
+            <button type="button" onClick={() => { setClearing(0); setNote("Kept on the clipboard."); }} className="border border-[#1A1A17] bg-white px-1.5 text-xs font-bold text-[#1A1A17] focus-visible:outline-2 focus-visible:outline-[var(--accent)]">
               Keep it
             </button>
           </p>

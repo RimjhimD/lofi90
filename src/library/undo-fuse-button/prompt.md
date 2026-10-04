@@ -10,3 +10,5 @@ Behaviour:
 - Label counts down: "Deleting in 3s · undo". When it burns out: "Deleted ✓" with a short flash.
 
 Look: switchboard style — 2px #1A1A17 border, hard 3px offset shadow, signal red #D7263D idle, warm #FFF4E5 while burning with an amber #A86A00 fuse and #FFB547 spark, bottle green #0E3B2E when kept, ink when done. Status text in a role="status" region linked with aria-describedby, visible focus ring, reduced motion respected (no flash, no pulsing spark).
+
+Look props: color (button colour before it's pressed), fuseColor, spark ("pulse" | "steady" | "none") and size ("sm" | "md" | "lg"), so the site can show colour, motion and size variants and a live controls panel.

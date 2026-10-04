@@ -12,3 +12,5 @@ Interaction:
 Accessibility: section with aria-roledescription="carousel" and a label; each card role="group" aria-roledescription="card" with "3 of 16: Name"; only the current card is exposed (others aria-hidden + inert); a polite live region announces the current card after a spin; visible focus; prefers-reduced-motion jumps without the spin.
 
 Look: switchboard style — 2px #1A1A17 borders, white cards on bone #F2EEE3 tabs, signal red #D7263D wheels and focus, mono numbers.
+
+Look props: accent (wheel and focus colour), flipMs (flip duration, default 450), behind (cards peeking out behind, default 4) and tilt (degrees each card behind leans back, default 7).

@@ -7,6 +7,7 @@ import { Stage } from "@/site/Stage";
 import { CodePanel, CopyButton } from "@/site/CodePanel";
 import { Flow } from "@/site/Flow";
 import { StatesGrid } from "@/site/StatesGrid";
+import { VariantsGrid } from "@/site/VariantsGrid";
 import { ScrollCable } from "@/site/ScrollCable";
 import { SectionNav } from "@/site/SectionNav";
 
@@ -24,6 +25,7 @@ const SECTIONS = [
   ["how", "How it works"],
   ["when", "When to use it"],
   ["usage", "Usage"],
+  ["variants", "Variants"],
   ["states", "States"],
   ["props", "Props"],
   ["prompt", "Build prompt"],
@@ -120,6 +122,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
         <Section id="usage" title="Usage" lead="Copy the component file into your project (React + Tailwind, no other packages), then use it like this.">
           <CodePanel files={[usageFile]} />
+        </Section>
+
+        <Section id="variants" title="Variants" lead="The same component in other colours, motions and sizes. Press replay to watch a tile's motion again, or use the controls under the live preview.">
+          <VariantsGrid slug={entry.slug} />
         </Section>
 
         <Section id="states" title="States" lead="Every state the component can be in, rendered live.">

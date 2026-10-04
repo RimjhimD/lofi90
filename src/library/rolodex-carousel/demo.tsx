@@ -1,6 +1,7 @@
 "use client";
 
-import { RolodexCarousel, type RolodexCard } from "./RolodexCarousel";
+import type { ControlValues } from "@/site/Controls";
+import { RolodexCarousel, type RolodexCard, type RolodexCarouselProps } from "./RolodexCarousel";
 
 const PEOPLE: [string, string, string][] = [
   ["Ana Alvarez", "Florist", "Wed & Sat mornings"],
@@ -34,6 +35,7 @@ const CARDS: RolodexCard[] = PEOPLE.map(([name, role, note], i) => ({
 }));
 
 /** Live preview: a contact rolodex. Try typing M or Y. */
-export default function RolodexCarouselDemo() {
-  return <RolodexCarousel cards={CARDS} label="Contacts" initialIndex={3} />;
+export default function RolodexCarouselDemo({ controls = {} }: { controls?: ControlValues }) {
+  const look = controls as Pick<RolodexCarouselProps, "accent" | "flipMs" | "behind" | "tilt">;
+  return <RolodexCarousel {...look} cards={CARDS} label="Contacts" initialIndex={3} />;
 }
