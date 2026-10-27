@@ -1,4 +1,6 @@
 import type { Control, ControlValues } from "@/site/Controls";
+import { PLAYGROUND as WAX_SEAL_BUTTON_PLAY } from "@/library/wax-seal-button/meta";
+import { PLAYGROUND as HOURGLASS_UPLOAD_LOADER_PLAY } from "@/library/hourglass-upload-loader/meta";
 
 const ACCENTS = [
   { value: "#C6FF3D", label: "Lime" },
@@ -84,4 +86,6 @@ export const PLAYGROUNDS: Record<string, Playground> = {
       { key: "size", label: "Size", type: "segment", options: SIZES },
     ],
   },
+  "wax-seal-button": WAX_SEAL_BUTTON_PLAY,
+  "hourglass-upload-loader": HOURGLASS_UPLOAD_LOADER_PLAY,
 };

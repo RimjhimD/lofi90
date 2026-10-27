@@ -12,6 +12,12 @@ import { STRING_NAV_STATES } from "@/library/string-nav/states";
 import { VINYL_CRATE_CAROUSEL_STATES } from "@/library/vinyl-crate-carousel/states";
 import { ISLAND_NOTIFICATION_STATES } from "@/library/island-notification/states";
 import { BOARDING_PASS_CARD_STATES } from "@/library/boarding-pass-card/states";
+import WaxSealButtonDemo from "@/library/wax-seal-button/demo";
+import HourglassUploadLoaderDemo from "@/library/hourglass-upload-loader/demo";
+import { WAX_SEAL_BUTTON_STATES } from "@/library/wax-seal-button/states";
+import { HOURGLASS_UPLOAD_LOADER_STATES } from "@/library/hourglass-upload-loader/states";
+import { CARD_STATE as WAX_SEAL_BUTTON_CARD } from "@/library/wax-seal-button/meta";
+import { CARD_STATE as HOURGLASS_UPLOAD_LOADER_CARD } from "@/library/hourglass-upload-loader/meta";
 
 export const DEMOS: Record<string, ReactComponent<{ controls?: ControlValues }>> = {
   "undo-fuse-button": UndoFuseButtonDemo,
@@ -20,6 +26,8 @@ export const DEMOS: Record<string, ReactComponent<{ controls?: ControlValues }>>
   "vinyl-crate-carousel": VinylCrateCarouselDemo,
   "island-notification": IslandNotificationDemo,
   "boarding-pass-card": BoardingPassCardDemo,
+  "wax-seal-button": WaxSealButtonDemo,
+  "hourglass-upload-loader": HourglassUploadLoaderDemo,
 };
 
 export interface StateSample {
@@ -36,6 +44,8 @@ export const STATES: Record<string, StateSample[]> = {
   "vinyl-crate-carousel": VINYL_CRATE_CAROUSEL_STATES,
   "island-notification": ISLAND_NOTIFICATION_STATES,
   "boarding-pass-card": BOARDING_PASS_CARD_STATES,
+  "wax-seal-button": WAX_SEAL_BUTTON_STATES,
+  "hourglass-upload-loader": HOURGLASS_UPLOAD_LOADER_STATES,
 };
 
 /** Which state each gallery card shows as its preview. */
@@ -46,4 +56,6 @@ export const CARD_STATE: Record<string, string> = {
   "vinyl-crate-carousel": "playing",
   "island-notification": "open",
   "boarding-pass-card": "torn",
+  "wax-seal-button": WAX_SEAL_BUTTON_CARD,
+  "hourglass-upload-loader": HOURGLASS_UPLOAD_LOADER_CARD,
 };

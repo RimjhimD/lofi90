@@ -2,7 +2,7 @@
 
 **A component library in your pocket.** React + TypeScript + Tailwind components for the LofiStack 90 Day Build Challenge: everyday UI with a twist, plus tools for real automation work.
 
-Live site: https://lofi90.vercel.app (coming soon)
+Live site: https://lofi90.vercel.app
 
 ## Components
 
@@ -14,6 +14,8 @@ Live site: https://lofi90.vercel.app (coming soon)
 | 04 | Vinyl Crate Carousel | section | `/components/vinyl-crate-carousel` |
 | 05 | Island Notification | modal | `/components/island-notification` |
 | 06 | Boarding Pass Card | card | `/components/boarding-pass-card` |
+| 07 | Wax Seal Button | button | `/components/wax-seal-button` |
+| 08 | Hourglass Upload Loader | loader | `/components/hourglass-upload-loader` |
 
 Every component page has a live demo (375 / 768 / full width), the usage example, the full source, a props table and the final prompt that built it.
 

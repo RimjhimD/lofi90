@@ -1,4 +1,6 @@
 import { ENTRIES, TYPES } from "@/lib/registry";
+import { TICKER as WAX_SEAL_BUTTON_TICKER } from "@/library/wax-seal-button/meta";
+import { TICKER as HOURGLASS_UPLOAD_LOADER_TICKER } from "@/library/hourglass-upload-loader/meta";
 
 /** A slow live feed under the header, built from the real components so it never lies. */
 export function Ticker() {
@@ -12,6 +14,8 @@ export function Ticker() {
         ["vinyl-crate-carousel", "pulled out a record · spinning at 33 rpm", "acc"],
         ["island-notification", "3 arrived · 1 showing, 2 waiting", "warn"],
         ["boarding-pass-card", "stub torn · checked in, seat 14A", "acc"],
+        WAX_SEAL_BUTTON_TICKER,
+        HOURGLASS_UPLOAD_LOADER_TICKER,
       ] as const
     ).filter(([slug]) => ENTRIES.some((e) => e.slug === slug)),
     ["library", `${ENTRIES.length} of 30 components · ${new Set(ENTRIES.map((e) => e.type)).size} of ${TYPES.length} types`, "mute"] as const,

@@ -1,3 +1,6 @@
+import { ENTRY as WAX_SEAL_BUTTON_ENTRY } from "@/library/wax-seal-button/meta";
+import { ENTRY as HOURGLASS_UPLOAD_LOADER_ENTRY } from "@/library/hourglass-upload-loader/meta";
+
 export type ComponentType =
   | "button"
   | "input"
@@ -380,6 +383,8 @@ export const ENTRIES: Entry[] = [
     ],
     support: "Needs React 19+ (it loads its styles once with <style precedence>). Works in all modern browsers (container queries, @property). No extra packages.",
   },
+  WAX_SEAL_BUTTON_ENTRY,
+  HOURGLASS_UPLOAD_LOADER_ENTRY,
 ];
 
 export const findEntry = (slug: string) => ENTRIES.find((e) => e.slug === slug);
