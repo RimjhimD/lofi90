@@ -1,5 +1,7 @@
 import { ENTRY as WAX_SEAL_BUTTON_ENTRY } from "@/library/wax-seal-button/meta";
 import { ENTRY as HOURGLASS_UPLOAD_LOADER_ENTRY } from "@/library/hourglass-upload-loader/meta";
+import { ENTRY as POSTCARD_FORM_ENTRY } from "@/library/postcard-form/meta";
+import { ENTRY as DEPARTURE_BOARD_TABLE_ENTRY } from "@/library/departure-board-table/meta";
 
 export type ComponentType =
   | "button"
@@ -385,6 +387,8 @@ export const ENTRIES: Entry[] = [
   },
   WAX_SEAL_BUTTON_ENTRY,
   HOURGLASS_UPLOAD_LOADER_ENTRY,
+  POSTCARD_FORM_ENTRY,
+  DEPARTURE_BOARD_TABLE_ENTRY,
 ];
 
 export const findEntry = (slug: string) => ENTRIES.find((e) => e.slug === slug);

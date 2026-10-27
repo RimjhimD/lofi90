@@ -14,10 +14,16 @@ import { ISLAND_NOTIFICATION_STATES } from "@/library/island-notification/states
 import { BOARDING_PASS_CARD_STATES } from "@/library/boarding-pass-card/states";
 import WaxSealButtonDemo from "@/library/wax-seal-button/demo";
 import HourglassUploadLoaderDemo from "@/library/hourglass-upload-loader/demo";
+import PostcardFormDemo from "@/library/postcard-form/demo";
+import DepartureBoardTableDemo from "@/library/departure-board-table/demo";
 import { WAX_SEAL_BUTTON_STATES } from "@/library/wax-seal-button/states";
 import { HOURGLASS_UPLOAD_LOADER_STATES } from "@/library/hourglass-upload-loader/states";
+import { POSTCARD_FORM_STATES } from "@/library/postcard-form/states";
+import { DEPARTURE_BOARD_TABLE_STATES } from "@/library/departure-board-table/states";
 import { CARD_STATE as WAX_SEAL_BUTTON_CARD } from "@/library/wax-seal-button/meta";
 import { CARD_STATE as HOURGLASS_UPLOAD_LOADER_CARD } from "@/library/hourglass-upload-loader/meta";
+import { CARD_STATE as POSTCARD_FORM_CARD } from "@/library/postcard-form/meta";
+import { CARD_STATE as DEPARTURE_BOARD_TABLE_CARD } from "@/library/departure-board-table/meta";
 
 export const DEMOS: Record<string, ReactComponent<{ controls?: ControlValues }>> = {
   "undo-fuse-button": UndoFuseButtonDemo,
@@ -28,6 +34,8 @@ export const DEMOS: Record<string, ReactComponent<{ controls?: ControlValues }>>
   "boarding-pass-card": BoardingPassCardDemo,
   "wax-seal-button": WaxSealButtonDemo,
   "hourglass-upload-loader": HourglassUploadLoaderDemo,
+  "postcard-form": PostcardFormDemo,
+  "departure-board-table": DepartureBoardTableDemo,
 };
 
 export interface StateSample {
@@ -46,6 +54,8 @@ export const STATES: Record<string, StateSample[]> = {
   "boarding-pass-card": BOARDING_PASS_CARD_STATES,
   "wax-seal-button": WAX_SEAL_BUTTON_STATES,
   "hourglass-upload-loader": HOURGLASS_UPLOAD_LOADER_STATES,
+  "postcard-form": POSTCARD_FORM_STATES,
+  "departure-board-table": DEPARTURE_BOARD_TABLE_STATES,
 };
 
 /** Which state each gallery card shows as its preview. */
@@ -58,4 +68,6 @@ export const CARD_STATE: Record<string, string> = {
   "boarding-pass-card": "torn",
   "wax-seal-button": WAX_SEAL_BUTTON_CARD,
   "hourglass-upload-loader": HOURGLASS_UPLOAD_LOADER_CARD,
+  "postcard-form": POSTCARD_FORM_CARD,
+  "departure-board-table": DEPARTURE_BOARD_TABLE_CARD,
 };

@@ -1,6 +1,8 @@
 import type { Control, ControlValues } from "@/site/Controls";
 import { PLAYGROUND as WAX_SEAL_BUTTON_PLAY } from "@/library/wax-seal-button/meta";
 import { PLAYGROUND as HOURGLASS_UPLOAD_LOADER_PLAY } from "@/library/hourglass-upload-loader/meta";
+import { PLAYGROUND as POSTCARD_FORM_PLAY } from "@/library/postcard-form/meta";
+import { PLAYGROUND as DEPARTURE_BOARD_TABLE_PLAY } from "@/library/departure-board-table/meta";
 
 const ACCENTS = [
   { value: "#C6FF3D", label: "Lime" },
@@ -88,4 +90,6 @@ export const PLAYGROUNDS: Record<string, Playground> = {
   },
   "wax-seal-button": WAX_SEAL_BUTTON_PLAY,
   "hourglass-upload-loader": HOURGLASS_UPLOAD_LOADER_PLAY,
+  "postcard-form": POSTCARD_FORM_PLAY,
+  "departure-board-table": DEPARTURE_BOARD_TABLE_PLAY,
 };

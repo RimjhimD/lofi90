@@ -16,6 +16,8 @@ Live site: https://lofi90.vercel.app
 | 06 | Boarding Pass Card | card | `/components/boarding-pass-card` |
 | 07 | Wax Seal Button | button | `/components/wax-seal-button` |
 | 08 | Hourglass Upload Loader | loader | `/components/hourglass-upload-loader` |
+| 09 | Postcard Form | form | `/components/postcard-form` |
+| 10 | Departure Board Table | table | `/components/departure-board-table` |
 
 Every component page has a live demo (375 / 768 / full width), the usage example, the full source, a props table and the final prompt that built it.
 
@@ -23,7 +25,7 @@ Every component page has a live demo (375 / 768 / full width), the usage example
 
 Each component lives in `src/library/<slug>/` and only needs React + Tailwind CSS — no other packages.
 
-**Requirements:** React 19 or newer (Next.js 15+) and Tailwind CSS 4. The Boarding Pass Card uses React 19's `<style href precedence>` to load its styles once, so it won't work on React 18.
+**Requirements:** React 19 or newer (Next.js 15+) and Tailwind CSS 4. The Boarding Pass Card and Postcard Form use React 19's `<style href precedence>` to load their styles once, so they won't work on React 18.
 
 ```
 src/library/undo-fuse-button/
