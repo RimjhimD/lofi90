@@ -3,6 +3,8 @@ import { TICKER as WAX_SEAL_BUTTON_TICKER } from "@/library/wax-seal-button/meta
 import { TICKER as HOURGLASS_UPLOAD_LOADER_TICKER } from "@/library/hourglass-upload-loader/meta";
 import { TICKER as POSTCARD_FORM_TICKER } from "@/library/postcard-form/meta";
 import { TICKER as DEPARTURE_BOARD_TABLE_TICKER } from "@/library/departure-board-table/meta";
+import { TICKER as SEISMOGRAPH_CHART_TICKER } from "@/library/seismograph-chart/meta";
+import { TICKER as POLAROID_CARD_TICKER } from "@/library/polaroid-card/meta";
 
 /** A slow live feed under the header, built from the real components so it never lies. */
 export function Ticker() {
@@ -20,6 +22,8 @@ export function Ticker() {
         HOURGLASS_UPLOAD_LOADER_TICKER,
         POSTCARD_FORM_TICKER,
         DEPARTURE_BOARD_TABLE_TICKER,
+        SEISMOGRAPH_CHART_TICKER,
+        POLAROID_CARD_TICKER,
       ] as const
     ).filter(([slug]) => ENTRIES.some((e) => e.slug === slug)),
     ["library", `${ENTRIES.length} of 30 components · ${new Set(ENTRIES.map((e) => e.type)).size} of ${TYPES.length} types`, "mute"] as const,

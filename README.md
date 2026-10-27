@@ -18,6 +18,8 @@ Live site: https://lofi90.vercel.app
 | 08 | Hourglass Upload Loader | loader | `/components/hourglass-upload-loader` |
 | 09 | Postcard Form | form | `/components/postcard-form` |
 | 10 | Departure Board Table | table | `/components/departure-board-table` |
+| 11 | Seismograph Chart | chart | `/components/seismograph-chart` |
+| 12 | Polaroid Card | card | `/components/polaroid-card` |
 
 Every component page has a live demo (375 / 768 / full width), the usage example, the full source, a props table and the final prompt that built it.
 

@@ -3,6 +3,8 @@ import { PLAYGROUND as WAX_SEAL_BUTTON_PLAY } from "@/library/wax-seal-button/me
 import { PLAYGROUND as HOURGLASS_UPLOAD_LOADER_PLAY } from "@/library/hourglass-upload-loader/meta";
 import { PLAYGROUND as POSTCARD_FORM_PLAY } from "@/library/postcard-form/meta";
 import { PLAYGROUND as DEPARTURE_BOARD_TABLE_PLAY } from "@/library/departure-board-table/meta";
+import { PLAYGROUND as SEISMOGRAPH_CHART_PLAY } from "@/library/seismograph-chart/meta";
+import { PLAYGROUND as POLAROID_CARD_PLAY } from "@/library/polaroid-card/meta";
 
 const ACCENTS = [
   { value: "#C6FF3D", label: "Lime" },
@@ -92,4 +94,6 @@ export const PLAYGROUNDS: Record<string, Playground> = {
   "hourglass-upload-loader": HOURGLASS_UPLOAD_LOADER_PLAY,
   "postcard-form": POSTCARD_FORM_PLAY,
   "departure-board-table": DEPARTURE_BOARD_TABLE_PLAY,
+  "seismograph-chart": SEISMOGRAPH_CHART_PLAY,
+  "polaroid-card": POLAROID_CARD_PLAY,
 };
