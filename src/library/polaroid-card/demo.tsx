@@ -7,8 +7,7 @@ import { PolaroidCard, type PolaroidCardProps } from "./PolaroidCard";
 
 const PHOTOS = [
   { id: "beach", src: "https://picsum.photos/id/1011/600/450", alt: "A woman in a red kayak on a calm green lake", caption: "Lake day, finally", date: "Aug 2026" },
-  // This URL is broken on purpose, so the error and Retry path can be tried.
-  { id: "broken", src: "https://picsum.photos/id/does-not-exist/600/450", alt: "Our tent at the campsite", caption: "The campsite", date: "Aug 2026" },
+  { id: "camp", src: "https://picsum.photos/id/1036/600/450", alt: "Yellow tents pitched in the snow below mountain peaks", caption: "The campsite", date: "Aug 2026" },
   // No alt on purpose, so the missing-alt sticky note shows.
   { id: "noalt", src: "https://picsum.photos/id/1025/600/450", alt: undefined, caption: "Pug in a blanket", date: "Sep 2026" },
 ] as const;
@@ -16,7 +15,7 @@ const PHOTOS = [
 /** Throttle: the same photo at 5000×3750 (several MB), stamped so the browser can't serve it from cache. */
 const heavy = (src: string, stamp: number) => `${src.replace("/600/450", "/5000/3750")}?t=${stamp}`;
 
-/** Live preview: an album page with three prints. Slow the network, break a photo, pick favourites. */
+/** Live preview: an album page with three prints. Slow the network, reload, pick favourites. */
 export default function PolaroidCardDemo({ controls = {} }: { controls?: ControlValues }) {
   const look = controls as Pick<PolaroidCardProps, "accent" | "size" | "tilt" | "slowAfterMs">;
   const [throttle, setThrottle] = useState(false);
@@ -63,7 +62,7 @@ export default function PolaroidCardDemo({ controls = {} }: { controls?: Control
             }}
             onLoad={(img) => say(`“${p.caption}” developed: ${img.naturalWidth}×${img.naturalHeight}, loaded and decoded. No layout shift.`, "good")}
             onError={({ attempt }) =>
-              say(attempt === 0 ? `“${p.caption}” failed to load. The print is overexposed and offers Retry.` : `Retry ${attempt} for “${p.caption}” failed too (the URL is broken on purpose).`, "bad")
+              say(attempt === 0 ? `“${p.caption}” failed to load. The print is overexposed and offers Retry.` : `Retry ${attempt} for “${p.caption}” failed too.`, "bad")
             }
           />
         ))}
@@ -97,7 +96,7 @@ export default function PolaroidCardDemo({ controls = {} }: { controls?: Control
         </button>
       </div>
       <p className="max-w-md text-center text-xs text-[var(--k-mute,#8A938D)]">
-        The middle photo has a broken link and the right one has no alt text, both on purpose. Click a print to pin it.
+        The right photo has no alt text on purpose, so you can see the warning. Click a print to pin it.
       </p>
     </div>
   );

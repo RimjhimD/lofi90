@@ -14,12 +14,14 @@ Live site: https://lofi90.vercel.app
 | 04 | Vinyl Crate Carousel | section | `/components/vinyl-crate-carousel` |
 | 05 | Island Notification | modal | `/components/island-notification` |
 | 06 | Boarding Pass Card | card | `/components/boarding-pass-card` |
-| 07 | Wax Seal Button | button | `/components/wax-seal-button` |
-| 08 | Hourglass Upload Loader | loader | `/components/hourglass-upload-loader` |
-| 09 | Postcard Form | form | `/components/postcard-form` |
-| 10 | Departure Board Table | table | `/components/departure-board-table` |
-| 11 | Seismograph Chart | chart | `/components/seismograph-chart` |
-| 12 | Polaroid Card | card | `/components/polaroid-card` |
+| 07 | Live URL Slug Input | input | `/components/url-slug-input` |
+| 08 | Bug Report Widget | modal | `/components/bug-report-widget` |
+| 09 | Text-Us Widget | form | `/components/text-us-widget` |
+| 10 | Tab Progress Loader | loader | `/components/tab-progress-loader` |
+| 11 | Scan-to-Save Contact Card | card | `/components/scan-to-save-contact-card` |
+| 12 | Open-Now Hours | section | `/components/open-now-hours` |
+| 13 | Polaroid Card | card | `/components/polaroid-card` |
+| 14 | Offline-Aware Navbar | navbar | `/components/offline-aware-navbar` |
 
 Every component page has a live demo (375 / 768 / full width), the usage example, the full source, a props table and the final prompt that built it.
 
@@ -27,7 +29,7 @@ Every component page has a live demo (375 / 768 / full width), the usage example
 
 Each component lives in `src/library/<slug>/` and only needs React + Tailwind CSS — no other packages.
 
-**Requirements:** React 19 or newer (Next.js 15+) and Tailwind CSS 4. The Boarding Pass Card and Postcard Form use React 19's `<style href precedence>` to load their styles once, so they won't work on React 18.
+**Requirements:** React 19 or newer (Next.js 15+) and Tailwind CSS 4. The Boarding Pass Card uses React 19's `<style href precedence>` to load its styles once, so it won't work on React 18.
 
 ```
 src/library/undo-fuse-button/

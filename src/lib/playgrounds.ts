@@ -1,10 +1,12 @@
 import type { Control, ControlValues } from "@/site/Controls";
-import { PLAYGROUND as WAX_SEAL_BUTTON_PLAY } from "@/library/wax-seal-button/meta";
-import { PLAYGROUND as HOURGLASS_UPLOAD_LOADER_PLAY } from "@/library/hourglass-upload-loader/meta";
-import { PLAYGROUND as POSTCARD_FORM_PLAY } from "@/library/postcard-form/meta";
-import { PLAYGROUND as DEPARTURE_BOARD_TABLE_PLAY } from "@/library/departure-board-table/meta";
-import { PLAYGROUND as SEISMOGRAPH_CHART_PLAY } from "@/library/seismograph-chart/meta";
+import { PLAYGROUND as URL_SLUG_INPUT_PLAY } from "@/library/url-slug-input/meta";
+import { PLAYGROUND as BUG_REPORT_WIDGET_PLAY } from "@/library/bug-report-widget/meta";
+import { PLAYGROUND as TEXT_US_WIDGET_PLAY } from "@/library/text-us-widget/meta";
+import { PLAYGROUND as TAB_PROGRESS_LOADER_PLAY } from "@/library/tab-progress-loader/meta";
+import { PLAYGROUND as SCAN_TO_SAVE_CONTACT_CARD_PLAY } from "@/library/scan-to-save-contact-card/meta";
+import { PLAYGROUND as OPEN_NOW_HOURS_PLAY } from "@/library/open-now-hours/meta";
 import { PLAYGROUND as POLAROID_CARD_PLAY } from "@/library/polaroid-card/meta";
+import { PLAYGROUND as OFFLINE_AWARE_NAVBAR_PLAY } from "@/library/offline-aware-navbar/meta";
 
 const ACCENTS = [
   { value: "#C6FF3D", label: "Lime" },
@@ -90,10 +92,12 @@ export const PLAYGROUNDS: Record<string, Playground> = {
       { key: "size", label: "Size", type: "segment", options: SIZES },
     ],
   },
-  "wax-seal-button": WAX_SEAL_BUTTON_PLAY,
-  "hourglass-upload-loader": HOURGLASS_UPLOAD_LOADER_PLAY,
-  "postcard-form": POSTCARD_FORM_PLAY,
-  "departure-board-table": DEPARTURE_BOARD_TABLE_PLAY,
-  "seismograph-chart": SEISMOGRAPH_CHART_PLAY,
+  "url-slug-input": URL_SLUG_INPUT_PLAY,
+  "bug-report-widget": BUG_REPORT_WIDGET_PLAY,
+  "text-us-widget": TEXT_US_WIDGET_PLAY,
+  "tab-progress-loader": TAB_PROGRESS_LOADER_PLAY,
+  "scan-to-save-contact-card": SCAN_TO_SAVE_CONTACT_CARD_PLAY,
+  "open-now-hours": OPEN_NOW_HOURS_PLAY,
   "polaroid-card": POLAROID_CARD_PLAY,
+  "offline-aware-navbar": OFFLINE_AWARE_NAVBAR_PLAY,
 };

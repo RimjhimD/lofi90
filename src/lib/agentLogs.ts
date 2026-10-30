@@ -2,7 +2,7 @@
 export interface AgentLog {
   slug: string;
   no: string;
-  kind: "Prompting" | "Integration" | "Build" | "Debug" | "QA" | "Release";
+  kind: "Prompting" | "Integration" | "Build" | "Debug" | "QA" | "Release" | "Automation";
   title: string;
   summary: string;
   date: string;
@@ -247,6 +247,49 @@ When you finish, report: why it was a 404, the results of each check, the live U
     saved: "A careful release checklist done in a few minutes, so nothing unsafe went public and nothing was left broken.",
     lesson: "Give the agent a stop condition. “If any check fails, stop and tell me” makes a push safe to hand over.",
     links: [{ label: "Live site", href: "https://lofi90.vercel.app" }, { label: "Repo", href: "https://github.com/RimjhimD/lofi90" }],
+  },
+  {
+    slug: "client-alert-workflows",
+    no: "07",
+    kind: "Automation",
+    title: "Build the workflows behind a client's AI phone line",
+    summary: "When the AI receptionist takes a message, the right person now gets a text and an email with the caller's details, the call summary and the recording.",
+    date: "8 Oct 2026",
+    agent: AGENT,
+    tools: ["GoHighLevel workflow builder", "GoHighLevel API", "Playwright browser", "Webhooks"],
+    task: "A client's AI receptionist answered calls and took messages for two people on the team, but nothing told them. They needed an alert by text and email with who called, why, a summary of the call and the recording, and only for the person the caller asked for.",
+    prompt: `You are working in a client's GoHighLevel (GHL) sub-account. An AI phone receptionist answers calls and tags the contact with the person the caller wants (one tag per team member). Right now nobody is alerted.
+
+Goal: when a caller leaves a message, the right team member gets a text and an email with the caller's name, number, reason, a call summary and a link to the recording.
+
+Instructions:
+1. Read the existing workflows first. List any that are shared with other bots and do not edit them.
+2. Build one workflow that receives the bot's post-call webhook and writes the call summary and recording link to two contact fields.
+3. Build one alert workflow per team member, triggered by their tag:
+   - wait until the recording field is filled, for at most 15 minutes, so the alert never goes out empty;
+   - send a labelled SMS, then an email, with every detail above;
+   - remove the tag at the end so the next call triggers it again.
+4. While testing, send the alerts to a test inbox instead of the real people. Test with a real call for each person, and with "anyone" (both should fire).
+5. After the tests pass, switch the alerts back to the real people, publish, and read every workflow back through the API to confirm.
+
+Rules: never edit a shared workflow. Back up anything before changing it. Ask me before publishing.
+
+When you finish, report: each workflow and its steps, the test calls and what fired, what you restored after testing, and anything still open.`,
+    workflow: [
+      "Read every workflow in the account first and marked the one shared with other bots as do-not-touch.",
+      "Built a post-call workflow on a webhook trigger that saves the call summary and the recording link onto the contact.",
+      "Built one alert workflow per team member: wait for the recording (15 minutes at most), labelled SMS, email, then remove the tag.",
+      "Pointed the alerts at a test inbox and made real test calls, fixing the bot's prompt between rounds until both tags fired on “anyone”.",
+      "Switched the alerts back to the real people, published, and read each workflow back to confirm the steps.",
+    ],
+    produced: [
+      "A post-call workflow that fills the summary and recording fields after every call.",
+      "Two alert workflows that send a labelled text and email to the right person.",
+      "A final end-to-end test call that passed: both tags fired, both alert emails arrived.",
+      "Still open: deleting the test contacts, and the bot sometimes saves an email slightly different from the one spelled out.",
+    ],
+    saved: "Messages that used to sit unseen now reach the right person within minutes, with the recording attached, and the test-then-restore routine is reusable for every client after this one.",
+    lesson: "Tell the agent what not to touch, and make it test with real calls into a safe inbox before anything goes to the client. A stop rule like “ask me before publishing” is what makes a live account safe to hand over.",
   },
 ];
 

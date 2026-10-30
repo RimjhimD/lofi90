@@ -3,10 +3,10 @@ import type { Playground } from "@/lib/playgrounds";
 
 export const ENTRY: Entry = {
   slug: "polaroid-card",
-  ext: "12",
+  ext: "13",
   name: "Polaroid Card",
   type: "card",
-  week: 6,
+  week: 7,
   icon: "📸",
   summary: "An image card shaped like an instant photo. It develops while the image really loads, and says so when it fails.",
   why: "Image cards usually handle loading badly. The page jumps when the photo arrives, you stare at a blank box while it loads, a failed link shows the browser's ugly broken-image icon, and missing alt text goes unnoticed until an accessibility audit. This card reserves the photo's space up front so nothing moves. While the image loads, the print develops from a dark chemical tint and clears only once the picture is loaded and decoded. A slow load says so, a failed one turns into an overexposed print with a Retry button, and a missing alt attribute gets a yellow sticky note while you develop.",
@@ -44,7 +44,6 @@ export const ENTRY: Entry = {
   ],
   tryIt: [
     "Turn on Throttle and press Reload photos. The prints keep their size and slowly develop.",
-    "Look at the middle photo: its link is broken, so it turns overexposed. Press Retry.",
     "The right photo has no alt text, so it wears a yellow sticky note. Click any print to pin it.",
   ],
   flow: [

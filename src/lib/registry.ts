@@ -1,9 +1,11 @@
-import { ENTRY as WAX_SEAL_BUTTON_ENTRY } from "@/library/wax-seal-button/meta";
-import { ENTRY as HOURGLASS_UPLOAD_LOADER_ENTRY } from "@/library/hourglass-upload-loader/meta";
-import { ENTRY as POSTCARD_FORM_ENTRY } from "@/library/postcard-form/meta";
-import { ENTRY as DEPARTURE_BOARD_TABLE_ENTRY } from "@/library/departure-board-table/meta";
-import { ENTRY as SEISMOGRAPH_CHART_ENTRY } from "@/library/seismograph-chart/meta";
+import { ENTRY as URL_SLUG_INPUT_ENTRY } from "@/library/url-slug-input/meta";
+import { ENTRY as BUG_REPORT_WIDGET_ENTRY } from "@/library/bug-report-widget/meta";
+import { ENTRY as TEXT_US_WIDGET_ENTRY } from "@/library/text-us-widget/meta";
+import { ENTRY as TAB_PROGRESS_LOADER_ENTRY } from "@/library/tab-progress-loader/meta";
+import { ENTRY as SCAN_TO_SAVE_CONTACT_CARD_ENTRY } from "@/library/scan-to-save-contact-card/meta";
+import { ENTRY as OPEN_NOW_HOURS_ENTRY } from "@/library/open-now-hours/meta";
 import { ENTRY as POLAROID_CARD_ENTRY } from "@/library/polaroid-card/meta";
+import { ENTRY as OFFLINE_AWARE_NAVBAR_ENTRY } from "@/library/offline-aware-navbar/meta";
 
 export type ComponentType =
   | "button"
@@ -387,12 +389,14 @@ export const ENTRIES: Entry[] = [
     ],
     support: "Needs React 19+ (it loads its styles once with <style precedence>). Works in all modern browsers (container queries, @property). No extra packages.",
   },
-  WAX_SEAL_BUTTON_ENTRY,
-  HOURGLASS_UPLOAD_LOADER_ENTRY,
-  POSTCARD_FORM_ENTRY,
-  DEPARTURE_BOARD_TABLE_ENTRY,
-  SEISMOGRAPH_CHART_ENTRY,
+  URL_SLUG_INPUT_ENTRY,
+  BUG_REPORT_WIDGET_ENTRY,
+  TEXT_US_WIDGET_ENTRY,
+  TAB_PROGRESS_LOADER_ENTRY,
+  SCAN_TO_SAVE_CONTACT_CARD_ENTRY,
+  OPEN_NOW_HOURS_ENTRY,
   POLAROID_CARD_ENTRY,
+  OFFLINE_AWARE_NAVBAR_ENTRY,
 ];
 
 export const findEntry = (slug: string) => ENTRIES.find((e) => e.slug === slug);

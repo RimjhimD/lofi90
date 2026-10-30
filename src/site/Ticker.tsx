@@ -1,10 +1,12 @@
 import { ENTRIES, TYPES } from "@/lib/registry";
-import { TICKER as WAX_SEAL_BUTTON_TICKER } from "@/library/wax-seal-button/meta";
-import { TICKER as HOURGLASS_UPLOAD_LOADER_TICKER } from "@/library/hourglass-upload-loader/meta";
-import { TICKER as POSTCARD_FORM_TICKER } from "@/library/postcard-form/meta";
-import { TICKER as DEPARTURE_BOARD_TABLE_TICKER } from "@/library/departure-board-table/meta";
-import { TICKER as SEISMOGRAPH_CHART_TICKER } from "@/library/seismograph-chart/meta";
+import { TICKER as URL_SLUG_INPUT_TICKER } from "@/library/url-slug-input/meta";
+import { TICKER as BUG_REPORT_WIDGET_TICKER } from "@/library/bug-report-widget/meta";
+import { TICKER as TEXT_US_WIDGET_TICKER } from "@/library/text-us-widget/meta";
+import { TICKER as TAB_PROGRESS_LOADER_TICKER } from "@/library/tab-progress-loader/meta";
+import { TICKER as SCAN_TO_SAVE_CONTACT_CARD_TICKER } from "@/library/scan-to-save-contact-card/meta";
+import { TICKER as OPEN_NOW_HOURS_TICKER } from "@/library/open-now-hours/meta";
 import { TICKER as POLAROID_CARD_TICKER } from "@/library/polaroid-card/meta";
+import { TICKER as OFFLINE_AWARE_NAVBAR_TICKER } from "@/library/offline-aware-navbar/meta";
 
 /** A slow live feed under the header, built from the real components so it never lies. */
 export function Ticker() {
@@ -18,12 +20,14 @@ export function Ticker() {
         ["vinyl-crate-carousel", "pulled out a record · spinning at 33 rpm", "acc"],
         ["island-notification", "3 arrived · 1 showing, 2 waiting", "warn"],
         ["boarding-pass-card", "stub torn · checked in, seat 14A", "acc"],
-        WAX_SEAL_BUTTON_TICKER,
-        HOURGLASS_UPLOAD_LOADER_TICKER,
-        POSTCARD_FORM_TICKER,
-        DEPARTURE_BOARD_TABLE_TICKER,
-        SEISMOGRAPH_CHART_TICKER,
+        URL_SLUG_INPUT_TICKER,
+        BUG_REPORT_WIDGET_TICKER,
+        TEXT_US_WIDGET_TICKER,
+        TAB_PROGRESS_LOADER_TICKER,
+        SCAN_TO_SAVE_CONTACT_CARD_TICKER,
+        OPEN_NOW_HOURS_TICKER,
         POLAROID_CARD_TICKER,
+        OFFLINE_AWARE_NAVBAR_TICKER,
       ] as const
     ).filter(([slug]) => ENTRIES.some((e) => e.slug === slug)),
     ["library", `${ENTRIES.length} of 30 components · ${new Set(ENTRIES.map((e) => e.type)).size} of ${TYPES.length} types`, "mute"] as const,
